@@ -12,6 +12,6 @@
   "dependencies": {
     "express": "^4.17.0",
     "random-number": "0.0.9",
-    "fctrading-client": "file:src/TradingAPIJSClient"
+    "ssi-api-client": "file:_ssi-api-client"
   }
 }
