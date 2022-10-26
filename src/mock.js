@@ -24,12 +24,11 @@ module.exports = {
     channel: "IW",
     extOrderID: "", // this property is unique in day.
     session: "",
-    code: "1we23rw4t",
     twoFaType: 0,
     startDate: "24/05/2019",
     endDate: "30/05/2019",
   },
-  mockDeterativeData: {
+  mockDerivativeData: {
     account: "1577926",
     buysell: "B",
     currency: "KVND",
