@@ -1,77 +1,24 @@
 const express = require("express");
 const client = require("ssi-api-client");
 const axios = require("axios");
-
-const streaming = require("./streaming");
-const config = require("./config.js");
-
-const app = express();
-const port = 3011;
 const rn = require("random-number");
 
-Date.prototype.yyyymmdd = function () {
-  var mm = this.getMonth() + 1; // getMonth() is zero-based
-  var dd = this.getDate();
+const config = require("./config.js");
+const { mockDeterativeData, mockStockData } = require("./mock");
 
-  return [
-    this.getFullYear(),
-    (mm > 9 ? "" : "0") + mm,
-    (dd > 9 ? "" : "0") + dd,
-  ].join("");
-};
+require("./market-data");
 
-function parseBool(str) {
+const app = express();
+
+const parseBool = (str) => {
   return str === "true" || str === true;
-}
-
-const date = new Date();
+};
 
 const rq = axios.create({
   baseURL: config.trading.URL,
   timeout: 5000,
 });
 
-const mockStockData = {
-  account: "1577921",
-  buysell: "B",
-  market: "VN", // Only support "VN" and "VNFE"
-  ordertype: "LO",
-  price: 25000,
-  quantity: 300,
-  instrumentid: "SSI",
-  validitydate: date.yyyymmdd(),
-  channel: "IW",
-  extOrderID: "", // this property is unique in day.
-  session: "",
-  code: "1we23rw4t",
-  twoFaType: 0,
-  startDate: "24/05/2019",
-  endDate: "30/05/2019",
-};
-const mockDeterativeData = {
-  account: "1577926",
-  buysell: "B",
-  currency: "KVND",
-  market: "VNFE",
-  ordertype: "LO", // Only support "VN" and "VNFE"
-  price: 1425,
-  quantity: 10,
-  instrumentid: "VN30F2209",
-  validitydate: date.yyyymmdd(),
-  channel: "WT",
-  extOrderID: "",
-  stoporder: false,
-  stopprice: 800,
-  stoptype: "D",
-  stopstep: 0.5,
-  lossstep: 0,
-  profitstep: 0,
-  session: "",
-  code: "674870",
-  querySummary: true,
-  startDate: "29/08/2019",
-  endDate: "29/08/2019",
-};
 let access_token = "";
 
 rq({
@@ -668,50 +615,6 @@ app.get("/ppmmraccount", (req, res) => {
     });
 });
 
-const rqData = axios.create({
-  baseURL: config.market.ApiUrl,
-  timeout: 5000,
-});
-
-rqData({
-  url: config.market.ApiUrl + "AccessToken",
-  method: "post",
-  data: {
-    consumerID: config.market.ConsumerID,
-    consumerSecret: config.market.ConsumerSecret,
-  },
-}).then(
-  (response) => {
-    if (response.data.status === 200) {
-      let token = "Bearer " + response.data.data.accessToken;
-      axios.interceptors.request.use(function (axios_config) {
-        axios_config.headers.Authorization = token;
-        return axios_config;
-      });
-
-      streaming.initStream({
-        url: config.market.HubUrl,
-        token: token,
-      });
-
-      var mkClient = streaming.start();
-
-      mkClient.serviceHandlers.connected = function (connection) {
-        mkClient.invoke("FcMarketDataV2Hub", "SwitchChannels", "X-QUOTE:ALL");
-      };
-
-      mkClient.serviceHandlers.reconnecting = function (connection) {
-        mkClient.invoke("FcMarketDataV2Hub", "SwitchChannels", "X:ALL");
-      };
-    } else {
-      console.log(response.data.message);
-    }
-  },
-  (reason) => {
-    console.log(reason);
-  }
-);
-
-app.listen(port, "localhost", () =>
-  console.log(`Example app listening on port ${port}!`)
+app.listen(config.port, "localhost", () =>
+  console.log(`Example app listening on port ${config.port}!`)
 );
