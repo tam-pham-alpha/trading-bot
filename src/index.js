@@ -1,8 +1,8 @@
 const express = require("express");
-const client = require("ssi-api-client");
-const axios = require("axios");
+const ssi = require("ssi-api-client");
 
-const config = require("./config.js");
+const { setAccessToken, fetch } = require("./utils/fetch");
+const config = require("./config");
 const apis = require("./apis");
 
 require("./market-data");
@@ -12,13 +12,8 @@ app.listen(config.port, "localhost", () =>
   console.log(`Example app listening on port ${config.port}!`)
 );
 
-const rq = axios.create({
-  baseURL: config.trading.URL,
-  timeout: 5000,
-});
-
-rq({
-  url: client.api.GET_ACCESS_TOKEN,
+fetch({
+  url: ssi.api.GET_ACCESS_TOKEN,
   method: "post",
   data: {
     consumerID: config.trading.ConsumerID,
@@ -33,42 +28,43 @@ rq({
       console.log(resp.data);
 
       const access_token = resp.data.data.accessToken;
+      setAccessToken(access_token);
 
       // init bulk of apis
       apis(app, access_token);
 
-      client.initStream({
+      ssi.initStream({
         url: config.trading.stream_url,
         access_token,
         notify_id: 0,
       });
 
-      client.bind(client.events.onError, function (e, data) {
+      ssi.bind(ssi.events.onError, function (e, data) {
         console.log(e + ": ");
         console.log(data);
       });
 
-      client.bind(client.events.onOrderUpdate, function (e, data) {
+      ssi.bind(ssi.events.onOrderUpdate, function (e, data) {
         console.log(e + ": ");
         console.log(JSON.stringify(data));
       });
 
-      client.bind(client.events.onOrderError, function (e, data) {
+      ssi.bind(ssi.events.onOrderError, function (e, data) {
         console.log(e + ": ");
         console.log(JSON.stringify(data));
       });
 
-      client.bind(client.events.onClientPortfolioEvent, function (e, data) {
+      ssi.bind(ssi.events.onClientPortfolioEvent, function (e, data) {
         console.log(e + ": ");
         console.log(JSON.stringify(data));
       });
 
-      client.bind(client.events.onOrderMatch, function (e, data) {
+      ssi.bind(ssi.events.onOrderMatch, function (e, data) {
         console.log(e + ": ");
         console.log(JSON.stringify(data));
       });
 
-      client.start();
+      ssi.start();
     } else {
       console.log(resp.data.message);
     }

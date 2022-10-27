@@ -1,7 +1,6 @@
-const express = require("express");
 const client = require("ssi-api-client");
-const axios = require("axios");
 const rn = require("random-number");
+const { fetch } = require("./utils/fetch");
 
 const config = require("./config.js");
 const { mockDerivativeData, mockStockData } = require("./mock");
@@ -16,18 +15,14 @@ const parseBool = (str) => {
   return str === "true" || str === true;
 };
 
-const rq = axios.create({
-  baseURL: config.trading.URL,
-  timeout: 5000,
-});
-
 module.exports = (app, access_token) => {
   app.get("/getOtp", (req, res) => {
     var request = {
       consumerID: config.trading.ConsumerID,
       consumerSecret: config.trading.ConsumerSecret,
     };
-    rq({
+
+    fetch({
       url: client.api.GET_OTP,
       method: "post",
 
@@ -40,6 +35,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/verifyCode", (req, res) => {
     var ro = {};
     Object.assign(ro, mockStockData);
@@ -51,7 +47,8 @@ module.exports = (app, access_token) => {
       code: ro.code,
       isSave: true,
     };
-    rq({
+
+    fetch({
       url: client.api.GET_ACCESS_TOKEN,
       method: "post",
       data: request,
@@ -67,6 +64,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/newOrder", (req, res) => {
     var ro = {};
     Object.assign(ro, mockStockData);
@@ -89,12 +87,11 @@ module.exports = (app, access_token) => {
       profitStep: 0,
       code: ro.code,
     };
-    rq({
+
+    fetch({
       url: client.api.NEW_ORDER,
       method: "post",
       headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
           config.trading.PrivateKey
@@ -109,6 +106,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/ttlNewOrder", (req, res) => {
     var ro = {};
     Object.assign(ro, mockDerivativeData);
@@ -131,12 +129,11 @@ module.exports = (app, access_token) => {
       profitStep: parseFloat(ro.profitstep),
       code: ro.code,
     };
-    rq({
+
+    fetch({
       url: client.api.NEW_ORDER,
       method: "post",
       headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
           config.trading.PrivateKey
@@ -151,6 +148,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/modifyOrder", (req, res) => {
     var ro = {};
     Object.assign(ro, mockStockData);
@@ -167,12 +165,11 @@ module.exports = (app, access_token) => {
       orderType: ro.ordertype,
       code: ro.code,
     };
-    rq({
+
+    fetch({
       url: client.api.MODIFY_ORDER,
       method: "post",
       headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
           config.trading.PrivateKey
@@ -187,6 +184,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/ttlmodifyOrder", (req, res) => {
     var ro = {};
     Object.assign(ro, mockDerivativeData);
@@ -203,12 +201,11 @@ module.exports = (app, access_token) => {
       orderType: ro.ordertype,
       code: ro.code,
     };
-    rq({
+
+    fetch({
       url: client.api.MODIFY_ORDER,
       method: "post",
       headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
           config.trading.PrivateKey
@@ -223,6 +220,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/cancelOrder", (req, res) => {
     var ro = {};
     Object.assign(ro, mockStockData);
@@ -236,12 +234,11 @@ module.exports = (app, access_token) => {
       requestID: getRandom() + "",
       code: ro.code,
     };
-    rq({
+
+    fetch({
       url: client.api.CANCEL_ORDER,
       method: "post",
       headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
           config.trading.PrivateKey
@@ -256,6 +253,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/ttlcancelOrder", (req, res) => {
     var ro = {};
     Object.assign(ro, mockDerivativeData);
@@ -269,12 +267,11 @@ module.exports = (app, access_token) => {
       requestID: getRandom() + "",
       code: ro.code,
     };
-    rq({
+
+    fetch({
       url: client.api.CANCEL_ORDER,
       method: "post",
       headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
           config.trading.PrivateKey
@@ -289,6 +286,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/orderHistory", (req, res) => {
     var ro = {};
     Object.assign(ro, mockStockData);
@@ -298,13 +296,10 @@ module.exports = (app, access_token) => {
       startDate: ro.startDate,
       endDate: ro.endDate,
     };
-    rq({
+
+    fetch({
       url: client.api.GET_ORDER_HISTORY,
       method: "get",
-      headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
-      },
       params: request,
     })
       .then((response) => {
@@ -314,6 +309,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/ttlorderHistory", (req, res) => {
     var ro = {};
     Object.assign(ro, mockDerivativeData);
@@ -323,13 +319,10 @@ module.exports = (app, access_token) => {
       startDate: ro.startDate,
       endDate: ro.endDate,
     };
-    rq({
+
+    fetch({
       url: client.api.GET_ORDER_HISTORY,
       method: "get",
-      headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
-      },
       params: request,
     })
       .then((response) => {
@@ -339,6 +332,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/derPosition", (req, res) => {
     var ro = {};
     Object.assign(ro, mockDerivativeData);
@@ -347,13 +341,10 @@ module.exports = (app, access_token) => {
       account: ro.account,
       querySummary: parseBool(ro.querySummary),
     };
-    rq({
+
+    fetch({
       url: client.api.GET_DER_POSITION,
       method: "get",
-      headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
-      },
       params: request,
     })
       .then((response) => {
@@ -363,6 +354,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/stockPosition", (req, res) => {
     var ro = {};
     Object.assign(ro, mockStockData);
@@ -370,13 +362,10 @@ module.exports = (app, access_token) => {
     var request = {
       account: ro.account,
     };
-    rq({
+
+    fetch({
       url: client.api.GET_STOCK_POSITION,
       method: "get",
-      headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
-      },
       params: request,
     })
       .then((response) => {
@@ -386,6 +375,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/maxBuyQty", (req, res) => {
     var ro = {};
     Object.assign(ro, mockStockData);
@@ -395,13 +385,10 @@ module.exports = (app, access_token) => {
       instrumentID: ro.instrumentid,
       price: parseFloat(ro.price),
     };
-    rq({
+
+    fetch({
       url: client.api.GET_MAX_BUY_QUANTITY,
       method: "get",
-      headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
-      },
       params: request,
     })
       .then((response) => {
@@ -411,6 +398,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/ttlmaxBuyQty", (req, res) => {
     var ro = {};
     Object.assign(ro, mockDerivativeData);
@@ -420,13 +408,10 @@ module.exports = (app, access_token) => {
       instrumentID: ro.instrumentid,
       price: parseFloat(ro.price),
     };
-    rq({
+
+    fetch({
       url: client.api.GET_MAX_BUY_QUANTITY,
       method: "get",
-      headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
-      },
       params: request,
     })
       .then((response) => {
@@ -436,6 +421,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/maxSellQty", (req, res) => {
     var ro = {};
     Object.assign(ro, mockStockData);
@@ -444,13 +430,10 @@ module.exports = (app, access_token) => {
       account: ro.account,
       instrumentID: ro.instrumentid,
     };
-    rq({
+
+    fetch({
       url: client.api.GET_MAX_SELL_QUANTITY,
       method: "get",
-      headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
-      },
       params: request,
     })
       .then((response) => {
@@ -460,6 +443,7 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
+
   app.get("/ttlmaxSellQty", (req, res) => {
     var ro = {};
     Object.assign(ro, mockDerivativeData);
@@ -469,13 +453,10 @@ module.exports = (app, access_token) => {
       instrumentID: ro.instrumentid,
       price: parseFloat(ro.price),
     };
-    rq({
+
+    fetch({
       url: client.api.GET_MAX_SELL_QUANTITY,
       method: "get",
-      headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
-      },
       params: request,
     })
       .then((response) => {
@@ -493,13 +474,10 @@ module.exports = (app, access_token) => {
     var request = {
       account: ro.account,
     };
-    rq({
+
+    fetch({
       url: client.api.GET_DER_ACCOUNT_BALANCE,
       method: "get",
-      headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
-      },
       params: request,
     })
       .then((response) => {
@@ -517,13 +495,10 @@ module.exports = (app, access_token) => {
     var request = {
       account: ro.account,
     };
-    rq({
+
+    fetch({
       url: client.api.GET_PPMMRACCOUNT,
       method: "get",
-      headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
-      },
       params: request,
     })
       .then((response) => {
@@ -541,13 +516,10 @@ module.exports = (app, access_token) => {
     var request = {
       account: ro.account,
     };
-    rq({
+
+    fetch({
       url: client.api.GET_ACCOUNT_BALANCE,
       method: "get",
-      headers: {
-        [client.constants.AUTHORIZATION_HEADER]:
-          client.constants.AUTHORIZATION_SCHEME + " " + access_token,
-      },
       params: request,
     })
       .then((response) => {

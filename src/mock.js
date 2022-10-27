@@ -16,7 +16,7 @@ const date = new Date();
 module.exports = {
   mockStockData: {
     code: config.pinCode,
-    account: "1577921",
+    account: config.spotAccount,
     buysell: "B",
     market: "VN", // Only support "VN" and "VNFE"
     ordertype: "LO",
@@ -28,8 +28,8 @@ module.exports = {
     extOrderID: "", // this property is unique in day.
     session: "",
     twoFaType: 0,
-    startDate: "24/05/2019",
-    endDate: "30/05/2019",
+    startDate: "20/10/2022",
+    endDate: "27/10/2022",
   },
   mockDerivativeData: {
     account: "1577926",
@@ -52,7 +52,7 @@ module.exports = {
     session: "",
     code: config.pinCode,
     querySummary: true,
-    startDate: "29/08/2019",
-    endDate: "29/08/2019",
+    startDate: "20/10/2022",
+    endDate: "27/10/2022",
   },
 };

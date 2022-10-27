@@ -32,18 +32,28 @@ rqData({
       stream.connected = () => {
         stream
           .getClient()
-          .invoke("FcMarketDataV2Hub", "SwitchChannels", "X-QUOTE:ALL");
-      };
-      stream.reconnecting = () => {
+          .invoke("FcMarketDataV2Hub", "SwitchChannels", "MI:VN30");
         stream
           .getClient()
-          .invoke("FcMarketDataV2Hub", "SwitchChannels", "X:ALL");
+          .invoke("FcMarketDataV2Hub", "SwitchChannels", "F:SSI");
+        stream
+          .getClient()
+          .invoke("FcMarketDataV2Hub", "SwitchChannels", "R:SSI");
+        stream
+          .getClient()
+          .invoke("FcMarketDataV2Hub", "SwitchChannels", "B:SSI");
+        stream
+          .getClient()
+          .invoke("FcMarketDataV2Hub", "SwitchChannels", "X-QUOTE:SSI");
+        stream
+          .getClient()
+          .invoke("FcMarketDataV2Hub", "SwitchChannels", "X-TRADE:SSI");
       };
 
       stream.subscribe("FcMarketDataV2Hub", "Broadcast", (message) => {
         const resp = JSON.parse(message);
         const data = JSON.parse(resp.Content);
-        console.log(data);
+        console.log(resp.DataType, data);
       });
 
       stream.subscribe("FcMarketDataV2Hub", "Reconnected", (message) => {
