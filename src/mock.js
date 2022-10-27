@@ -1,3 +1,5 @@
+const config = require("./config");
+
 Date.prototype.yyyymmdd = function () {
   var mm = this.getMonth() + 1; // getMonth() is zero-based
   var dd = this.getDate();
@@ -13,6 +15,7 @@ const date = new Date();
 
 module.exports = {
   mockStockData: {
+    code: config.pinCode,
     account: "1577921",
     buysell: "B",
     market: "VN", // Only support "VN" and "VNFE"
@@ -47,7 +50,7 @@ module.exports = {
     lossstep: 0,
     profitstep: 0,
     session: "",
-    code: "674870",
+    code: config.pinCode,
     querySummary: true,
     startDate: "29/08/2019",
     endDate: "29/08/2019",

@@ -1,60 +1,44 @@
-
 const signalr = require("signalr-client");
 
-
 function addSlash(str) {
-    return str.substr(-1) !== "/" ? (str + "/") : str
+  return str.substr(-1) !== "/" ? str + "/" : str;
 }
 
 var api = {
-    SIGNALR: "signalr"
-}
+  SIGNALR: "signalr",
+};
 
 function resoleURL(baseURL, query) {
-    return addSlash(baseURL) + query;
+  return addSlash(baseURL) + query;
 }
 
-var client = {};
-
-/**
- * Init client stream order
- * @param {{url: string, consumer_id:string,consumer_secret:string}} options
- */
-exports.initStream = function (options) {
+class Streaming {
+  constructor(options) {
     var url = resoleURL(options.url, api.SIGNALR);
-    client = new signalr.client(
-        url,
-        ["FcMarketDataV2Hub"],
-        10,
-        true
-    );
+    this._client = new signalr.client(url, ["FcMarketDataV2Hub"], 10, true);
 
-    client._eventsListener = [];
-    client.headers['Authorization'] = options.token;
+    this._client._eventsListener = [];
+    this._client.headers["Authorization"] = options.token;
 
-    client.on("FcMarketDataV2Hub", "Broadcast", function (message) {
-        console.log(message);
-    });
+    this._client.serviceHandlers.connected = () => {
+      this.connected();
+    };
+    this._client.serviceHandlers.reconnecting = () => {
+      this.reconnecting();
+    };
+  }
 
-    client.on("FcMarketDataV2Hub", "Reconnected", function (message) {
-        console.log("Reconnected" + message);
-    });
+  start = () => {
+    this._client.start();
+  };
 
-    client.on("FcMarketDataV2Hub", "Disconnected", function (message) {
-        console.log("Disconnected" + message);
-    });
+  getClient = () => {
+    return this._client;
+  };
 
-    client.on("FcMarketDataV2Hub", "Error", function (message) {
-        console.log(message);
-    });
-}
-exports.streamClient = client;
-
-/**
- * Start listen stream from server.
- */
-exports.start = function start() {
-    client.start();
-    return client;
+  subscribe = (channel, event, callback) => {
+    this._client.on(channel, event, callback);
+  };
 }
 
+module.exports = Streaming;

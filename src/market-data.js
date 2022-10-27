@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const streaming = require("./streaming");
+const Streaming = require("./streaming");
 const config = require("./config.js");
 
 const rqData = axios.create({
@@ -19,25 +19,46 @@ rqData({
   (response) => {
     if (response.data.status === 200) {
       let token = "Bearer " + response.data.data.accessToken;
-      axios.interceptors.request.use(function (axios_config) {
+      axios.interceptors.request.use((axios_config) => {
         axios_config.headers.Authorization = token;
         return axios_config;
       });
 
-      streaming.initStream({
+      const stream = new Streaming({
         url: config.market.HubUrl,
         token: token,
       });
 
-      var mkClient = streaming.start();
-
-      mkClient.serviceHandlers.connected = function (connection) {
-        mkClient.invoke("FcMarketDataV2Hub", "SwitchChannels", "X-QUOTE:ALL");
+      stream.connected = () => {
+        stream
+          .getClient()
+          .invoke("FcMarketDataV2Hub", "SwitchChannels", "X-QUOTE:ALL");
+      };
+      stream.reconnecting = () => {
+        stream
+          .getClient()
+          .invoke("FcMarketDataV2Hub", "SwitchChannels", "X:ALL");
       };
 
-      mkClient.serviceHandlers.reconnecting = function (connection) {
-        mkClient.invoke("FcMarketDataV2Hub", "SwitchChannels", "X:ALL");
-      };
+      stream.subscribe("FcMarketDataV2Hub", "Broadcast", (message) => {
+        const resp = JSON.parse(message);
+        const data = JSON.parse(resp.Content);
+        console.log(data);
+      });
+
+      stream.subscribe("FcMarketDataV2Hub", "Reconnected", (message) => {
+        console.log("Reconnected" + message);
+      });
+
+      stream.subscribe("FcMarketDataV2Hub", "Disconnected", (message) => {
+        console.log("Disconnected" + message);
+      });
+
+      stream.subscribe("FcMarketDataV2Hub", "Error", (message) => {
+        console.log(message);
+      });
+
+      stream.start();
     } else {
       console.log(response.data.message);
     }
