@@ -3,6 +3,8 @@ import axios from 'axios';
 import Streaming from './streaming';
 import config from './config';
 
+console.log('okie');
+
 const rqData = axios.create({
   baseURL: config.market.ApiUrl,
   timeout: 5000,
@@ -19,6 +21,8 @@ rqData({
   (response) => {
     if (response.data.status === 200) {
       const token = 'Bearer ' + response.data.data.accessToken;
+
+      console.log('token', token);
 
       const stream = new Streaming({
         url: config.market.HubUrl,

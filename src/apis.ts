@@ -1,9 +1,11 @@
-const client = require("ssi-api-client");
-const rn = require("random-number");
-const { fetch } = require("./utils/fetch");
+// @ts-nocheck
 
-const config = require("./config.js");
-const { mockDerivativeData, mockStockData } = require("./mock");
+import client from 'ssi-api-client';
+import rn from 'random-number';
+import { fetch } from './utils/fetch';
+
+import config from './config';
+import { mockDerivativeData, mockStockData } from './mock';
 
 const getRandom = rn.generator({
   min: 0,
@@ -11,20 +13,20 @@ const getRandom = rn.generator({
   integer: true,
 });
 
-const parseBool = (str) => {
-  return str === "true" || str === true;
+const parseBool = (str: string) => {
+  return str === 'true' || str === true;
 };
 
-module.exports = (app, access_token) => {
-  app.get("/getOtp", (req, res) => {
-    var request = {
+export default function (app: any, access_token: string) {
+  app.get('/getOtp', (req, res) => {
+    const request = {
       consumerID: config.trading.ConsumerID,
       consumerSecret: config.trading.ConsumerSecret,
     };
 
     fetch({
       url: client.api.GET_OTP,
-      method: "post",
+      method: 'post',
 
       data: request,
     })
@@ -36,11 +38,11 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/verifyCode", (req, res) => {
-    var ro = {};
+  app.get('/verifyCode', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockStockData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       consumerID: config.trading.ConsumerID,
       consumerSecret: config.trading.ConsumerSecret,
       twoFactorType: parseInt(ro.twoFaType),
@@ -50,13 +52,13 @@ module.exports = (app, access_token) => {
 
     fetch({
       url: client.api.GET_ACCESS_TOKEN,
-      method: "post",
+      method: 'post',
       data: request,
     })
       .then((response) => {
         if (response.data.status === 200) {
           access_token = response.data.data.accessToken;
-          console.log("Access Token for order: " + access_token);
+          console.log('Access Token for order: ' + access_token);
         }
         res.send(JSON.stringify(response.data));
       })
@@ -65,11 +67,11 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/newOrder", (req, res) => {
-    var ro = {};
+  app.get('/newOrder', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockStockData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       instrumentID: ro.instrumentid,
       market: ro.market,
       buySell: ro.buysell,
@@ -78,10 +80,10 @@ module.exports = (app, access_token) => {
       price: parseFloat(ro.price),
       quantity: parseInt(ro.quantity),
       account: ro.account,
-      requestID: getRandom() + "",
+      requestID: getRandom() + '',
       stopOrder: false,
       stopPrice: 0,
-      stopType: "string",
+      stopType: 'string',
       stopStep: 0,
       lossStep: 0,
       profitStep: 0,
@@ -90,11 +92,11 @@ module.exports = (app, access_token) => {
 
     fetch({
       url: client.api.NEW_ORDER,
-      method: "post",
+      method: 'post',
       headers: {
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
-          config.trading.PrivateKey
+          config.trading.PrivateKey,
         ),
       },
       data: request,
@@ -107,11 +109,11 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/ttlNewOrder", (req, res) => {
-    var ro = {};
+  app.get('/ttlNewOrder', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockDerivativeData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       instrumentID: ro.instrumentid,
       market: ro.market,
       buySell: ro.buysell,
@@ -120,7 +122,7 @@ module.exports = (app, access_token) => {
       price: parseFloat(ro.price),
       quantity: parseInt(ro.quantity),
       account: ro.account,
-      requestID: getRandom() + "",
+      requestID: getRandom() + '',
       stopOrder: parseBool(ro.stoporder),
       stopPrice: parseFloat(ro.stopprice),
       stopType: ro.stoptype,
@@ -132,11 +134,11 @@ module.exports = (app, access_token) => {
 
     fetch({
       url: client.api.NEW_ORDER,
-      method: "post",
+      method: 'post',
       headers: {
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
-          config.trading.PrivateKey
+          config.trading.PrivateKey,
         ),
       },
       data: request,
@@ -149,11 +151,11 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/modifyOrder", (req, res) => {
-    var ro = {};
+  app.get('/modifyOrder', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockStockData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       orderID: ro.orderid,
       price: parseFloat(ro.price),
       quantity: parseInt(ro.quantity),
@@ -161,18 +163,18 @@ module.exports = (app, access_token) => {
       instrumentID: ro.instrumentid,
       marketID: ro.market,
       buySell: ro.buysell,
-      requestID: getRandom() + "",
+      requestID: getRandom() + '',
       orderType: ro.ordertype,
       code: ro.code,
     };
 
     fetch({
       url: client.api.MODIFY_ORDER,
-      method: "post",
+      method: 'post',
       headers: {
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
-          config.trading.PrivateKey
+          config.trading.PrivateKey,
         ),
       },
       data: request,
@@ -185,11 +187,11 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/ttlmodifyOrder", (req, res) => {
-    var ro = {};
+  app.get('/ttlmodifyOrder', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockDerivativeData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       orderID: ro.orderid,
       price: parseFloat(ro.price),
       quantity: parseInt(ro.quantity),
@@ -197,18 +199,18 @@ module.exports = (app, access_token) => {
       instrumentID: ro.instrumentid,
       marketID: ro.market,
       buySell: ro.buysell,
-      requestID: getRandom() + "",
+      requestID: getRandom() + '',
       orderType: ro.ordertype,
       code: ro.code,
     };
 
     fetch({
       url: client.api.MODIFY_ORDER,
-      method: "post",
+      method: 'post',
       headers: {
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
-          config.trading.PrivateKey
+          config.trading.PrivateKey,
         ),
       },
       data: request,
@@ -221,27 +223,27 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/cancelOrder", (req, res) => {
-    var ro = {};
+  app.get('/cancelOrder', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockStockData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       orderID: ro.orderid,
       account: ro.account,
       instrumentID: ro.instrumentid,
       marketID: ro.market,
       buySell: ro.buysell,
-      requestID: getRandom() + "",
+      requestID: getRandom() + '',
       code: ro.code,
     };
 
     fetch({
       url: client.api.CANCEL_ORDER,
-      method: "post",
+      method: 'post',
       headers: {
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
-          config.trading.PrivateKey
+          config.trading.PrivateKey,
         ),
       },
       data: request,
@@ -254,27 +256,27 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/ttlcancelOrder", (req, res) => {
-    var ro = {};
+  app.get('/ttlcancelOrder', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockDerivativeData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       orderID: ro.orderid,
       account: ro.account,
       instrumentID: ro.instrumentid,
       marketID: ro.market,
       buySell: ro.buysell,
-      requestID: getRandom() + "",
+      requestID: getRandom() + '',
       code: ro.code,
     };
 
     fetch({
       url: client.api.CANCEL_ORDER,
-      method: "post",
+      method: 'post',
       headers: {
         [client.constants.SIGNATURE_HEADER]: client.sign(
           JSON.stringify(request),
-          config.trading.PrivateKey
+          config.trading.PrivateKey,
         ),
       },
       data: request,
@@ -287,11 +289,11 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/orderHistory", (req, res) => {
-    var ro = {};
+  app.get('/orderHistory', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockStockData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       account: ro.account,
       startDate: ro.startDate,
       endDate: ro.endDate,
@@ -299,7 +301,7 @@ module.exports = (app, access_token) => {
 
     fetch({
       url: client.api.GET_ORDER_HISTORY,
-      method: "get",
+      method: 'get',
       params: request,
     })
       .then((response) => {
@@ -310,11 +312,11 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/ttlorderHistory", (req, res) => {
-    var ro = {};
+  app.get('/ttlorderHistory', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockDerivativeData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       account: ro.account,
       startDate: ro.startDate,
       endDate: ro.endDate,
@@ -322,7 +324,7 @@ module.exports = (app, access_token) => {
 
     fetch({
       url: client.api.GET_ORDER_HISTORY,
-      method: "get",
+      method: 'get',
       params: request,
     })
       .then((response) => {
@@ -333,18 +335,18 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/derPosition", (req, res) => {
-    var ro = {};
+  app.get('/derPosition', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockDerivativeData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       account: ro.account,
       querySummary: parseBool(ro.querySummary),
     };
 
     fetch({
       url: client.api.GET_DER_POSITION,
-      method: "get",
+      method: 'get',
       params: request,
     })
       .then((response) => {
@@ -355,17 +357,17 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/stockPosition", (req, res) => {
-    var ro = {};
+  app.get('/stockPosition', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockStockData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       account: ro.account,
     };
 
     fetch({
       url: client.api.GET_STOCK_POSITION,
-      method: "get",
+      method: 'get',
       params: request,
     })
       .then((response) => {
@@ -376,11 +378,11 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/maxBuyQty", (req, res) => {
-    var ro = {};
+  app.get('/maxBuyQty', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockStockData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       account: ro.account,
       instrumentID: ro.instrumentid,
       price: parseFloat(ro.price),
@@ -388,7 +390,7 @@ module.exports = (app, access_token) => {
 
     fetch({
       url: client.api.GET_MAX_BUY_QUANTITY,
-      method: "get",
+      method: 'get',
       params: request,
     })
       .then((response) => {
@@ -399,11 +401,11 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/ttlmaxBuyQty", (req, res) => {
-    var ro = {};
+  app.get('/ttlmaxBuyQty', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockDerivativeData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       account: ro.account,
       instrumentID: ro.instrumentid,
       price: parseFloat(ro.price),
@@ -411,7 +413,7 @@ module.exports = (app, access_token) => {
 
     fetch({
       url: client.api.GET_MAX_BUY_QUANTITY,
-      method: "get",
+      method: 'get',
       params: request,
     })
       .then((response) => {
@@ -422,18 +424,18 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/maxSellQty", (req, res) => {
-    var ro = {};
+  app.get('/maxSellQty', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockStockData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       account: ro.account,
       instrumentID: ro.instrumentid,
     };
 
     fetch({
       url: client.api.GET_MAX_SELL_QUANTITY,
-      method: "get",
+      method: 'get',
       params: request,
     })
       .then((response) => {
@@ -444,11 +446,11 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/ttlmaxSellQty", (req, res) => {
-    var ro = {};
+  app.get('/ttlmaxSellQty', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockDerivativeData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       account: ro.account,
       instrumentID: ro.instrumentid,
       price: parseFloat(ro.price),
@@ -456,7 +458,7 @@ module.exports = (app, access_token) => {
 
     fetch({
       url: client.api.GET_MAX_SELL_QUANTITY,
-      method: "get",
+      method: 'get',
       params: request,
     })
       .then((response) => {
@@ -467,17 +469,17 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/derAccountBalance", (req, res) => {
-    var ro = {};
+  app.get('/derAccountBalance', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockDerivativeData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       account: ro.account,
     };
 
     fetch({
       url: client.api.GET_DER_ACCOUNT_BALANCE,
-      method: "get",
+      method: 'get',
       params: request,
     })
       .then((response) => {
@@ -488,17 +490,17 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/ppmmraccount", (req, res) => {
-    var ro = {};
+  app.get('/ppmmraccount', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockStockData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       account: ro.account,
     };
 
     fetch({
       url: client.api.GET_PPMMRACCOUNT,
-      method: "get",
+      method: 'get',
       params: request,
     })
       .then((response) => {
@@ -509,17 +511,17 @@ module.exports = (app, access_token) => {
       });
   });
 
-  app.get("/accountBalance", (req, res) => {
-    var ro = {};
+  app.get('/accountBalance', (req, res) => {
+    const ro = {};
     Object.assign(ro, mockStockData);
     Object.assign(ro, req.query);
-    var request = {
+    const request = {
       account: ro.account,
     };
 
     fetch({
       url: client.api.GET_ACCOUNT_BALANCE,
-      method: "get",
+      method: 'get',
       params: request,
     })
       .then((response) => {
@@ -529,4 +531,4 @@ module.exports = (app, access_token) => {
         res.send(error);
       });
   });
-};
+}

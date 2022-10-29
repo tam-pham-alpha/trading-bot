@@ -1,19 +1,18 @@
-const axios = require("axios");
+import axios from 'axios';
+import config from '../config';
 
-const config = require("../config.js");
-
-let access_token = "";
+let access_token = '';
 
 const req = axios.create({
   baseURL: config.trading.URL,
   timeout: 5000,
 });
 
-module.exports.setAccessToken = (token) => {
+export const setAccessToken = (token: string) => {
   access_token = token;
 };
 
-module.exports.fetch = (opts) => {
+export const fetch = (opts: any) => {
   return req({
     ...opts,
     headers: {
