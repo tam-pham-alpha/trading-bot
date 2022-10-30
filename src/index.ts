@@ -9,6 +9,7 @@ import apis from './biz/apis';
 import { cancelAllOrder, placeBatchOrder } from './biz/trade';
 import Streaming from './streaming';
 import { getOrderHistory } from './biz/order';
+import { getOrderTable } from './utils/table';
 
 const INTERVAL = 1800000; // 30 mins
 
@@ -174,7 +175,7 @@ Promise.all([marketInit, tradingInit]).then(() => {
 
       if (filteredOrders.length) {
         console.log('R: New orders');
-        console.table(filteredOrders);
+        console.table(getOrderTable(filteredOrders));
       }
     } else {
       console.log('ERROR: Unable to cancel all orders.');
