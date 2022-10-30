@@ -3,10 +3,10 @@ import ssi from 'ssi-api-client';
 
 import { setAccessToken, fetch } from './utils/fetch';
 import config from './config';
-import api from './apis';
+import apis from './biz/apis';
 
 import './market-data';
-import apis from './apis';
+import { cancelAllOrder } from './biz/trade';
 
 const app = express();
 app.listen(config.port, 'localhost', () =>
@@ -32,6 +32,8 @@ fetch({
       setAccessToken(access_token);
 
       apis(app, access_token);
+
+      cancelAllOrder();
 
       ssi.initStream({
         url: config.trading.stream_url,

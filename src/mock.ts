@@ -1,14 +1,14 @@
 import config from './config';
 
-export const mockStockData = {
+export const spot = {
   code: config.pinCode,
   account: config.spotAccount,
-  buysell: 'B',
+  buySell: 'B',
   market: 'VN', // Only support "VN" and "VNFE"
-  ordertype: 'LO',
+  orderType: 'LO',
   price: 25000,
   quantity: 300,
-  instrumentid: 'SSI',
+  instrumentID: 'SSI',
   channel: 'IW',
   extOrderID: '', // this property is unique in day.
   session: '',
@@ -17,23 +17,23 @@ export const mockStockData = {
   endDate: '27/10/2022',
 };
 
-export const mockDerivativeData = {
+export const deri = {
   account: '1577926',
-  buysell: 'B',
+  buySell: 'B',
   currency: 'KVND',
   market: 'VNFE',
-  ordertype: 'LO', // Only support "VN" and "VNFE"
+  orderType: 'LO', // Only support "VN" and "VNFE"
   price: 1425,
   quantity: 10,
-  instrumentid: 'VN30F2209',
+  instrumentID: 'VN30F2209',
   channel: 'WT',
   extOrderID: '',
-  stoporder: false,
-  stopprice: 800,
-  stoptype: 'D',
-  stopstep: 0.5,
-  lossstep: 0,
-  profitstep: 0,
+  stopOrder: false,
+  stopPrice: 800,
+  stopType: 'D',
+  stopStep: 0.5,
+  lossStep: 0,
+  profitStep: 0,
   session: '',
   code: config.pinCode,
   querySummary: true,

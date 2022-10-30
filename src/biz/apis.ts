@@ -2,10 +2,10 @@
 
 import client from 'ssi-api-client';
 import rn from 'random-number';
-import { fetch } from './utils/fetch';
+import { fetch } from '../utils/fetch';
 
-import config from './config';
-import { mockDerivativeData, mockStockData } from './mock';
+import config from '../config';
+import { deri, spot } from '../mock';
 
 const getRandom = rn.generator({
   min: 0,
@@ -40,7 +40,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/verifyCode', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockStockData);
+    Object.assign(ro, spot);
     Object.assign(ro, req.query);
     const request = {
       consumerID: config.trading.ConsumerID,
@@ -69,7 +69,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/newOrder', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockStockData);
+    Object.assign(ro, spot);
     Object.assign(ro, req.query);
     const request = {
       instrumentID: ro.instrumentid,
@@ -111,7 +111,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/ttlNewOrder', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockDerivativeData);
+    Object.assign(ro, deri);
     Object.assign(ro, req.query);
     const request = {
       instrumentID: ro.instrumentid,
@@ -153,7 +153,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/modifyOrder', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockStockData);
+    Object.assign(ro, spot);
     Object.assign(ro, req.query);
     const request = {
       orderID: ro.orderid,
@@ -189,7 +189,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/ttlmodifyOrder', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockDerivativeData);
+    Object.assign(ro, deri);
     Object.assign(ro, req.query);
     const request = {
       orderID: ro.orderid,
@@ -225,7 +225,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/cancelOrder', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockStockData);
+    Object.assign(ro, spot);
     Object.assign(ro, req.query);
     const request = {
       orderID: ro.orderid,
@@ -258,7 +258,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/ttlcancelOrder', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockDerivativeData);
+    Object.assign(ro, deri);
     Object.assign(ro, req.query);
     const request = {
       orderID: ro.orderid,
@@ -291,7 +291,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/orderHistory', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockStockData);
+    Object.assign(ro, spot);
     Object.assign(ro, req.query);
     const request = {
       account: ro.account,
@@ -314,7 +314,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/ttlorderHistory', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockDerivativeData);
+    Object.assign(ro, deri);
     Object.assign(ro, req.query);
     const request = {
       account: ro.account,
@@ -337,7 +337,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/derPosition', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockDerivativeData);
+    Object.assign(ro, deri);
     Object.assign(ro, req.query);
     const request = {
       account: ro.account,
@@ -359,7 +359,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/stockPosition', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockStockData);
+    Object.assign(ro, spot);
     Object.assign(ro, req.query);
     const request = {
       account: ro.account,
@@ -380,7 +380,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/maxBuyQty', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockStockData);
+    Object.assign(ro, spot);
     Object.assign(ro, req.query);
     const request = {
       account: ro.account,
@@ -403,7 +403,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/ttlmaxBuyQty', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockDerivativeData);
+    Object.assign(ro, deri);
     Object.assign(ro, req.query);
     const request = {
       account: ro.account,
@@ -426,7 +426,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/maxSellQty', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockStockData);
+    Object.assign(ro, spot);
     Object.assign(ro, req.query);
     const request = {
       account: ro.account,
@@ -448,7 +448,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/ttlmaxSellQty', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockDerivativeData);
+    Object.assign(ro, deri);
     Object.assign(ro, req.query);
     const request = {
       account: ro.account,
@@ -471,7 +471,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/derAccountBalance', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockDerivativeData);
+    Object.assign(ro, deri);
     Object.assign(ro, req.query);
     const request = {
       account: ro.account,
@@ -492,7 +492,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/ppmmraccount', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockStockData);
+    Object.assign(ro, spot);
     Object.assign(ro, req.query);
     const request = {
       account: ro.account,
@@ -513,7 +513,7 @@ export default function (app: any, access_token: string) {
 
   app.get('/accountBalance', (req, res) => {
     const ro = {};
-    Object.assign(ro, mockStockData);
+    Object.assign(ro, spot);
     Object.assign(ro, req.query);
     const request = {
       account: ro.account,

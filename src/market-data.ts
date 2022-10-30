@@ -3,8 +3,6 @@ import axios from 'axios';
 import Streaming from './streaming';
 import config from './config';
 
-console.log('okie');
-
 const rqData = axios.create({
   baseURL: config.market.ApiUrl,
   timeout: 5000,
