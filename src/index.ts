@@ -8,6 +8,7 @@ import apis from './biz/apis';
 
 import { cancelAllOrder, placeBatchOrder } from './biz/trade';
 import Streaming from './streaming';
+import { getOrderHistory } from './biz/order';
 
 const INTERVAL = 1800000; // 30 mins
 
@@ -122,28 +123,23 @@ const tradingInit = fetch({
       });
 
       ssi.bind(ssi.events.onError, function (e: any, data: any) {
-        console.log(e + ': ');
-        console.log(data);
+        console.log(e, JSON.stringify(data));
       });
 
       ssi.bind(ssi.events.onOrderUpdate, function (e: any, data: any) {
-        console.log(e + ': ');
-        console.log(JSON.stringify(data));
+        console.log(e, JSON.stringify(data));
       });
 
       ssi.bind(ssi.events.onOrderError, function (e: any, data: any) {
-        console.log(e + ': ');
-        console.log(JSON.stringify(data));
+        console.log(e, JSON.stringify(data));
       });
 
       ssi.bind(ssi.events.onClientPortfolioEvent, function (e: any, data: any) {
-        console.log(e + ': ');
-        console.log(JSON.stringify(data));
+        console.log(e, JSON.stringify(data));
       });
 
       ssi.bind(ssi.events.onOrderMatch, function (e: any, data: any) {
-        console.log(e + ': ');
-        console.log(JSON.stringify(data));
+        console.log(e, JSON.stringify(data));
       });
 
       ssi.start();
@@ -161,9 +157,28 @@ const tradingInit = fetch({
 Promise.all([marketInit, tradingInit]).then(() => {
   console.log('Auto Trading Started');
 
-  const orderControl = () => {
-    cancelAllOrder();
-    placeBatchOrder('SSI');
+  const orderControl = async () => {
+    console.log('A: Cancel all orders');
+    await cancelAllOrder();
+
+    const orders = (await getOrderHistory()).filter(
+      (i) => i.orderStatus === 'QU',
+    );
+
+    if (orders.length === 0) {
+      console.log('A: Place batch orders');
+
+      await placeBatchOrder('SSI');
+      const orders = await getOrderHistory();
+      const filteredOrders = orders.filter((i) => i.orderStatus === 'QU');
+
+      if (filteredOrders.length) {
+        console.log('R: New orders');
+        console.table(filteredOrders);
+      }
+    } else {
+      console.log('ERROR: Unable to cancel all orders.');
+    }
   };
 
   orderControl();

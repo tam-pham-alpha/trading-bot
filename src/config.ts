@@ -2,6 +2,9 @@ export default {
   port: 3011,
   pinCode: '1we23rw4t',
   spotAccount: '1577921',
+  bot: {
+    delta: 2,
+  },
   market: {
     HubUrl: 'wss://fc-data.ssi.com.vn/v2.0/',
     ApiUrl: 'https://fc-data.ssi.com.vn/api/v2/Market/',

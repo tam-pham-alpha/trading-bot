@@ -22,7 +22,7 @@ export const getOrderHistory = async () => {
   });
 };
 
-export const placeOrder = (
+export const placeOrder = async (
   instrument: string,
   price: number,
   quantity: number,
@@ -49,7 +49,7 @@ export const placeOrder = (
     code: spot.code,
   };
 
-  fetch({
+  return fetch({
     url: client.api.NEW_ORDER,
     method: 'post',
     headers: {
@@ -64,7 +64,7 @@ export const placeOrder = (
   });
 };
 
-export const cancelOrder = (orderId: string) => {
+export const cancelOrder = async (orderId: string) => {
   const request = {
     orderID: orderId,
     account: spot.account,

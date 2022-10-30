@@ -73,7 +73,7 @@ export type OrderHistory = {
   inputTime: string;
   modifiedTime: string;
   instrumentID: string;
-  orderType: string;
+  orderType: OrderType;
   cancelQty: number;
   avgPrice: number;
   isForceSell: boolean;
