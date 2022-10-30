@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf ./build && tsc",
-    "start:dev": "nodemon",
-    "start": "npm run build && node build/index.js",
+    "serve": "npm run build && node build/index.js",
+    "start": "nodemon",
     "lint": "eslint . --ext .ts",
     "prettier-format": "run-script-os",
     "prettier-format:win32": "prettier --config .prettierrc \"./src/**/*.ts\" --write",
@@ -17,6 +17,9 @@
     "prettier-watch:darwin:linux": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
     "prettier-watch:default": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
     "test": "jest",
+    "login": "ssh -i _deploy/goingsunny-sg.pem ec2-user@13.215.51.234",
+    "deploy:prod": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout master && git pull && yarn install && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
+    "deploy:stag": "npm run login 'cd stag/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && yarn run build && pm2 startOrRestart pm2-stag.json --env production'",
     "test:dev": "jest --watchAll"
   },
   "husky": {
