@@ -6,8 +6,10 @@ import { setAccessToken, fetch } from './utils/fetch';
 import config from './config';
 import apis from './biz/apis';
 
-import { cancelAllOrder } from './biz/trade';
+import { cancelAllOrder, placeBatchOrder } from './biz/trade';
 import Streaming from './streaming';
+
+const INTERVAL = 1800000; // 30 mins
 
 const app = express();
 app.listen(config.port, 'localhost', () =>
@@ -19,7 +21,8 @@ const rqData = axios.create({
   baseURL: config.market.ApiUrl,
   timeout: 5000,
 });
-rqData({
+
+const marketInit = rqData({
   url: config.market.ApiUrl + 'AccessToken',
   method: 'post',
   data: {
@@ -27,9 +30,13 @@ rqData({
     consumerSecret: config.market.ConsumerSecret,
   },
 }).then(
-  (response) => {
-    if (response.data.status === 200) {
-      const token = 'Bearer ' + response.data.data.accessToken;
+  (resp) => {
+    if (resp.data.status === 200) {
+      const token = 'Bearer ' + resp.data.data.accessToken;
+      axios.interceptors.request.use((axios_config: any) => {
+        axios_config.headers.Authorization = token;
+        return axios_config;
+      });
 
       const stream = new Streaming({
         url: config.market.HubUrl,
@@ -79,8 +86,10 @@ rqData({
 
       console.log('SSI Market Data Started!');
     } else {
-      console.log(response.data.message);
+      console.log(resp.data.message);
     }
+
+    return true;
   },
   (reason) => {
     console.log(reason);
@@ -88,7 +97,7 @@ rqData({
 );
 
 // SSI Trading
-fetch({
+const tradingInit = fetch({
   url: ssi.api.GET_ACCESS_TOKEN,
   method: 'post',
   data: {
@@ -105,7 +114,6 @@ fetch({
       setAccessToken(access_token);
 
       apis(app, access_token);
-      cancelAllOrder();
 
       ssi.initStream({
         url: config.trading.stream_url,
@@ -143,7 +151,23 @@ fetch({
     } else {
       console.log(resp.data.message);
     }
+
+    return true;
   })
   .catch((reason) => {
     console.log(reason);
   });
+
+Promise.all([marketInit, tradingInit]).then(() => {
+  console.log('Auto Trading Started');
+
+  const orderControl = () => {
+    cancelAllOrder();
+    placeBatchOrder('SSI');
+  };
+
+  orderControl();
+  setInterval(() => {
+    orderControl();
+  }, INTERVAL);
+});
