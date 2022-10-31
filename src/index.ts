@@ -15,7 +15,7 @@ const INTERVAL = 1800000; // 30 mins
 
 let lastPrice = 0;
 
-const orderControl = async () => {
+const orderControl = async (lastPrice: number) => {
   console.log('A: Cancel all orders');
   await cancelAllOrder();
 
@@ -30,7 +30,7 @@ const orderControl = async () => {
   console.table(orders);
 
   if (orders.length === 0) {
-    console.log('A: Place batch orders');
+    console.log('A: Place batch orders', lastPrice);
 
     await placeBatchOrder('SSI', lastPrice);
     const orders = await getOrderHistory();
@@ -103,14 +103,13 @@ const marketInit = rqData({
         const data = JSON.parse(resp.Content);
         if (resp.DataType === 'X-TRADE') {
           if (data.Symbol === 'SSI') {
-            console.log(resp.DataType, data);
+            console.log(resp.DataType, data.LastPrice);
 
             if (lastPrice === 0) {
-              lastPrice = data.LastPrice;
-              orderControl();
+              orderControl(data.LastPrice);
             }
 
-            lastPrice = data.lastPrice;
+            lastPrice = data.LastPrice;
           }
         }
       });
@@ -202,6 +201,6 @@ Promise.all([marketInit, tradingInit]).then(() => {
   console.log('Auto Trading Started');
 
   setInterval(() => {
-    orderControl();
+    orderControl(lastPrice);
   }, INTERVAL);
 });
