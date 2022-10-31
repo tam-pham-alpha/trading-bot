@@ -35,24 +35,24 @@ export const placeBatchOrder = async (
       config.bot.levelQty3,
       'B',
     ),
-    placeOrder(
-      instrument,
-      getNumber((currentPrice * (100 + config.bot.levelPrice1)) / 100, 2),
-      config.bot.levelQty1,
-      'S',
-    ),
-    placeOrder(
-      instrument,
-      getNumber((currentPrice * (100 + config.bot.levelPrice2)) / 100, 2),
-      config.bot.levelQty2,
-      'S',
-    ),
-    placeOrder(
-      instrument,
-      getNumber((currentPrice * (100 + config.bot.levelPrice3)) / 100, 2),
-      config.bot.levelQty3,
-      'S',
-    ),
+    // placeOrder(
+    //   instrument,
+    //   getNumber((currentPrice * (100 + config.bot.levelPrice1)) / 100, 2),
+    //   config.bot.levelQty1,
+    //   'S',
+    // ),
+    // placeOrder(
+    //   instrument,
+    //   getNumber((currentPrice * (100 + config.bot.levelPrice2)) / 100, 2),
+    //   config.bot.levelQty2,
+    //   'S',
+    // ),
+    // placeOrder(
+    //   instrument,
+    //   getNumber((currentPrice * (100 + config.bot.levelPrice3)) / 100, 2),
+    //   config.bot.levelQty3,
+    //   'S',
+    // ),
   ]);
 };
 
