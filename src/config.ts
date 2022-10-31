@@ -3,7 +3,7 @@ export default {
   pinCode: '1we23rw4t',
   spotAccount: '1577921',
   bot: {
-    delta: 2, // distance from last price to price of new orders (both buy & sell)
+    delta: 4.5, // distance from last price to price of new orders (both buy & sell)
     distance: 2, // distance from avg price to current price in percentage
     cashPerStock: 50, // cash per stock
   },

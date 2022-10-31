@@ -9,8 +9,8 @@ export const getDailyStockPrice = (symbol: string) => {
   const lookupRequest = {
     symbol: symbol,
     market: '',
-    fromDate: format(add(today, { days: -2 }), 'dd/MM/yyyy'),
-    toDate: format(add(today, { days: -2 }), 'dd/MM/yyyy'),
+    fromDate: format(add(today, { days: -3 }), 'dd/MM/yyyy'),
+    toDate: format(add(today, { days: -3 }), 'dd/MM/yyyy'),
     pageIndex: 1,
     pageSize: 1000,
   };

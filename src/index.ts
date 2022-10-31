@@ -69,7 +69,7 @@ const marketInit = rqData({
       stream.subscribe('FcMarketDataV2Hub', 'Broadcast', (message: any) => {
         const resp = JSON.parse(message);
         const data = JSON.parse(resp.Content);
-        console.log(resp.DataType, data);
+        // console.log(resp.DataType, data);
       });
 
       stream.subscribe('FcMarketDataV2Hub', 'Reconnected', (message: any) => {

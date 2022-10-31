@@ -11,5 +11,5 @@ export const toNumber = (str: string) => {
 };
 
 export const getNumber = (number: number, digit: number = 0) => {
-  return Math.round(number * Math.pow(10, digit)) / Math.pow(10, digit);
+  return Math.round(number / Math.pow(10, digit)) * Math.pow(10, digit);
 };

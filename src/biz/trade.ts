@@ -1,26 +1,30 @@
 import config from '../config';
 import { OrderHistory } from '../types/Order';
-import { getNumber, toNumber } from '../utils/number';
-import { getDailyStockPrice } from './market';
+import { getNumber } from '../utils/number';
 import { cancelOrder, getOrderHistory, placeOrder } from './order';
 import { getStockPosition } from './position';
 
 export const placeBatchOrder = async (instrument: string) => {
   const delta = config.bot.delta;
 
-  const dailyMarket = await getDailyStockPrice(instrument);
   const positions = await getStockPosition();
-  const currentPosition = positions.filter(
-    (i) => i.instrumentID === instrument,
-  );
+  const currentPosition = positions.find((i) => i.instrumentID === instrument);
 
-  const currentPrice = toNumber(dailyMarket.RefPrice);
-  const buyPrice = getNumber((currentPrice * (100 + delta)) / 100, 2);
-  const sellPrice = getNumber((currentPrice * (100 - delta)) / 100, 2);
+  const currentPrice = currentPosition?.avgPrice;
+
+  if (!currentPrice) {
+    throw new Error('Unable to get the current price');
+  }
+
+  const sellPrice = getNumber((currentPrice * (100 + delta)) / 100, 2);
+  const buyPrice = getNumber((currentPrice * (100 - delta)) / 100, 2);
+
+  console.log('Place order: ', instrument, 'S', sellPrice, 100);
+  console.log('Place order: ', instrument, 'B', buyPrice, 100);
 
   return Promise.all([
-    placeOrder(instrument, buyPrice, 100, 'B'),
     placeOrder(instrument, sellPrice, 100, 'S'),
+    placeOrder(instrument, buyPrice, 100, 'B'),
   ]);
 };
 
