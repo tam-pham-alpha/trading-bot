@@ -3,6 +3,12 @@ export default {
   pinCode: '1we23rw4t',
   spotAccount: '1577921',
   bot: {
+    levelPrice1: 2.5,
+    levelPrice2: 4.5,
+    levelPrice3: 6.5,
+    levelQty1: 100,
+    levelQty2: 200,
+    levelQty3: 300,
     delta: 4.5, // distance from last price to price of new orders (both buy & sell)
     distance: 2, // distance from avg price to current price in percentage
     cashPerStock: 50, // cash per stock

@@ -13,6 +13,38 @@ import { getOrderTable } from './utils/table';
 
 const INTERVAL = 1800000; // 30 mins
 
+let lastPrice = 0;
+
+const orderControl = async () => {
+  console.log('A: Cancel all orders');
+  await cancelAllOrder();
+
+  const orders = await (
+    await getOrderHistory()
+  ).filter(
+    (i) =>
+      i.orderStatus !== 'CL' &&
+      i.orderStatus !== 'FF' &&
+      i.orderStatus !== 'WC',
+  );
+  console.table(orders);
+
+  if (orders.length === 0) {
+    console.log('A: Place batch orders');
+
+    await placeBatchOrder('SSI', lastPrice);
+    const orders = await getOrderHistory();
+    const filteredOrders = orders.filter((i) => i.orderStatus === 'QU');
+
+    if (filteredOrders.length) {
+      console.log('R: New orders');
+      console.table(getOrderTable(filteredOrders));
+    }
+  } else {
+    console.log('ERROR: Unable to cancel all orders.');
+  }
+};
+
 const app = express();
 app.listen(config.port, 'localhost', () =>
   console.log(`Example app listening on port ${config.port}!`),
@@ -69,7 +101,18 @@ const marketInit = rqData({
       stream.subscribe('FcMarketDataV2Hub', 'Broadcast', (message: any) => {
         const resp = JSON.parse(message);
         const data = JSON.parse(resp.Content);
-        // console.log(resp.DataType, data);
+        if (resp.DataType === 'X-TRADE') {
+          if (data.Symbol === 'SSI') {
+            console.log(resp.DataType, data);
+
+            if (lastPrice === 0) {
+              lastPrice = data.LastPrice;
+              orderControl();
+            }
+
+            lastPrice = data.lastPrice;
+          }
+        }
       });
 
       stream.subscribe('FcMarketDataV2Hub', 'Reconnected', (message: any) => {
@@ -158,31 +201,6 @@ const tradingInit = fetch({
 Promise.all([marketInit, tradingInit]).then(() => {
   console.log('Auto Trading Started');
 
-  const orderControl = async () => {
-    console.log('A: Cancel all orders');
-    await cancelAllOrder();
-
-    const orders = (await getOrderHistory()).filter(
-      (i) => i.orderStatus === 'QU',
-    );
-
-    if (orders.length === 0) {
-      console.log('A: Place batch orders');
-
-      await placeBatchOrder('SSI');
-      const orders = await getOrderHistory();
-      const filteredOrders = orders.filter((i) => i.orderStatus === 'QU');
-
-      if (filteredOrders.length) {
-        console.log('R: New orders');
-        console.table(getOrderTable(filteredOrders));
-      }
-    } else {
-      console.log('ERROR: Unable to cancel all orders.');
-    }
-  };
-
-  orderControl();
   setInterval(() => {
     orderControl();
   }, INTERVAL);

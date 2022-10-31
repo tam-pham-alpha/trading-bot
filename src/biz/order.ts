@@ -1,4 +1,5 @@
 import client from 'ssi-api-client';
+import { format } from 'date-fns';
 
 import { fetch } from '../utils/fetch';
 import { spot } from '../mock';
@@ -7,10 +8,11 @@ import config from '../config';
 import { OrderHistory, Side } from '../types/Order';
 
 export const getOrderHistory = async () => {
+  const today = new Date();
   const request = {
     account: spot.account,
-    startDate: spot.startDate,
-    endDate: spot.endDate,
+    startDate: format(today, 'dd/MM/yyyy'),
+    endDate: format(today, 'dd/MM/yyyy'),
   };
 
   return fetch({
