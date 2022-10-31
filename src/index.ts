@@ -23,43 +23,39 @@ let lastPrice = 0;
 let tradingInterval: any = null;
 let session: TradingSession = 'C';
 
-const orderControl = async (price: number) => {
-  console.log('A: Cancel all orders');
-  await cancelAllOrder();
-  const orders = await getLiveOrder();
-
-  if (orders.length === 0) {
-    console.log('A: Place batch orders', price);
-    await placeBatchOrder('SSI', price);
-
-    const orders = await getLiveOrder();
-    if (orders.length) {
-      console.log('R: New orders');
-      console.table(getOrderTable(orders));
-    }
-  } else {
-    console.log('ERROR: Unable to cancel all orders.');
-  }
-};
-
 const startNewTradingInterval = async () => {
-  if (session !== 'LO') return;
-  if (!lastPrice) return;
-
-  console.log('A: startNewTradingInterval');
+  console.log('A: NEW TRADING SESSION');
 
   const balance = await getAccountBalance();
+  console.log('R: ACCOUNT');
   console.table(getAccountTable([balance]));
 
   const positions = await getStockPosition();
+  console.log('R: POSITIONS');
   console.table(getStockPositionTable(positions));
+
+  await cancelAllOrder();
+
+  if (session !== 'LO') return;
+  if (!lastPrice) return;
+
+  const orders = await getLiveOrder();
+  if (orders.length === 0) {
+    console.log('A: PLACE ORDERS', lastPrice);
+    await placeBatchOrder('SSI', lastPrice);
+
+    const orders = await getLiveOrder();
+    console.log('R: NEW ORDERS');
+    console.table(getOrderTable(orders));
+  } else {
+    console.log('ERROR: Unable to cancel all orders.');
+  }
 
   if (tradingInterval) {
     clearInterval(tradingInterval);
   }
-
   tradingInterval = setInterval(() => {
-    orderControl(lastPrice);
+    startNewTradingInterval();
   }, INTERVAL);
 };
 
@@ -120,9 +116,15 @@ const marketInit = rqData({
         const resp = JSON.parse(message);
         const data = JSON.parse(resp.Content);
 
-        console.log(resp.DataType);
+        console.log(resp.DataType, data);
+        const type = resp.DataType;
 
-        if (resp.DataType === 'X-TRADE') {
+        if (type === 'F') {
+          session === data.TradingSession;
+          startNewTradingInterval();
+        }
+
+        if (type === 'X-TRADE') {
           if (data.Symbol === 'SSI') {
             if (lastPrice === 0) {
               lastPrice = data.LastPrice;
@@ -190,11 +192,11 @@ const tradingInit = fetch({
       });
 
       ssi.bind(ssi.events.onOrderUpdate, function (e: any, data: any) {
-        console.log('onOrderUpdate', JSON.stringify(data));
+        // console.log('onOrderUpdate', JSON.stringify(data));
       });
 
       ssi.bind(ssi.events.onOrderError, function (e: any, data: any) {
-        console.log('onOrderError', JSON.stringify(data));
+        // console.log('onOrderError', JSON.stringify(data));
       });
 
       ssi.bind(ssi.events.onClientPortfolioEvent, function (e: any, data: any) {
