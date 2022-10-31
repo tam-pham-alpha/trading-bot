@@ -24,6 +24,18 @@ export const getOrderHistory = async () => {
   });
 };
 
+export const getLiveOrder = async () => {
+  const orders = await getOrderHistory();
+  return orders.filter(
+    (i) =>
+      i.orderStatus === 'WA' ||
+      i.orderStatus === 'RS' ||
+      i.orderStatus === 'SD' ||
+      i.orderStatus === 'QU' ||
+      i.orderStatus === 'PF',
+  );
+};
+
 export const placeOrder = async (
   instrument: string,
   price: number,

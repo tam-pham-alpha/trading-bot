@@ -8,41 +8,59 @@ import apis from './biz/apis';
 
 import { cancelAllOrder, placeBatchOrder } from './biz/trade';
 import Streaming from './streaming';
-import { getOrderHistory } from './biz/order';
-import { getOrderTable } from './utils/table';
+import { getLiveOrder } from './biz/order';
+import {
+  getAccountTable,
+  getOrderTable,
+  getStockPositionTable,
+} from './utils/table';
+import { getAccountBalance } from './biz/account';
+import { getStockPosition } from './biz/position';
+import { TradingSession } from './types/Market';
 
-const INTERVAL = 1800000; // 30 mins
-
+const INTERVAL = config.bot.interval;
 let lastPrice = 0;
+let tradingInterval: any = null;
+let session: TradingSession = 'C';
 
-const orderControl = async (lastPrice: number) => {
+const orderControl = async (price: number) => {
   console.log('A: Cancel all orders');
   await cancelAllOrder();
-
-  const orders = await (
-    await getOrderHistory()
-  ).filter(
-    (i) =>
-      i.orderStatus !== 'CL' &&
-      i.orderStatus !== 'FF' &&
-      i.orderStatus !== 'WC',
-  );
-  console.table(orders);
+  const orders = await getLiveOrder();
 
   if (orders.length === 0) {
-    console.log('A: Place batch orders', lastPrice);
+    console.log('A: Place batch orders', price);
+    await placeBatchOrder('SSI', price);
 
-    await placeBatchOrder('SSI', lastPrice);
-    const orders = await getOrderHistory();
-    const filteredOrders = orders.filter((i) => i.orderStatus === 'QU');
-
-    if (filteredOrders.length) {
+    const orders = await getLiveOrder();
+    if (orders.length) {
       console.log('R: New orders');
-      console.table(getOrderTable(filteredOrders));
+      console.table(getOrderTable(orders));
     }
   } else {
     console.log('ERROR: Unable to cancel all orders.');
   }
+};
+
+const startNewTradingInterval = async () => {
+  if (session !== 'LO') return;
+  if (!lastPrice) return;
+
+  console.log('A: startNewTradingInterval');
+
+  const balance = await getAccountBalance();
+  console.table(getAccountTable([balance]));
+
+  const positions = await getStockPosition();
+  console.table(getStockPositionTable(positions));
+
+  if (tradingInterval) {
+    clearInterval(tradingInterval);
+  }
+
+  tradingInterval = setInterval(() => {
+    orderControl(lastPrice);
+  }, INTERVAL);
 };
 
 const app = express();
@@ -101,12 +119,14 @@ const marketInit = rqData({
       stream.subscribe('FcMarketDataV2Hub', 'Broadcast', (message: any) => {
         const resp = JSON.parse(message);
         const data = JSON.parse(resp.Content);
+
+        console.log(resp.DataType);
+
         if (resp.DataType === 'X-TRADE') {
           if (data.Symbol === 'SSI') {
-            console.log(resp.DataType, data.LastPrice);
-
             if (lastPrice === 0) {
-              orderControl(data.LastPrice);
+              lastPrice = data.LastPrice;
+              startNewTradingInterval();
             }
 
             lastPrice = data.LastPrice;
@@ -166,23 +186,24 @@ const tradingInit = fetch({
       });
 
       ssi.bind(ssi.events.onError, function (e: any, data: any) {
-        console.log(e, JSON.stringify(data));
+        console.log('onError', JSON.stringify(data));
       });
 
       ssi.bind(ssi.events.onOrderUpdate, function (e: any, data: any) {
-        console.log(e, JSON.stringify(data));
+        console.log('onOrderUpdate', JSON.stringify(data));
       });
 
       ssi.bind(ssi.events.onOrderError, function (e: any, data: any) {
-        console.log(e, JSON.stringify(data));
+        console.log('onOrderError', JSON.stringify(data));
       });
 
       ssi.bind(ssi.events.onClientPortfolioEvent, function (e: any, data: any) {
-        console.log(e, JSON.stringify(data));
+        console.log('onClientPortfolioEvent', JSON.stringify(data));
       });
 
       ssi.bind(ssi.events.onOrderMatch, function (e: any, data: any) {
-        console.log(e, JSON.stringify(data));
+        console.log('onOrderMatch', JSON.stringify(data));
+        startNewTradingInterval();
       });
 
       ssi.start();
@@ -198,9 +219,5 @@ const tradingInit = fetch({
   });
 
 Promise.all([marketInit, tradingInit]).then(() => {
-  console.log('Auto Trading Started');
-
-  setInterval(() => {
-    orderControl(lastPrice);
-  }, INTERVAL);
+  startNewTradingInterval();
 });

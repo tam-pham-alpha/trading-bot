@@ -3,8 +3,8 @@ export type OrderStatus =
   | 'RS' //ReadyToSendExchange
   | 'SD' //SentToExchange
   | 'QU' //QueueInExchange
-  | 'FF' //FullyFilled
   | 'PF' //PartiallyFilled
+  | 'FF' //FullyFilled
   | 'FFPC' //FullyFilledPartiallyCancelled
   | 'WM' //WaitingModify
   | 'WC' //WaitingCancel
@@ -13,8 +13,8 @@ export type OrderStatus =
   | 'EX' //Expired
   | 'SOR' //StopOrderReady
   | 'SOS' //StopOrderSent
-  | 'IAV' //PresessionOrder
-  | 'SOI'; //PresessionstopOrder
+  | 'IAV' //PreSessionOrder
+  | 'SOI'; //PreSessionstopOrder
 
 export type Side = 'B' | 'S';
 export type OrderType =

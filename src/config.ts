@@ -3,12 +3,22 @@ export default {
   pinCode: '1we23rw4t',
   spotAccount: '1577921',
   bot: {
-    levelPrice1: 2.5,
-    levelPrice2: 4.5,
-    levelPrice3: 6.5,
-    levelQty1: 100,
-    levelQty2: 200,
-    levelQty3: 300,
+    interval: 1800000, // 30 mins
+
+    buyLvPrc1: 2.5,
+    buyLvPrc2: 4.5,
+    buyLvPrc3: 6.5,
+    buyLvQty1: 100,
+    buyLvQty2: 200,
+    buyLvQty3: 300,
+
+    sellLvPrc1: 2.5,
+    sellLvPrc2: 4.5,
+    sellLvPrc3: 6.5,
+    sellLvQty1: 100,
+    sellLvQty2: 200,
+    sellLvQty3: 300,
+
     delta: 4.5, // distance from last price to price of new orders (both buy & sell)
     distance: 2, // distance from avg price to current price in percentage
     cashPerStock: 50, // cash per stock

@@ -30,3 +30,12 @@ export type DailyStockPrice = {
   TotalTradedVol: string;
   TotalTradedValue: string;
 };
+
+export type TradingSession =
+  | 'ATO' // Opening Call Auction
+  | 'LO' // Continuous Trading
+  | 'ATC' // Closing All Auction
+  | 'PT' // Put Through
+  | 'C' // Market Close
+  | 'BREAK' // Lunch Break
+  | 'HALT'; // Market Halt

@@ -1,7 +1,7 @@
 import config from '../config';
 import { OrderHistory } from '../types/Order';
 import { getNumber } from '../utils/number';
-import { cancelOrder, getOrderHistory, placeOrder } from './order';
+import { cancelOrder, getLiveOrder, placeOrder } from './order';
 import { getStockPosition } from './position';
 
 export const placeBatchOrder = async (
@@ -19,45 +19,20 @@ export const placeBatchOrder = async (
   return Promise.all([
     placeOrder(
       instrument,
-      getNumber((currentPrice * (100 - config.bot.levelPrice1)) / 100, 2),
-      config.bot.levelQty1,
-      'B',
-    ),
-    placeOrder(
-      instrument,
-      getNumber((currentPrice * (100 - config.bot.levelPrice2)) / 100, 2),
-      config.bot.levelQty2,
+      getNumber((currentPrice * (100 - config.bot.buyLvPrc1)) / 100, 2),
+      config.bot.buyLvQty1,
       'B',
     ),
     // placeOrder(
     //   instrument,
-    //   getNumber((currentPrice * (100 - config.bot.levelPrice3)) / 100, 2),
-    //   config.bot.levelQty3,
-    //   'B',
-    // ),
-    // placeOrder(
-    //   instrument,
-    //   getNumber((currentPrice * (100 + config.bot.levelPrice1)) / 100, 2),
-    //   config.bot.levelQty1,
-    //   'S',
-    // ),
-    // placeOrder(
-    //   instrument,
-    //   getNumber((currentPrice * (100 + config.bot.levelPrice2)) / 100, 2),
-    //   config.bot.levelQty2,
-    //   'S',
-    // ),
-    // placeOrder(
-    //   instrument,
-    //   getNumber((currentPrice * (100 + config.bot.levelPrice3)) / 100, 2),
-    //   config.bot.levelQty3,
+    //   getNumber((currentPrice * (100 + config.bot.sellLvPrc1)) / 100, 2),
+    //   config.bot.sellLvQty1,
     //   'S',
     // ),
   ]);
 };
 
 export const cancelAllOrder = async () => {
-  const orders = await getOrderHistory();
-
+  const orders = await getLiveOrder();
   return Promise.all(orders.map((i: OrderHistory) => cancelOrder(i.orderID)));
 };
