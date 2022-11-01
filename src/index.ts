@@ -16,6 +16,9 @@ import {
 import { getAccountBalance } from './biz/account';
 import { getStockPosition } from './biz/position';
 import { TradingSession } from './types/Market';
+import OrderFactory from './factory/OrderFactory';
+import { getLiveOrder } from './biz/order';
+import { OrderHistory } from './types/Order';
 
 const INTERVAL = config.bot.interval;
 let lastPrice = 0;
@@ -39,6 +42,9 @@ const startNewTradingInterval = async () => {
 
     console.log('A: PLACE ORDERS', lastPrice);
     await placeBatchOrder('SSI', lastPrice);
+
+    const liveOrders = await getLiveOrder();
+    OrderFactory.setOrders(liveOrders);
   }
 
   if (tradingInterval) {
@@ -47,6 +53,27 @@ const startNewTradingInterval = async () => {
   tradingInterval = setInterval(() => {
     startNewTradingInterval();
   }, INTERVAL);
+};
+
+const onOrderUpdate = async (e: any, data: any) => {
+  const order: OrderHistory = data.data;
+  if (parseInt(order.modifiedTime) + 10000 < Date.now()) {
+    return;
+  }
+
+  console.log('R: ORDER UPDATE');
+  OrderFactory.orderUpdate([data.data]);
+  console.table(getOrderTable(OrderFactory.getLiveOrders()));
+};
+
+const onOrderMatch = async (e: any, data: any) => {
+  console.log('R: ORDER MATCH');
+
+  const liveOrders = await getLiveOrder();
+  OrderFactory.setOrders(liveOrders);
+  console.table(getOrderTable(OrderFactory.getLiveOrders()));
+
+  startNewTradingInterval();
 };
 
 const app = express();
@@ -150,11 +177,6 @@ const marketInit = rqData({
   },
 );
 
-const onOrderUpdate = async (e: any, data: any) => {
-  console.log('R: ORDER UPDATE');
-  console.table(getOrderTable([data.data]));
-};
-
 // SSI Trading
 const tradingInit = fetch({
   url: ssi.api.GET_ACCESS_TOKEN,
@@ -180,24 +202,21 @@ const tradingInit = fetch({
         notify_id: 0,
       });
 
+      ssi.bind(ssi.events.onOrderUpdate, onOrderUpdate);
+
+      ssi.bind(ssi.events.onOrderMatch, onOrderMatch);
+
       ssi.bind(ssi.events.onError, function (e: any, data: any) {
         console.log('onError', JSON.stringify(data));
       });
-
-      ssi.bind(ssi.events.onOrderUpdate, onOrderUpdate);
 
       ssi.bind(ssi.events.onOrderError, function (e: any, data: any) {
         // console.log('onOrderError', JSON.stringify(data));
       });
 
-      ssi.bind(ssi.events.onClientPortfolioEvent, function (e: any, data: any) {
-        console.log('onClientPortfolioEvent', JSON.stringify(data));
-      });
-
-      ssi.bind(ssi.events.onOrderMatch, function (e: any, data: any) {
-        console.log('onOrderMatch', JSON.stringify(data));
-        startNewTradingInterval();
-      });
+      // ssi.bind(ssi.events.onClientPortfolioEvent, function (e: any, data: any) {
+      //   console.log('onClientPortfolioEvent', JSON.stringify(data));
+      // });
 
       ssi.start();
       console.log('SSI Trading Started!');

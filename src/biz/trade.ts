@@ -21,10 +21,11 @@ export const placeBatchOrder = async (
         (lastPrice * (100 - config.bot.buyLvPrc1)) / 100,
         2,
       );
+
       const qty =
-        position && position.avgPrice > buyPrice
-          ? config.bot.buyLvQty2
-          : config.bot.buyLvQty1;
+        !position || position.avgPrice < buyPrice
+          ? config.bot.buyLvQty1
+          : config.bot.buyLvQty2;
 
       return placeOrder(instrument, 'B', buyPrice, qty);
     })(),
@@ -35,9 +36,9 @@ export const placeBatchOrder = async (
       );
 
       const qty =
-        position && position.avgPrice < sellPrice
-          ? config.bot.sellLvQty2
-          : config.bot.sellLvQty1;
+        !position || position.avgPrice > sellPrice
+          ? config.bot.sellLvQty1
+          : config.bot.sellLvQty2;
 
       if (position?.onHand || 0 < qty) {
         return;
