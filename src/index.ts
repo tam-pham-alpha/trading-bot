@@ -36,18 +36,13 @@ const startNewTradingInterval = async () => {
     console.table(getStockPositionTable(positions));
 
     await cancelAllOrder();
-    const orders = await getLiveOrder();
 
-    if (orders.length === 0) {
-      console.log('A: PLACE ORDERS', lastPrice);
-      await placeBatchOrder('SSI', lastPrice);
+    console.log('A: PLACE ORDERS', lastPrice);
+    await placeBatchOrder('SSI', lastPrice);
 
-      const orders = await getLiveOrder();
-      console.log('R: NEW ORDERS');
-      console.table(getOrderTable(orders));
-    } else {
-      console.log('ERROR: Unable to cancel all orders.');
-    }
+    console.log('R: LIVE ORDERS');
+    const liveOrders = await getLiveOrder();
+    console.table(getOrderTable(liveOrders));
   }
 
   if (tradingInterval) {
@@ -159,6 +154,11 @@ const marketInit = rqData({
   },
 );
 
+const onOrderUpdate = async (e: any, data: any) => {
+  console.log('R: ORDER UPDATE');
+  console.table(getOrderTable([data.data]));
+};
+
 // SSI Trading
 const tradingInit = fetch({
   url: ssi.api.GET_ACCESS_TOKEN,
@@ -188,9 +188,7 @@ const tradingInit = fetch({
         console.log('onError', JSON.stringify(data));
       });
 
-      ssi.bind(ssi.events.onOrderUpdate, function (e: any, data: any) {
-        // console.log('onOrderUpdate', JSON.stringify(data));
-      });
+      ssi.bind(ssi.events.onOrderUpdate, onOrderUpdate);
 
       ssi.bind(ssi.events.onOrderError, function (e: any, data: any) {
         // console.log('onOrderError', JSON.stringify(data));
