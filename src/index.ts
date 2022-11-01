@@ -8,7 +8,6 @@ import apis from './biz/apis';
 
 import { cancelAllOrder, placeBatchOrder } from './biz/trade';
 import Streaming from './streaming';
-import { getLiveOrder } from './biz/order';
 import {
   getAccountTable,
   getOrderTable,
@@ -27,22 +26,19 @@ const startNewTradingInterval = async () => {
   console.log('A: NEW TRADING SESSION', session, lastPrice);
 
   if (session === 'LO' && lastPrice) {
-    console.log('R: ACCOUNT');
     const balance = await getAccountBalance();
+    console.log('R: ACCOUNT');
     console.table(getAccountTable([balance]));
 
-    console.log('R: POSITIONS');
     const positions = await getStockPosition();
+    console.log('R: POSITIONS');
     console.table(getStockPositionTable(positions));
 
+    console.log('A: CANCEL ALL ORDERS');
     await cancelAllOrder();
 
     console.log('A: PLACE ORDERS', lastPrice);
     await placeBatchOrder('SSI', lastPrice);
-
-    console.log('R: LIVE ORDERS');
-    const liveOrders = await getLiveOrder();
-    console.table(getOrderTable(liveOrders));
   }
 
   if (tradingInterval) {

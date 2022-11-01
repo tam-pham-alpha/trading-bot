@@ -3,17 +3,18 @@ export default {
   pinCode: '1we23rw4t',
   spotAccount: '1577921',
   bot: {
-    interval: 1800000, // 30 mins
-    // interval: 900000, // 15 mins
+    // interval: 1800000, // 30 mins
+    // interval: 1200000, // 20 mins
+    interval: 900000, // 15 mins
     // interval: 600000, // 10 mins
 
-    buyLvPrc1: 0.95,
-    buyLvPrc2: 1.95,
+    buyLvPrc1: 0.55,
+    buyLvPrc2: 1.45,
     buyLvQty1: 200,
     buyLvQty2: 400,
 
-    sellLvPrc1: 1.45,
-    sellLvPrc2: 2.45,
+    sellLvPrc1: 0.75,
+    sellLvPrc2: 1.95,
     sellLvQty1: 100,
     sellLvQty2: 200,
 
