@@ -4,14 +4,14 @@ export default {
   spotAccount: '1577921',
   bot: {
     // interval: 1800000, // 30 mins
-    // interval: 1200000, // 20 mins
+    interval: 1200000, // 20 mins
+    // interval: 900000, // 15 mins
     // interval: 600000, // 10 mins
-    interval: 900000, // 15 mins
 
-    buyLvPrc1: 0.55,
+    buyLvPrc1: 1.05,
     buyLvPrc2: 1.45,
     buyLvQty1: 200,
-    buyLvQty2: 400,
+    buyLvQty2: 300,
 
     sellLvPrc1: 0.75,
     sellLvPrc2: 1.95,
