@@ -21,7 +21,7 @@ import { TradingSession } from './types/Market';
 const INTERVAL = config.bot.interval;
 let lastPrice = 0;
 let tradingInterval: any = null;
-var session: TradingSession = 'C';
+let session: TradingSession = 'C';
 
 const startNewTradingInterval = async () => {
   console.log('A: NEW TRADING SESSION', session, lastPrice);
