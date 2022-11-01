@@ -38,9 +38,9 @@ export const getLiveOrder = async () => {
 
 export const placeOrder = async (
   instrument: string,
+  side: Side,
   price: number,
   quantity: number,
-  side: Side,
 ) => {
   const request = {
     market: spot.market,

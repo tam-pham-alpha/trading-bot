@@ -5,9 +5,9 @@ export default {
   bot: {
     interval: 1800000, // 30 mins
 
-    buyLvPrc1: 2.5,
-    buyLvPrc2: 4.5,
-    buyLvPrc3: 6.5,
+    buyLvPrc1: 1.5,
+    buyLvPrc2: 3.5,
+    buyLvPrc3: 4.5,
     buyLvQty1: 100,
     buyLvQty2: 200,
     buyLvQty3: 300,

@@ -24,31 +24,30 @@ let tradingInterval: any = null;
 let session: TradingSession = 'C';
 
 const startNewTradingInterval = async () => {
-  console.log('A: NEW TRADING SESSION');
+  console.log('A: NEW TRADING SESSION', session, lastPrice);
 
-  const balance = await getAccountBalance();
-  console.log('R: ACCOUNT');
-  console.table(getAccountTable([balance]));
+  if (session === 'LO' && lastPrice) {
+    console.log('R: ACCOUNT');
+    const balance = await getAccountBalance();
+    console.table(getAccountTable([balance]));
 
-  const positions = await getStockPosition();
-  console.log('R: POSITIONS');
-  console.table(getStockPositionTable(positions));
+    console.log('R: POSITIONS');
+    const positions = await getStockPosition();
+    console.table(getStockPositionTable(positions));
 
-  await cancelAllOrder();
-
-  if (session !== 'LO') return;
-  if (!lastPrice) return;
-
-  const orders = await getLiveOrder();
-  if (orders.length === 0) {
-    console.log('A: PLACE ORDERS', lastPrice);
-    await placeBatchOrder('SSI', lastPrice);
-
+    await cancelAllOrder();
     const orders = await getLiveOrder();
-    console.log('R: NEW ORDERS');
-    console.table(getOrderTable(orders));
-  } else {
-    console.log('ERROR: Unable to cancel all orders.');
+
+    if (orders.length === 0) {
+      console.log('A: PLACE ORDERS', lastPrice);
+      await placeBatchOrder('SSI', lastPrice);
+
+      const orders = await getLiveOrder();
+      console.log('R: NEW ORDERS');
+      console.table(getOrderTable(orders));
+    } else {
+      console.log('ERROR: Unable to cancel all orders.');
+    }
   }
 
   if (tradingInterval) {

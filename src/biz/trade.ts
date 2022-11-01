@@ -8,27 +8,43 @@ export const placeBatchOrder = async (
   instrument: string,
   lastPrice: number,
 ) => {
-  const positions = await getStockPosition();
-  const currentPosition = positions.find((i) => i.instrumentID === instrument);
-  const currentPrice = lastPrice || currentPosition?.avgPrice || 0;
+  const positionList = await getStockPosition();
+  const position = positionList.find((i) => i.instrumentID === instrument);
 
-  if (!currentPrice) {
+  if (!lastPrice) {
     throw new Error('Unable to get the current price');
   }
 
   return Promise.all([
-    placeOrder(
-      instrument,
-      getNumber((currentPrice * (100 - config.bot.buyLvPrc1)) / 100, 2),
-      config.bot.buyLvQty1,
-      'B',
-    ),
-    // placeOrder(
-    //   instrument,
-    //   getNumber((currentPrice * (100 + config.bot.sellLvPrc1)) / 100, 2),
-    //   config.bot.sellLvQty1,
-    //   'S',
-    // ),
+    async () => {
+      const buyPrice = getNumber(
+        (lastPrice * (100 - config.bot.buyLvPrc1)) / 100,
+        2,
+      );
+      const qty =
+        position && position.avgPrice > buyPrice
+          ? config.bot.buyLvQty2
+          : config.bot.buyLvQty1;
+
+      return placeOrder(instrument, 'B', buyPrice, qty);
+    },
+    async () => {
+      const sellPrice = getNumber(
+        (lastPrice * (100 + config.bot.sellLvPrc1)) / 100,
+        2,
+      );
+
+      const qty =
+        position && position.avgPrice < sellPrice
+          ? config.bot.sellLvQty2
+          : config.bot.sellLvQty1;
+
+      if (position?.onHand || 0 < qty) {
+        return;
+      }
+
+      return placeOrder(instrument, 'S', sellPrice, qty);
+    },
   ]);
 };
 
