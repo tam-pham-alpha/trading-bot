@@ -21,7 +21,7 @@ import { TradingSession } from './types/Market';
 const INTERVAL = config.bot.interval;
 let lastPrice = 0;
 let tradingInterval: any = null;
-let session: TradingSession = 'C';
+var session: TradingSession = 'C';
 
 const startNewTradingInterval = async () => {
   console.log('A: NEW TRADING SESSION', session, lastPrice);
@@ -117,7 +117,7 @@ const marketInit = rqData({
         const type = resp.DataType;
 
         if (type === 'F') {
-          session === data.TradingSession;
+          session = data.TradingSession;
           startNewTradingInterval();
         }
 

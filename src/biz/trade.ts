@@ -16,7 +16,7 @@ export const placeBatchOrder = async (
   }
 
   return Promise.all([
-    async () => {
+    (async () => {
       const buyPrice = getNumber(
         (lastPrice * (100 - config.bot.buyLvPrc1)) / 100,
         2,
@@ -27,8 +27,8 @@ export const placeBatchOrder = async (
           : config.bot.buyLvQty1;
 
       return placeOrder(instrument, 'B', buyPrice, qty);
-    },
-    async () => {
+    })(),
+    (async () => {
       const sellPrice = getNumber(
         (lastPrice * (100 + config.bot.sellLvPrc1)) / 100,
         2,
@@ -44,7 +44,7 @@ export const placeBatchOrder = async (
       }
 
       return placeOrder(instrument, 'S', sellPrice, qty);
-    },
+    })(),
   ]);
 };
 
