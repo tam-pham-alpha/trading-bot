@@ -32,7 +32,7 @@ export const getAccountTable = (accounts: Account[]) => {
 export const getStockPositionTable = (positions: StockPosition[]) => {
   return positions.map((i) => ({
     symbol: i.instrumentID,
-    onHand: i.onHand,
+    sellableQty: i.sellableQty,
     avgPrice: i.avgPrice,
     marketPrice: i.marketPrice,
     buyT0: i.buyT0,

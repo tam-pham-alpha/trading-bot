@@ -1,6 +1,9 @@
-SSI-DCA-BOT
+# SSI-DCA-BOT
 
-# Todo list
+Là bot tự động trade stock, với mục tiêu tạo ra ít nhất 5% lợi nhuận thụ động mỗi tháng.
+
+
+## Todo list
 
 - Mục tiêu của BOT là DCA chứng khoán
 - Hỗ trợ multiple stocks

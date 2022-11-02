@@ -92,7 +92,7 @@ const rqData = axios.create({
   timeout: 5000,
 });
 
-const marketInit = rqData({
+rqData({
   url: config.market.ApiUrl + 'AccessToken',
   method: 'post',
   data: {
@@ -183,7 +183,7 @@ const marketInit = rqData({
 );
 
 // SSI Trading
-const tradingInit = fetch({
+fetch({
   url: ssi.api.GET_ACCESS_TOKEN,
   method: 'post',
   data: {
