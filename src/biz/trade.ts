@@ -10,6 +10,9 @@ export const placeBatchOrder = async (
 ) => {
   const positionList = await getStockPosition();
   const position = positionList.find((i) => i.instrumentID === instrument);
+  const strategy = config.strategies.find((i) => i.symbol === instrument);
+
+  if (!strategy) return;
 
   if (!lastPrice) {
     throw new Error('Unable to get the current price');
@@ -18,27 +21,27 @@ export const placeBatchOrder = async (
   return Promise.all([
     (async () => {
       const buyPrice = getNumber(
-        (lastPrice * (100 - config.bot.buyLvPrc1)) / 100,
+        (lastPrice * (100 - strategy.buyLvPrc1)) / 100,
         2,
       );
 
       const qty =
         !position || position.avgPrice < buyPrice
-          ? config.bot.buyLvQty1
-          : config.bot.buyLvQty2;
+          ? strategy.buyLvQty1
+          : strategy.buyLvQty2;
 
       return placeOrder(instrument, 'B', buyPrice, qty);
     })(),
     (async () => {
       const sellPrice = getNumber(
-        (lastPrice * (100 + config.bot.sellLvPrc1)) / 100,
+        (lastPrice * (100 + strategy.sellLvPrc1)) / 100,
         2,
       );
 
       const qty =
         !position || position.avgPrice > sellPrice
-          ? config.bot.sellLvQty1
-          : config.bot.sellLvQty2;
+          ? strategy.sellLvQty1
+          : strategy.sellLvQty2;
 
       if ((position?.sellableQty || 0) < qty) {
         return;

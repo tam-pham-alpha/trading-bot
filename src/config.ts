@@ -1,29 +1,64 @@
+export const INTERVAL = {
+  m30: 1800000, // 30 mins
+  m20: 1200000, // 20 mins
+  m15: 900000, // 15 mins
+  m10: 600000, // 10 mins
+};
+
 export default {
   port: 3011,
   pinCode: '1we23rw4t',
   spotAccount: '1577921',
-  bot: {
-    interval: 1800000, // 30 mins
-    // interval: 1200000, // 20 mins
-    // interval: 900000, // 15 mins
-    // interval: 600000, // 10 mins
+  strategies: [
+    {
+      symbol: 'SSI',
+      interval: INTERVAL.m20,
 
-    buyLvPrc1: 0.75,
-    buyLvPrc2: 1.55,
-    buyLvQty1: 200,
-    buyLvQty2: 300,
+      buyLvPrc1: 0.75,
+      buyLvPrc2: 1.55,
+      buyLvQty1: 200,
+      buyLvQty2: 300,
 
-    sellLvPrc1: 1.25,
-    sellLvPrc2: 2.45,
-    sellLvQty1: 100,
-    sellLvQty2: 200,
+      sellLvPrc1: 1.25,
+      sellLvPrc2: 2.45,
+      sellLvQty1: 100,
+      sellLvQty2: 200,
 
-    tolerantLoss: 0,
+      tolerantLoss: 0,
+    },
+    {
+      symbol: 'HAG',
+      interval: INTERVAL.m20,
 
-    delta: 4.5, // distance from last price to price of new orders (both buy & sell)
-    distance: 2, // distance from avg price to current price in percentage
-    cashPerStock: 50, // cash per stock
-  },
+      buyLvPrc1: 0.75,
+      buyLvPrc2: 1.55,
+      buyLvQty1: 200,
+      buyLvQty2: 300,
+
+      sellLvPrc1: 1.25,
+      sellLvPrc2: 2.45,
+      sellLvQty1: 100,
+      sellLvQty2: 200,
+
+      tolerantLoss: 0,
+    },
+    {
+      symbol: 'TCB',
+      interval: INTERVAL.m20,
+
+      buyLvPrc1: 0.75,
+      buyLvPrc2: 1.55,
+      buyLvQty1: 200,
+      buyLvQty2: 300,
+
+      sellLvPrc1: 1.25,
+      sellLvPrc2: 2.45,
+      sellLvQty1: 100,
+      sellLvQty2: 200,
+
+      tolerantLoss: 0,
+    },
+  ],
   market: {
     HubUrl: 'wss://fc-data.ssi.com.vn/v2.0/',
     ApiUrl: 'https://fc-data.ssi.com.vn/api/v2/Market/',

@@ -79,3 +79,20 @@ export type OrderHistory = {
   isForceSell: boolean;
   isShortSell: boolean;
 };
+
+export type OrderMatchEvent = {
+  type: string;
+  data: {
+    orderId: string;
+    instrumentID: string;
+    ipAddress: string;
+    uniqueID: string;
+    notifyID: string;
+    buySell: 'B' | 'S';
+    matchPrice: number;
+    matchQty: number;
+    prefix: string;
+    account: string;
+    matchTime: string;
+  };
+};

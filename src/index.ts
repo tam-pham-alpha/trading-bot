@@ -3,7 +3,7 @@ import express from 'express';
 import ssi from 'ssi-api-client';
 
 import { setAccessToken, fetch } from './utils/fetch';
-import config from './config';
+import config, { INTERVAL } from './config';
 import apis from './biz/apis';
 
 import { placeBatchOrder } from './biz/trade';
@@ -18,32 +18,31 @@ import { getStockPosition } from './biz/position';
 import { TradingSession } from './types/Market';
 import OrderFactory from './factory/OrderFactory';
 import { getLiveOrder } from './biz/order';
-import { OrderHistory } from './types/Order';
+import { OrderHistory, OrderMatchEvent } from './types/Order';
 
-const INTERVAL = config.bot.interval;
-const STOCK = 'SSI';
-
-let lastPrice = 0;
-let tradingInterval: any = null;
 let session: TradingSession = 'C';
+const lastPrice: Record<string, number> = {};
+const tradingInterval: Record<string, any> = {};
 
-const startNewTradingInterval = async () => {
-  console.log('A: NEW TRADING SESSION', session, lastPrice);
+const displayPortfolio = async () => {
+  const balance = await getAccountBalance();
+  console.log('R: ACCOUNT');
+  console.table(getAccountTable([balance]));
 
-  if (session === 'LO' && lastPrice) {
-    const balance = await getAccountBalance();
-    console.log('R: ACCOUNT');
-    console.table(getAccountTable([balance]));
+  const positions = await getStockPosition();
+  console.log('R: POSITIONS');
+  console.table(getStockPositionTable(positions));
+};
 
-    const positions = await getStockPosition();
-    console.log('R: POSITIONS');
-    console.table(getStockPositionTable(positions));
+const startNewTradingInterval = async (symbol: string) => {
+  console.log('A: NEW TRADING SESSION', symbol, session, lastPrice[symbol]);
 
+  if (session === 'LO' && lastPrice[symbol]) {
     console.log('A: CANCEL ALL ORDERS');
-    OrderFactory.cancelOrdersBySymbol(STOCK);
+    OrderFactory.cancelOrdersBySymbol(symbol);
 
-    console.log('A: PLACE ORDERS', lastPrice);
-    await placeBatchOrder(STOCK, lastPrice);
+    console.log('A: PLACE ORDERS', lastPrice[symbol]);
+    await placeBatchOrder(symbol, lastPrice[symbol]);
 
     console.log('R: LIVE ORDERS');
     console.table(getOrderTable(OrderFactory.getLiveOrders()));
@@ -52,12 +51,13 @@ const startNewTradingInterval = async () => {
     OrderFactory.setOrders(liveOrders);
   }
 
-  if (tradingInterval) {
-    clearInterval(tradingInterval);
+  const strategy = config.strategies.find((i) => i.symbol === symbol);
+  if (tradingInterval[symbol]) {
+    clearInterval(tradingInterval[symbol]);
   }
-  tradingInterval = setInterval(() => {
-    startNewTradingInterval();
-  }, INTERVAL);
+  tradingInterval[symbol] = setInterval(() => {
+    startNewTradingInterval(symbol);
+  }, strategy?.interval || INTERVAL.m30);
 };
 
 const onOrderUpdate = async (e: any, data: any) => {
@@ -71,14 +71,17 @@ const onOrderUpdate = async (e: any, data: any) => {
   console.table(getOrderTable(OrderFactory.getLiveOrders()));
 };
 
-const onOrderMatch = async (e: any, data: any) => {
+const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
   console.log('R: ORDER MATCH');
+  const symbol = data.data.instrumentID;
+
+  displayPortfolio();
 
   const liveOrders = await getLiveOrder();
   OrderFactory.setOrders(liveOrders);
   console.table(getOrderTable(OrderFactory.getLiveOrders()));
 
-  startNewTradingInterval();
+  startNewTradingInterval(symbol);
 };
 
 const app = express();
@@ -92,7 +95,7 @@ const rqData = axios.create({
   timeout: 5000,
 });
 
-rqData({
+const ssiData = rqData({
   url: config.market.ApiUrl + 'AccessToken',
   method: 'post',
   data: {
@@ -113,45 +116,56 @@ rqData({
         token: token,
       });
 
+      const symbolList = config.strategies.map((i) => i.symbol).join('-');
+
       stream.connected = () => {
         stream
           .getClient()
           .invoke('FcMarketDataV2Hub', 'SwitchChannels', 'MI:VN30');
         stream
           .getClient()
-          .invoke('FcMarketDataV2Hub', 'SwitchChannels', 'F:SSI');
+          .invoke('FcMarketDataV2Hub', 'SwitchChannels', `F:${symbolList}`);
         stream
           .getClient()
-          .invoke('FcMarketDataV2Hub', 'SwitchChannels', 'R:SSI');
+          .invoke('FcMarketDataV2Hub', 'SwitchChannels', `R:${symbolList}`);
         stream
           .getClient()
-          .invoke('FcMarketDataV2Hub', 'SwitchChannels', 'B:SSI');
+          .invoke('FcMarketDataV2Hub', 'SwitchChannels', `B:${symbolList}`);
         stream
           .getClient()
-          .invoke('FcMarketDataV2Hub', 'SwitchChannels', 'X-QUOTE:SSI');
+          .invoke(
+            'FcMarketDataV2Hub',
+            'SwitchChannels',
+            `X-QUOTE:${symbolList}`,
+          );
         stream
           .getClient()
-          .invoke('FcMarketDataV2Hub', 'SwitchChannels', 'X-TRADE:SSI');
+          .invoke(
+            'FcMarketDataV2Hub',
+            'SwitchChannels',
+            `X-TRADE:${symbolList}`,
+          );
       };
 
       stream.subscribe('FcMarketDataV2Hub', 'Broadcast', (message: any) => {
         const resp = JSON.parse(message);
-        const data = JSON.parse(resp.Content);
         const type = resp.DataType;
+        const data = JSON.parse(resp.Content);
 
         if (type === 'F') {
           session = data.TradingSession;
-          startNewTradingInterval();
+          config.strategies.map((i) => {
+            startNewTradingInterval(i.symbol);
+          });
         }
 
         if (type === 'X-TRADE') {
-          if (data.Symbol === 'SSI') {
-            if (lastPrice === 0) {
-              lastPrice = data.LastPrice;
-              startNewTradingInterval();
-            }
+          const symbol = data.Symbol;
+          const tmp = lastPrice[symbol];
+          lastPrice[symbol] = data.LastPrice;
 
-            lastPrice = data.LastPrice;
+          if (!tmp) {
+            startNewTradingInterval(symbol);
           }
         }
       });
@@ -183,7 +197,7 @@ rqData({
 );
 
 // SSI Trading
-fetch({
+const ssiTrading = fetch({
   url: ssi.api.GET_ACCESS_TOKEN,
   method: 'post',
   data: {
@@ -224,7 +238,6 @@ fetch({
       // });
 
       ssi.start();
-      console.log('SSI Trading Started!');
     } else {
       console.log(resp.data.message);
     }
@@ -234,3 +247,8 @@ fetch({
   .catch((reason) => {
     console.log(reason);
   });
+
+Promise.all([ssiData, ssiTrading]).then(() => {
+  console.log('SSI-DCA-BOT Started!');
+  displayPortfolio();
+});
