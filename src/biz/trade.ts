@@ -49,7 +49,9 @@ export const placeBatchOrder = async (
   ]);
 };
 
-export const cancelAllOrder = async () => {
-  const orders = await getLiveOrder();
+export const cancelAllOrder = async (symbol: string) => {
+  const orders = (await getLiveOrder()).filter(
+    (i) => i.instrumentID === symbol,
+  );
   return Promise.all(orders.map((i: OrderHistory) => cancelOrder(i.orderID)));
 };

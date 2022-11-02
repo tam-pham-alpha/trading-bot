@@ -21,6 +21,8 @@ import { getLiveOrder } from './biz/order';
 import { OrderHistory } from './types/Order';
 
 const INTERVAL = config.bot.interval;
+const STOCK = 'SSI';
+
 let lastPrice = 0;
 let tradingInterval: any = null;
 let session: TradingSession = 'C';
@@ -38,10 +40,10 @@ const startNewTradingInterval = async () => {
     console.table(getStockPositionTable(positions));
 
     console.log('A: CANCEL ALL ORDERS');
-    await cancelAllOrder();
+    await cancelAllOrder(STOCK);
 
     console.log('A: PLACE ORDERS', lastPrice);
-    await placeBatchOrder('SSI', lastPrice);
+    await placeBatchOrder(STOCK, lastPrice);
 
     const liveOrders = await getLiveOrder();
     OrderFactory.setOrders(liveOrders);
