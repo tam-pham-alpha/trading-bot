@@ -4,6 +4,16 @@ import { getNumber } from '../utils/number';
 import { cancelOrder, getLiveOrder, placeOrder } from './order';
 import { getStockPosition } from './position';
 
+export const checkTolerantLoss = (
+  tolerant: number,
+  avgPrice: number,
+  price: number,
+) => {
+  if (!avgPrice) return false;
+  const acceptedPrice = (avgPrice * (100 - tolerant)) / 100;
+  return price > acceptedPrice;
+};
+
 export const placeBatchOrder = async (
   instrument: string,
   lastPrice: number,
@@ -11,6 +21,7 @@ export const placeBatchOrder = async (
   const positionList = await getStockPosition();
   const position = positionList.find((i) => i.instrumentID === instrument);
   const strategy = config.strategies.find((i) => i.symbol === instrument);
+  const avgPrice = position?.avgPrice || 0;
 
   if (!strategy) return;
 
@@ -26,7 +37,7 @@ export const placeBatchOrder = async (
       );
 
       const qty =
-        !position || position.avgPrice < buyPrice
+        !avgPrice || avgPrice < buyPrice
           ? strategy.buyLvQty1
           : strategy.buyLvQty2;
 
@@ -39,11 +50,15 @@ export const placeBatchOrder = async (
       );
 
       const qty =
-        !position || position.avgPrice > sellPrice
+        !avgPrice || avgPrice > sellPrice
           ? strategy.sellLvQty1
           : strategy.sellLvQty2;
 
       if ((position?.sellableQty || 0) < qty) {
+        return;
+      }
+
+      if (!checkTolerantLoss(strategy.tolerantLoss, avgPrice, sellPrice)) {
         return;
       }
 
