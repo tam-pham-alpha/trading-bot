@@ -40,7 +40,7 @@ export const placeBatchOrder = async (
           ? config.bot.sellLvQty1
           : config.bot.sellLvQty2;
 
-      if (position?.onHand || 0 < qty) {
+      if ((position?.onHand || 0) < qty) {
         return;
       }
 

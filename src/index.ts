@@ -31,7 +31,6 @@ const startNewTradingInterval = async () => {
   if (session === 'LO' && lastPrice) {
     const balance = await getAccountBalance();
     console.log('R: ACCOUNT');
-    console.log('balance', balance);
     console.table(getAccountTable([balance]));
 
     const positions = await getStockPosition();

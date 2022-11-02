@@ -8,13 +8,13 @@ export default {
     // interval: 900000, // 15 mins
     // interval: 600000, // 10 mins
 
-    buyLvPrc1: 1.05,
-    buyLvPrc2: 1.45,
+    buyLvPrc1: 0.75,
+    buyLvPrc2: 1.55,
     buyLvQty1: 200,
     buyLvQty2: 300,
 
-    sellLvPrc1: 0.75,
-    sellLvPrc2: 1.95,
+    sellLvPrc1: 1.25,
+    sellLvPrc2: 2.45,
     sellLvQty1: 100,
     sellLvQty2: 200,
 
