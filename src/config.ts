@@ -3,8 +3,8 @@ export default {
   pinCode: '1we23rw4t',
   spotAccount: '1577921',
   bot: {
-    // interval: 1800000, // 30 mins
-    interval: 1200000, // 20 mins
+    interval: 1800000, // 30 mins
+    // interval: 1200000, // 20 mins
     // interval: 900000, // 15 mins
     // interval: 600000, // 10 mins
 

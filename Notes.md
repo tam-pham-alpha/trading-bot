@@ -3,6 +3,10 @@ SSI-DCA-BOT
 # Todo list
 
 - Mục tiêu của BOT là DCA chứng khoán
+- Hỗ trợ multiple stocks
+- Hỗ trợ option chỉ bán khi giá hiện tại >= delta (%) cho sẵn
+- Kiểm tra khi nào thì stock có thể bán (onHand)
+
 - Build phần quản lý order ở client
 - Check balance trước khi đặt orders
 - Kiểm soát số lượng mua bán trong ngày
