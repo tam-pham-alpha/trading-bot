@@ -47,6 +47,9 @@ const startNewTradingInterval = async () => {
 
     console.log('R: LIVE ORDERS');
     console.table(getOrderTable(OrderFactory.getLiveOrders()));
+
+    const liveOrders = await getLiveOrder();
+    OrderFactory.setOrders(liveOrders);
   }
 
   if (tradingInterval) {
@@ -231,10 +234,3 @@ const tradingInit = fetch({
   .catch((reason) => {
     console.log(reason);
   });
-
-Promise.all([marketInit, tradingInit]).then(async () => {
-  const liveOrders = await getLiveOrder();
-  OrderFactory.setOrders(liveOrders);
-
-  startNewTradingInterval();
-});
