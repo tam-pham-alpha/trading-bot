@@ -6,7 +6,7 @@ import { setAccessToken, fetch } from './utils/fetch';
 import config from './config';
 import apis from './biz/apis';
 
-import { cancelAllOrder, placeBatchOrder } from './biz/trade';
+import { placeBatchOrder } from './biz/trade';
 import Streaming from './streaming';
 import {
   getAccountTable,
@@ -40,13 +40,13 @@ const startNewTradingInterval = async () => {
     console.table(getStockPositionTable(positions));
 
     console.log('A: CANCEL ALL ORDERS');
-    await cancelAllOrder(STOCK);
+    OrderFactory.cancelOrdersBySymbol(STOCK);
 
     console.log('A: PLACE ORDERS', lastPrice);
     await placeBatchOrder(STOCK, lastPrice);
 
-    const liveOrders = await getLiveOrder();
-    OrderFactory.setOrders(liveOrders);
+    console.log('R: LIVE ORDERS');
+    console.table(getOrderTable(OrderFactory.getLiveOrders()));
   }
 
   if (tradingInterval) {
@@ -232,6 +232,9 @@ const tradingInit = fetch({
     console.log(reason);
   });
 
-Promise.all([marketInit, tradingInit]).then(() => {
+Promise.all([marketInit, tradingInit]).then(async () => {
+  const liveOrders = await getLiveOrder();
+  OrderFactory.setOrders(liveOrders);
+
   startNewTradingInterval();
 });

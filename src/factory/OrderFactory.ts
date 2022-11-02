@@ -1,4 +1,5 @@
 import { uniqBy } from 'lodash';
+import { cancelOrder } from '../biz/order';
 
 import { OrderHistory } from '../types/Order';
 
@@ -33,6 +34,14 @@ class OrderFactory {
         i.orderStatus === 'QU' ||
         i.orderStatus === 'PF',
     );
+  };
+
+  cancelOrdersBySymbol = async (symbol: string) => {
+    const orders = this.getLiveOrders().filter(
+      (i) => i.instrumentID === symbol,
+    );
+
+    return Promise.all(orders.map((i: OrderHistory) => cancelOrder(i.orderID)));
   };
 }
 
