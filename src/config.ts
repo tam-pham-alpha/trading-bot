@@ -15,12 +15,12 @@ export default {
       symbol: 'SSI',
       interval: INTERVAL.m30,
 
-      buyLvPrc1: 0.85,
+      buyLvPrc1: 0.75,
       buyLvPrc2: 1.55,
       buyLvQty1: 200,
       buyLvQty2: 400,
 
-      sellLvPrc1: 1.55,
+      sellLvPrc1: 1.35,
       sellLvPrc2: 2.55,
       sellLvQty1: 100,
       sellLvQty2: 200,
@@ -31,12 +31,12 @@ export default {
       symbol: 'HAG',
       interval: INTERVAL.m20,
 
-      buyLvPrc1: 0.85,
+      buyLvPrc1: 0.75,
       buyLvPrc2: 1.55,
       buyLvQty1: 400,
-      buyLvQty2: 800,
+      buyLvQty2: 700,
 
-      sellLvPrc1: 1.55,
+      sellLvPrc1: 1.35,
       sellLvPrc2: 2.55,
       sellLvQty1: 200,
       sellLvQty2: 400,
@@ -50,7 +50,7 @@ export default {
       buyLvPrc1: 0.75,
       buyLvPrc2: 1.45,
       buyLvQty1: 100,
-      buyLvQty2: 200,
+      buyLvQty2: 300,
 
       sellLvPrc1: 1.45,
       sellLvPrc2: 2.45,
