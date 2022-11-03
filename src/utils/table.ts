@@ -12,8 +12,8 @@ export const getOrderTable = (orders: OrderHistory[]) => {
     filledQty: i.filledQty,
     avgPrice: i.avgPrice,
     orderStatus: i.orderStatus,
-    timestamp: i.inputTime,
     orderType: i.orderType,
+    timestamp: i.inputTime,
   }));
 };
 
@@ -21,11 +21,12 @@ export const getAccountTable = (accounts: Account[]) => {
   return accounts.map((i) => ({
     account: i.account,
     totalAssets: i.totalAssets,
-    cashBal: i.cashBal,
-    secureAmount: i.secureAmount,
-    withdrawable: i.withdrawable,
+    purchasingPower: i.purchasingPower,
     receivingCashT1: i.receivingCashT1,
     receivingCashT2: i.receivingCashT2,
+    withdrawable: i.withdrawable,
+    secureAmount: i.secureAmount,
+    cashBal: i.cashBal,
   }));
 };
 

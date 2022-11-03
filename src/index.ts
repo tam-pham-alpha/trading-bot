@@ -13,25 +13,25 @@ import {
   getOrderTable,
   getStockPositionTable,
 } from './utils/table';
-import { getAccountBalance } from './biz/account';
-import { getStockPosition } from './biz/position';
 import { TradingSession } from './types/Market';
 import OrderFactory from './factory/OrderFactory';
 import { getLiveOrder } from './biz/order';
 import { OrderHistory, OrderMatchEvent } from './types/Order';
+import BalanceFactory from './factory/BalanceFactory';
+import PositionFactory from './factory/PositionFactory';
 
 let session: TradingSession = 'C';
 const lastPrice: Record<string, number> = {};
 const tradingInterval: Record<string, any> = {};
 
 const displayPortfolio = async () => {
-  const balance = await getAccountBalance();
+  await BalanceFactory.update();
   console.log('R: ACCOUNT');
-  console.table(getAccountTable([balance]));
+  console.table(getAccountTable([BalanceFactory.balance]));
 
-  const positions = await getStockPosition();
+  await PositionFactory.update();
   console.log('R: POSITIONS');
-  console.table(getStockPositionTable(positions));
+  console.table(getStockPositionTable(PositionFactory.positions));
 };
 
 const startNewTradingInterval = async (symbol: string) => {

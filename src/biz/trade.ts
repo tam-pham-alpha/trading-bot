@@ -1,8 +1,8 @@
 import config from '../config';
-import { OrderHistory } from '../types/Order';
+import BalanceFactory from '../factory/BalanceFactory';
+import PositionFactory from '../factory/PositionFactory';
 import { getNumber } from '../utils/number';
-import { cancelOrder, getLiveOrder, placeOrder } from './order';
-import { getStockPosition } from './position';
+import { placeOrder } from './order';
 
 export const checkTolerantLoss = (
   tolerant: number,
@@ -18,7 +18,9 @@ export const placeBatchOrder = async (
   instrument: string,
   lastPrice: number,
 ) => {
-  const positionList = await getStockPosition();
+  const positionList = PositionFactory.positions;
+  const balance = BalanceFactory.balance;
+
   const position = positionList.find((i) => i.instrumentID === instrument);
   const strategy = config.strategies.find((i) => i.symbol === instrument);
   const avgPrice = position?.avgPrice || 0;
@@ -41,6 +43,11 @@ export const placeBatchOrder = async (
           ? strategy.buyLvQty1
           : strategy.buyLvQty2;
 
+      // insufficient balance
+      if (buyPrice * qty > balance.purchasingPower) {
+        return;
+      }
+
       return placeOrder(instrument, 'B', buyPrice, qty);
     })(),
     (async () => {
@@ -58,6 +65,7 @@ export const placeBatchOrder = async (
         return;
       }
 
+      // don't sell low
       if (!checkTolerantLoss(strategy.tolerantLoss, avgPrice, sellPrice)) {
         return;
       }
@@ -65,11 +73,4 @@ export const placeBatchOrder = async (
       return placeOrder(instrument, 'S', sellPrice, qty);
     })(),
   ]);
-};
-
-export const cancelAllOrder = async (symbol: string) => {
-  const orders = (await getLiveOrder()).filter(
-    (i) => i.instrumentID === symbol,
-  );
-  return Promise.all(orders.map((i: OrderHistory) => cancelOrder(i.orderID)));
 };
