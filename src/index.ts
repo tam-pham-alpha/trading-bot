@@ -61,11 +61,6 @@ const startNewTradingInterval = async (symbol: string) => {
 };
 
 const onOrderUpdate = async (e: any, data: any) => {
-  const order: OrderHistory = data.data;
-  if (parseInt(order.modifiedTime) + 10000 < Date.now()) {
-    return;
-  }
-
   console.log('R: ORDER UPDATE');
   OrderFactory.orderUpdate([data.data]);
   console.table(getOrderTable(OrderFactory.getLiveOrders()));
