@@ -1,4 +1,4 @@
-import { checkTolerantLoss } from './trade';
+import { checkCrossProfit, checkTolerantLoss } from './trade';
 
 describe('check tolerant', () => {
   it('should return true', () => {
@@ -9,5 +9,16 @@ describe('check tolerant', () => {
     expect(checkTolerantLoss(0, 15000, 13500)).toBe(false);
     expect(checkTolerantLoss(10, 15000, 13500)).toBe(false);
     expect(checkTolerantLoss(10, 15000, 13600)).toBe(true);
+  });
+});
+
+describe('check take profit', () => {
+  it('should work', () => {
+    expect(checkCrossProfit(2.5, 15000, 14000)).toBe(false);
+    expect(checkCrossProfit(2.5, 15000, 15000)).toBe(false);
+    expect(checkCrossProfit(2.5, 15000, 15375)).toBe(false);
+    expect(checkCrossProfit(2.5, 15000, 15376)).toBe(true);
+    expect(checkCrossProfit(2.5, 15000, 16000)).toBe(true);
+    expect(checkCrossProfit(2.5, 15000, 17000)).toBe(true);
   });
 });

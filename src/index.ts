@@ -3,10 +3,10 @@ import express from 'express';
 import ssi from 'ssi-api-client';
 
 import { setAccessToken, fetch } from './utils/fetch';
-import config, { INTERVAL } from './config';
+import config, { INTERVAL, strategies } from './config';
 import apis from './biz/apis';
 
-import { placeBatchOrder } from './biz/trade';
+import { placeBatchOrder, placeTakeProfitOrder } from './biz/trade';
 import Streaming from './streaming';
 import {
   getAccountTable,
@@ -16,7 +16,7 @@ import {
 import { TradingSession } from './types/Market';
 import OrderFactory from './factory/OrderFactory';
 import { getLiveOrder } from './biz/order';
-import { OrderHistory, OrderMatchEvent } from './types/Order';
+import { OrderMatchEvent } from './types/Order';
 import BalanceFactory from './factory/BalanceFactory';
 import PositionFactory from './factory/PositionFactory';
 
@@ -51,7 +51,7 @@ const startNewTradingInterval = async (symbol: string) => {
     OrderFactory.setOrders(liveOrders);
   }
 
-  const strategy = config.strategies.find((i) => i.symbol === symbol);
+  const strategy = strategies.find((i) => i.symbol === symbol);
   if (tradingInterval[symbol]) {
     clearInterval(tradingInterval[symbol]);
   }
@@ -60,13 +60,27 @@ const startNewTradingInterval = async (symbol: string) => {
   }, strategy?.interval || INTERVAL.m30);
 };
 
+const onTrade = (symbol: string, price: number) => {
+  const tmp = lastPrice[symbol];
+  lastPrice[symbol] = price;
+
+  placeTakeProfitOrder(symbol, price);
+
+  if (!tmp) {
+    startNewTradingInterval(symbol);
+  }
+};
+
 const onOrderUpdate = async (e: any, data: any) => {
+  if (session !== 'LO') return;
+
   console.log('R: ORDER UPDATE');
   OrderFactory.orderUpdate([data.data]);
   console.table(getOrderTable(OrderFactory.getLiveOrders()));
 };
 
 const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
+  if (session !== 'LO') return;
   console.log('R: ORDER MATCH');
   const symbol = data.data.instrumentID;
 
@@ -111,7 +125,7 @@ const ssiData = rqData({
         token: token,
       });
 
-      const symbolList = config.strategies.map((i) => i.symbol).join('-');
+      const symbolList = strategies.map((i) => i.symbol).join('-');
 
       stream.connected = () => {
         stream
@@ -149,19 +163,15 @@ const ssiData = rqData({
 
         if (type === 'F') {
           session = data.TradingSession;
-          config.strategies.map((i) => {
+          strategies.map((i) => {
             startNewTradingInterval(i.symbol);
           });
         }
 
         if (type === 'X-TRADE') {
           const symbol = data.Symbol;
-          const tmp = lastPrice[symbol];
-          lastPrice[symbol] = data.LastPrice;
-
-          if (!tmp) {
-            startNewTradingInterval(symbol);
-          }
+          const price = data.LastPrice;
+          onTrade(symbol, price);
         }
       });
 

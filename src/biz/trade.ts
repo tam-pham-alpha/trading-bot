@@ -1,4 +1,4 @@
-import config from '../config';
+import { strategies } from '../config';
 import BalanceFactory from '../factory/BalanceFactory';
 import PositionFactory from '../factory/PositionFactory';
 import { getNumber } from '../utils/number';
@@ -14,6 +14,38 @@ export const checkTolerantLoss = (
   return price > acceptedPrice;
 };
 
+export const checkCrossProfit = (
+  takeProfit: number,
+  avgPrice: number,
+  price: number,
+) => {
+  if (!avgPrice) return false;
+  const acceptedPrice = (avgPrice * (100 + takeProfit)) / 100;
+  return price > acceptedPrice;
+};
+
+export const placeTakeProfitOrder = async (
+  instrument: string,
+  lastPrice: number,
+) => {
+  const positionList = PositionFactory.positions;
+  const position = positionList.find((i) => i.instrumentID === instrument);
+  const strategy = strategies.find((i) => i.symbol === instrument);
+  const avgPrice = position?.avgPrice || 0;
+  const sellQty = position?.sellableQty || 0;
+
+  if (
+    !lastPrice ||
+    !sellQty ||
+    !strategy ||
+    !checkCrossProfit(strategy.takeProfit, avgPrice, lastPrice)
+  ) {
+    return;
+  }
+
+  return await placeOrder(instrument, 'S', lastPrice, sellQty);
+};
+
 export const placeBatchOrder = async (
   instrument: string,
   lastPrice: number,
@@ -22,14 +54,10 @@ export const placeBatchOrder = async (
   const balance = BalanceFactory.balance;
 
   const position = positionList.find((i) => i.instrumentID === instrument);
-  const strategy = config.strategies.find((i) => i.symbol === instrument);
+  const strategy = strategies.find((i) => i.symbol === instrument);
   const avgPrice = position?.avgPrice || 0;
 
-  if (!strategy) return;
-
-  if (!lastPrice) {
-    throw new Error('Unable to get the current price');
-  }
+  if (!strategy || !lastPrice) return;
 
   return Promise.all([
     (async () => {

@@ -11,63 +11,160 @@ export const INTERVAL = {
   h04: m15 * 16,
 };
 
+export const strategies = [
+  {
+    symbol: 'SSI',
+    interval: INTERVAL.m45,
+
+    buyLvPrc1: 0.85,
+    buyLvPrc2: 1.55,
+    buyLvQty1: 200,
+    buyLvQty2: 400,
+
+    sellLvPrc1: 1.35,
+    sellLvPrc2: 2.55,
+    sellLvQty1: 100,
+    sellLvQty2: 200,
+
+    minQty: 100,
+    freeze: -10,
+    accumulate: -4.2,
+    takeProfit: 2.5,
+    allocation: 17,
+    tolerantLoss: 0,
+  },
+  {
+    symbol: 'HAG',
+    interval: INTERVAL.m45,
+
+    buyLvPrc1: 1.45,
+    buyLvPrc2: 1.55,
+    buyLvQty1: 400,
+    buyLvQty2: 700,
+
+    sellLvPrc1: 1.35,
+    sellLvPrc2: 2.55,
+    sellLvQty1: 200,
+    sellLvQty2: 400,
+
+    minQty: 100,
+    freeze: -10,
+    accumulate: -4.2,
+    takeProfit: 2.5,
+    allocation: 17,
+    tolerantLoss: 0,
+  },
+  {
+    symbol: 'TCB',
+    interval: INTERVAL.m45,
+
+    buyLvPrc1: 1.45,
+    buyLvPrc2: 1.45,
+    buyLvQty1: 100,
+    buyLvQty2: 300,
+
+    sellLvPrc1: 1.45,
+    sellLvPrc2: 2.45,
+    sellLvQty1: 100,
+    sellLvQty2: 200,
+
+    minQty: 100,
+    freeze: -10,
+    accumulate: -4.2,
+    takeProfit: 2.5,
+    allocation: 17,
+    tolerantLoss: 0,
+  },
+  {
+    symbol: 'FPT',
+    interval: INTERVAL.m45,
+
+    buyLvPrc1: 1.45,
+    buyLvPrc2: 1.45,
+    buyLvQty1: 100,
+    buyLvQty2: 300,
+
+    sellLvPrc1: 1.45,
+    sellLvPrc2: 2.45,
+    sellLvQty1: 100,
+    sellLvQty2: 200,
+
+    minQty: 100,
+    freeze: -10,
+    accumulate: -4.2,
+    takeProfit: 2.5,
+    allocation: 17,
+    tolerantLoss: 0,
+  },
+  {
+    symbol: 'HPG',
+    interval: INTERVAL.m45,
+
+    buyLvPrc1: 1.45,
+    buyLvPrc2: 1.45,
+    buyLvQty1: 100,
+    buyLvQty2: 300,
+
+    sellLvPrc1: 1.45,
+    sellLvPrc2: 2.45,
+    sellLvQty1: 100,
+    sellLvQty2: 200,
+
+    minQty: 100,
+    freeze: -10,
+    accumulate: -4.2,
+    takeProfit: 2.5,
+    allocation: 17,
+    tolerantLoss: 0,
+  },
+  {
+    symbol: 'MSN',
+    interval: INTERVAL.m45,
+
+    buyLvPrc1: 1.45,
+    buyLvPrc2: 1.45,
+    buyLvQty1: 100,
+    buyLvQty2: 300,
+
+    sellLvPrc1: 1.45,
+    sellLvPrc2: 2.45,
+    sellLvQty1: 100,
+    sellLvQty2: 200,
+
+    minQty: 100,
+    freeze: -10,
+    accumulate: -4.2,
+    takeProfit: 2.5,
+    allocation: 17,
+    tolerantLoss: 0,
+  },
+  {
+    symbol: 'VNM',
+    interval: INTERVAL.m45,
+
+    buyLvPrc1: 1.45,
+    buyLvPrc2: 1.45,
+    buyLvQty1: 100,
+    buyLvQty2: 300,
+
+    sellLvPrc1: 1.45,
+    sellLvPrc2: 2.45,
+    sellLvQty1: 100,
+    sellLvQty2: 200,
+
+    minQty: 100,
+    freeze: -10,
+    accumulate: -4.2,
+    takeProfit: 2.5,
+    allocation: 17,
+    tolerantLoss: 0,
+  },
+];
+
 export default {
   port: 3011,
   pinCode: '1we23rw4t',
   spotAccount: '1577921',
-  strategies: [
-    {
-      symbol: 'SSI',
-      interval: INTERVAL.m30,
-
-      buyLvPrc1: 0.75,
-      buyLvPrc2: 1.55,
-      buyLvQty1: 200,
-      buyLvQty2: 400,
-
-      sellLvPrc1: 1.35,
-      sellLvPrc2: 2.55,
-      sellLvQty1: 100,
-      sellLvQty2: 200,
-
-      minQty: 100,
-      tolerantLoss: 0,
-    },
-    {
-      symbol: 'HAG',
-      interval: INTERVAL.m20,
-
-      buyLvPrc1: 0.75,
-      buyLvPrc2: 1.55,
-      buyLvQty1: 400,
-      buyLvQty2: 700,
-
-      sellLvPrc1: 1.35,
-      sellLvPrc2: 2.55,
-      sellLvQty1: 200,
-      sellLvQty2: 400,
-
-      minQty: 100,
-      tolerantLoss: 0,
-    },
-    {
-      symbol: 'TCB',
-      interval: INTERVAL.m30,
-
-      buyLvPrc1: 0.75,
-      buyLvPrc2: 1.45,
-      buyLvQty1: 100,
-      buyLvQty2: 300,
-
-      sellLvPrc1: 1.45,
-      sellLvPrc2: 2.45,
-      sellLvQty1: 100,
-      sellLvQty2: 200,
-
-      minQty: 100,
-      tolerantLoss: 0,
-    },
-  ],
   market: {
     HubUrl: 'wss://fc-data.ssi.com.vn/v2.0/',
     ApiUrl: 'https://fc-data.ssi.com.vn/api/v2/Market/',

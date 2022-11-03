@@ -7,7 +7,7 @@ Dự kiến
 - Giả sử giá trị mỗi lệnh là 5.000.000, thì mỗi lệnh sẽ nhận được 25.000
 - Mong muốn doanh thu 10.000.000, tương ứng với 400 lệnh mỗi tháng, 20 lệnh mỗi ngày.
 - Có nghĩa là mình cần khoảng 200.000.000 mỗi tháng (để lời 5%)
-- Thêm tính năng mua giá trị trường nếu giá đạt delta% (10%) so với avgPrice
+- Thêm tính năng mua giá trị trường nếu giá đạt delta% (2.5%) so với avgPrice
 
 
 ## Todo list
