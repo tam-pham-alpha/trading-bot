@@ -39,13 +39,13 @@ export const strategies = [
 
     buyLvPrc1: 1.45,
     buyLvPrc2: 1.55,
-    buyLvQty1: 400,
-    buyLvQty2: 700,
+    buyLvQty1: 200,
+    buyLvQty2: 400,
 
     sellLvPrc1: 1.35,
     sellLvPrc2: 2.55,
-    sellLvQty1: 200,
-    sellLvQty2: 400,
+    sellLvQty1: 100,
+    sellLvQty2: 200,
 
     minQty: 100,
     freeze: -10,
@@ -82,12 +82,12 @@ export const strategies = [
     buyLvPrc1: 1.45,
     buyLvPrc2: 1.45,
     buyLvQty1: 100,
-    buyLvQty2: 300,
+    buyLvQty2: 100,
 
     sellLvPrc1: 1.45,
     sellLvPrc2: 2.45,
     sellLvQty1: 100,
-    sellLvQty2: 200,
+    sellLvQty2: 100,
 
     minQty: 100,
     freeze: -10,
@@ -102,8 +102,8 @@ export const strategies = [
 
     buyLvPrc1: 1.45,
     buyLvPrc2: 1.45,
-    buyLvQty1: 100,
-    buyLvQty2: 300,
+    buyLvQty1: 200,
+    buyLvQty2: 400,
 
     sellLvPrc1: 1.45,
     sellLvPrc2: 2.45,
@@ -124,12 +124,12 @@ export const strategies = [
     buyLvPrc1: 1.45,
     buyLvPrc2: 1.45,
     buyLvQty1: 100,
-    buyLvQty2: 300,
+    buyLvQty2: 100,
 
     sellLvPrc1: 1.45,
     sellLvPrc2: 2.45,
     sellLvQty1: 100,
-    sellLvQty2: 200,
+    sellLvQty2: 100,
 
     minQty: 100,
     freeze: -10,
@@ -145,12 +145,12 @@ export const strategies = [
     buyLvPrc1: 1.45,
     buyLvPrc2: 1.45,
     buyLvQty1: 100,
-    buyLvQty2: 300,
+    buyLvQty2: 100,
 
     sellLvPrc1: 1.45,
     sellLvPrc2: 2.45,
     sellLvQty1: 100,
-    sellLvQty2: 200,
+    sellLvQty2: 100,
 
     minQty: 100,
     freeze: -10,

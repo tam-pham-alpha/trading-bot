@@ -61,6 +61,8 @@ const startNewTradingInterval = async (symbol: string) => {
 };
 
 const onTrade = (symbol: string, price: number) => {
+  if (session !== 'LO') return;
+
   const tmp = lastPrice[symbol];
   lastPrice[symbol] = price;
 
