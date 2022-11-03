@@ -1,6 +1,12 @@
 # SSI-DCA-BOT
 
-Là bot tự động trade stock, với mục tiêu tạo ra ít nhất 5% lợi nhuận thụ động mỗi tháng.
+Là bot tự động trade stock, với mục tiêu tạo ra ít nhất 10% lợi nhuận thụ động mỗi quý.
+
+Dự kiến
+- mỗi lệnh lời: 0.5%
+- Giả sử giá trị mỗi lệnh là 5.000.000, thì mỗi lệnh sẽ nhận được 25.000
+- Mong muốn doanh thu 10.000.000, tương ứng với 400 lệnh mỗi tháng, 20 lệnh mỗi ngày.
+- Có nghĩa là mình cần khoảng 200.000.000 mỗi tháng (để lời 5%)
 
 
 ## Todo list

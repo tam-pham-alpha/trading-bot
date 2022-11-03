@@ -1,4 +1,5 @@
 export const INTERVAL = {
+  m45: 2700000, // 30 mins
   m30: 1800000, // 30 mins
   m20: 1200000, // 20 mins
   m15: 900000, // 15 mins
@@ -12,15 +13,15 @@ export default {
   strategies: [
     {
       symbol: 'SSI',
-      interval: INTERVAL.m20,
+      interval: INTERVAL.m30,
 
-      buyLvPrc1: 0.75,
+      buyLvPrc1: 0.85,
       buyLvPrc2: 1.55,
       buyLvQty1: 200,
-      buyLvQty2: 300,
+      buyLvQty2: 400,
 
-      sellLvPrc1: 1.25,
-      sellLvPrc2: 2.45,
+      sellLvPrc1: 1.55,
+      sellLvPrc2: 2.55,
       sellLvQty1: 100,
       sellLvQty2: 200,
 
@@ -30,28 +31,28 @@ export default {
       symbol: 'HAG',
       interval: INTERVAL.m20,
 
-      buyLvPrc1: 0.75,
+      buyLvPrc1: 0.85,
       buyLvPrc2: 1.55,
-      buyLvQty1: 200,
-      buyLvQty2: 300,
+      buyLvQty1: 400,
+      buyLvQty2: 800,
 
-      sellLvPrc1: 1.25,
-      sellLvPrc2: 2.45,
-      sellLvQty1: 100,
-      sellLvQty2: 200,
+      sellLvPrc1: 1.55,
+      sellLvPrc2: 2.55,
+      sellLvQty1: 200,
+      sellLvQty2: 400,
 
       tolerantLoss: 0,
     },
     {
       symbol: 'TCB',
-      interval: INTERVAL.m20,
+      interval: INTERVAL.m30,
 
       buyLvPrc1: 0.75,
-      buyLvPrc2: 1.55,
-      buyLvQty1: 200,
-      buyLvQty2: 300,
+      buyLvPrc2: 1.45,
+      buyLvQty1: 100,
+      buyLvQty2: 200,
 
-      sellLvPrc1: 1.25,
+      sellLvPrc1: 1.45,
       sellLvPrc2: 2.45,
       sellLvQty1: 100,
       sellLvQty2: 200,
