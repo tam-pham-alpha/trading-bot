@@ -16,7 +16,7 @@ export const strategies = [
     symbol: 'SSI',
     interval: INTERVAL.m45,
 
-    buyLvPrc1: 0.85,
+    buyLvPrc1: 0.95,
     buyLvPrc2: 1.55,
     buyLvQty1: 200,
     buyLvQty2: 400,
