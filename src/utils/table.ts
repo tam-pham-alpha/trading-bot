@@ -1,6 +1,8 @@
+import { strategies } from '../config';
 import { Account } from '../types/Account';
 import { OrderHistory } from '../types/Order';
 import { StockPosition } from '../types/Position';
+import { orderBy } from 'lodash';
 
 export const getOrderTable = (orders: OrderHistory[]) => {
   return orders.map((i) => ({
@@ -31,7 +33,7 @@ export const getAccountTable = (accounts: Account[]) => {
 };
 
 export const getStockPositionTable = (positions: StockPosition[]) => {
-  return positions.map((i) => ({
+  const list = positions.map((i) => ({
     symbol: i.instrumentID,
     sellableQty: i.sellableQty,
     avgPrice: i.avgPrice,
@@ -39,8 +41,10 @@ export const getStockPositionTable = (positions: StockPosition[]) => {
     buyT0: i.buyT0,
     buyT1: i.buyT1,
     buyT2: i.buyT2,
-    sellT0: i.sellT0,
-    sellT1: i.sellT1,
-    sellT2: i.sellT2,
+    total: i.total,
+    value: i.value,
+    allocation: i.allocation,
+    target: strategies.find((s) => s.symbol === i.instrumentID)?.allocation,
   }));
+  return orderBy(list, ['value'], ['desc']);
 };

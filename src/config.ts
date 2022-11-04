@@ -1,5 +1,24 @@
 const m15 = 900000;
 
+type Strategy = {
+  symbol: string;
+  interval: number;
+
+  buyLvPrc1: number;
+  buyLvPrc2: number;
+  buyLvQty1: number;
+  buyLvQty2: number;
+
+  sellLvPrc1: number;
+  sellLvPrc2: number;
+  sellLvQty1: number;
+  sellLvQty2: number;
+
+  takeProfit: number;
+  allocation: number;
+  tolerantLoss: number;
+};
+
 export const INTERVAL = {
   m10: 600000, // 10 mins
   m15: 900000, // 15 mins
@@ -11,8 +30,29 @@ export const INTERVAL = {
   h04: m15 * 16,
 };
 
-export const strategies = [
+const based: Strategy = {
+  symbol: '',
+  interval: INTERVAL.m45,
+
+  buyLvPrc1: 1.45,
+  buyLvPrc2: 1.55,
+  buyLvQty1: 200,
+  buyLvQty2: 400,
+
+  sellLvPrc1: 1.35,
+  sellLvPrc2: 2.55,
+  sellLvQty1: 100,
+  sellLvQty2: 200,
+
+  takeProfit: 2.5,
+  allocation: 10,
+  tolerantLoss: 0,
+};
+
+export const strategies: Strategy[] = [
   {
+    ...based,
+
     symbol: 'SSI',
     interval: INTERVAL.m45,
 
@@ -26,14 +66,13 @@ export const strategies = [
     sellLvQty1: 100,
     sellLvQty2: 200,
 
-    minQty: 100,
-    freeze: -10,
-    accumulate: -4.2,
     takeProfit: 2.5,
-    allocation: 17,
     tolerantLoss: 0,
+    allocation: 25,
   },
   {
+    ...based,
+
     symbol: 'HAG',
     interval: INTERVAL.m45,
 
@@ -47,14 +86,13 @@ export const strategies = [
     sellLvQty1: 100,
     sellLvQty2: 200,
 
-    minQty: 100,
-    freeze: -10,
-    accumulate: -4.2,
     takeProfit: 2.5,
-    allocation: 17,
+    allocation: 10,
     tolerantLoss: 0,
   },
   {
+    ...based,
+
     symbol: 'TCB',
     interval: INTERVAL.m45,
 
@@ -68,14 +106,13 @@ export const strategies = [
     sellLvQty1: 100,
     sellLvQty2: 200,
 
-    minQty: 100,
-    freeze: -10,
-    accumulate: -4.2,
     takeProfit: 2.5,
-    allocation: 17,
+    allocation: 25,
     tolerantLoss: 0,
   },
   {
+    ...based,
+
     symbol: 'FPT',
     interval: INTERVAL.m45,
 
@@ -89,14 +126,13 @@ export const strategies = [
     sellLvQty1: 100,
     sellLvQty2: 100,
 
-    minQty: 100,
-    freeze: -10,
-    accumulate: -4.2,
     takeProfit: 2.5,
-    allocation: 17,
+    allocation: 10,
     tolerantLoss: 0,
   },
   {
+    ...based,
+
     symbol: 'HPG',
     interval: INTERVAL.m45,
 
@@ -110,14 +146,13 @@ export const strategies = [
     sellLvQty1: 100,
     sellLvQty2: 200,
 
-    minQty: 100,
-    freeze: -10,
-    accumulate: -4.2,
     takeProfit: 2.5,
-    allocation: 17,
+    allocation: 10,
     tolerantLoss: 0,
   },
   {
+    ...based,
+
     symbol: 'MSN',
     interval: INTERVAL.m45,
 
@@ -131,14 +166,13 @@ export const strategies = [
     sellLvQty1: 100,
     sellLvQty2: 100,
 
-    minQty: 100,
-    freeze: -10,
-    accumulate: -4.2,
     takeProfit: 2.5,
-    allocation: 17,
+    allocation: 25,
     tolerantLoss: 0,
   },
   {
+    ...based,
+
     symbol: 'VNM',
     interval: INTERVAL.m45,
 
@@ -152,11 +186,8 @@ export const strategies = [
     sellLvQty1: 100,
     sellLvQty2: 100,
 
-    minQty: 100,
-    freeze: -10,
-    accumulate: -4.2,
     takeProfit: 2.5,
-    allocation: 17,
+    allocation: 25,
     tolerantLoss: 0,
   },
 ];

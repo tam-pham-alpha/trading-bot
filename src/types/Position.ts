@@ -15,4 +15,7 @@ export type StockPosition = {
   sellableQty: number;
   holdForTrade: number;
   marketPrice: number;
+  total?: number;
+  value?: number;
+  allocation?: number;
 };

@@ -56,6 +56,7 @@ export const placeBatchOrder = async (
   const position = positionList.find((i) => i.instrumentID === instrument);
   const strategy = strategies.find((i) => i.symbol === instrument);
   const avgPrice = position?.avgPrice || 0;
+  const allocation = position?.allocation || 0;
 
   if (!strategy || !lastPrice) return;
 
@@ -71,6 +72,11 @@ export const placeBatchOrder = async (
           ? strategy.buyLvQty1
           : strategy.buyLvQty2;
 
+      // dont buy more
+      if (allocation >= strategy.allocation) {
+        console.log(`R. ${instrument} reached the allocation`);
+        return;
+      }
       // insufficient balance
       if (buyPrice * qty > balance.purchasingPower) {
         return;
