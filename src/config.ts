@@ -30,8 +30,8 @@ const based: Strategy = {
   symbol: '',
   interval: INTERVAL.m45,
 
-  buyLvPrc1: 1.75,
-  buyLvPrc2: 2.25,
+  buyLvPrc1: 1.95,
+  buyLvPrc2: 2.45,
   buyLvQty1: 100,
   buyLvQty2: 100,
 
