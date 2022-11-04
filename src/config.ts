@@ -6,6 +6,7 @@ type Strategy = {
 
   buyLvPrc1: number;
   buyLvPrc2: number;
+
   buyLvQty1: number;
   buyLvQty2: number;
 
@@ -29,8 +30,8 @@ const based: Strategy = {
   symbol: '',
   interval: INTERVAL.m45,
 
-  buyLvPrc1: 1.45,
-  buyLvPrc2: 1.55,
+  buyLvPrc1: 1.75,
+  buyLvPrc2: 2.25,
   buyLvQty1: 100,
   buyLvQty2: 100,
 
@@ -46,8 +47,8 @@ export const strategies: Strategy[] = [
     symbol: 'SSI',
     interval: INTERVAL.m45,
 
-    buyLvPrc1: 0.95,
-    buyLvPrc2: 1.55,
+    buyLvPrc1: 1.45,
+    buyLvPrc2: 1.95,
     buyLvQty1: 200,
     buyLvQty2: 400,
 
@@ -61,8 +62,6 @@ export const strategies: Strategy[] = [
     symbol: 'HAG',
     interval: INTERVAL.m45,
 
-    buyLvPrc1: 1.45,
-    buyLvPrc2: 1.55,
     buyLvQty1: 200,
     buyLvQty2: 400,
 
@@ -76,8 +75,6 @@ export const strategies: Strategy[] = [
     symbol: 'TCB',
     interval: INTERVAL.m45,
 
-    buyLvPrc1: 1.45,
-    buyLvPrc2: 1.45,
     buyLvQty1: 100,
     buyLvQty2: 300,
 
@@ -91,8 +88,6 @@ export const strategies: Strategy[] = [
     symbol: 'FPT',
     interval: INTERVAL.m45,
 
-    buyLvPrc1: 1.45,
-    buyLvPrc2: 1.45,
     buyLvQty1: 100,
     buyLvQty2: 100,
 
@@ -106,8 +101,6 @@ export const strategies: Strategy[] = [
     symbol: 'HPG',
     interval: INTERVAL.m45,
 
-    buyLvPrc1: 1.45,
-    buyLvPrc2: 1.45,
     buyLvQty1: 200,
     buyLvQty2: 400,
 
@@ -121,8 +114,6 @@ export const strategies: Strategy[] = [
     symbol: 'MSN',
     interval: INTERVAL.m45,
 
-    buyLvPrc1: 1.45,
-    buyLvPrc2: 1.45,
     buyLvQty1: 100,
     buyLvQty2: 100,
 
@@ -136,8 +127,6 @@ export const strategies: Strategy[] = [
     symbol: 'VNM',
     interval: INTERVAL.m45,
 
-    buyLvPrc1: 1.45,
-    buyLvPrc2: 1.45,
     buyLvQty1: 100,
     buyLvQty2: 100,
 
@@ -149,11 +138,13 @@ export const strategies: Strategy[] = [
     ...based,
     symbol: 'VHC',
     interval: INTERVAL.m45,
+    buyLvPrc1: 1.45,
   },
   {
     ...based,
     symbol: 'REE',
     interval: INTERVAL.m45,
+    buyLvPrc1: 1.45,
   },
 ];
 
