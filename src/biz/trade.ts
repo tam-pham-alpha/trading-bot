@@ -40,7 +40,6 @@ export const placeTakeProfitOrder = async (
     !strategy ||
     !checkCrossProfit(strategy.takeProfit, avgPrice, lastPrice)
   ) {
-    console.log(`ERROR ${instrument}: Place Take Profit Order`);
     return;
   }
 
