@@ -31,11 +31,11 @@ const based: Strategy = {
 
   buyLvPrc1: 1.45,
   buyLvPrc2: 1.55,
-  buyLvQty1: 200,
-  buyLvQty2: 400,
+  buyLvQty1: 100,
+  buyLvQty2: 100,
 
   takeProfit: 2.5,
-  allocation: 10,
+  allocation: 7,
   tolerantLoss: 0,
 };
 
@@ -144,6 +144,16 @@ export const strategies: Strategy[] = [
     takeProfit: 2.5,
     allocation: 25,
     tolerantLoss: 0,
+  },
+  {
+    ...based,
+    symbol: 'VHC',
+    interval: INTERVAL.m45,
+  },
+  {
+    ...based,
+    symbol: 'REE',
+    interval: INTERVAL.m45,
   },
 ];
 
