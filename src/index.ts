@@ -21,6 +21,7 @@ import BalanceFactory from './factory/BalanceFactory';
 import PositionFactory from './factory/PositionFactory';
 
 let session: TradingSession = 'C';
+let SYS_READY = false;
 const lastPrice: Record<string, number> = {};
 const tradingInterval: Record<string, any> = {};
 
@@ -32,6 +33,8 @@ const displayPortfolio = async () => {
   await PositionFactory.update();
   console.log('R: POSITIONS');
   console.table(getStockPositionTable(PositionFactory.positions));
+
+  SYS_READY = true;
 };
 
 const startNewTradingInterval = async (symbol: string) => {
@@ -61,7 +64,7 @@ const startNewTradingInterval = async (symbol: string) => {
 };
 
 const onTrade = (symbol: string, price: number) => {
-  if (session !== 'LO') return;
+  if (session !== 'LO' || !SYS_READY) return;
 
   const tmp = lastPrice[symbol];
   lastPrice[symbol] = price;
