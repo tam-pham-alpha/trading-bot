@@ -40,6 +40,7 @@ export const placeTakeProfitOrder = async (
     !strategy ||
     !checkCrossProfit(strategy.takeProfit, avgPrice, lastPrice)
   ) {
+    console.log(`ERROR ${instrument}: Place Take Profit Order`);
     return;
   }
 
@@ -66,11 +67,12 @@ export const placeBatchOrder = async (
 
   // don't buy more
   if (allocation >= strategy.allocation) {
-    console.log(`R. ${instrument} reached the allocation`);
+    console.log(`ERROR ${instrument}: reached the allocation`);
     return;
   }
   // insufficient balance
   if (buyPrice * qty > balance.purchasingPower) {
+    console.log(`ERROR ${instrument}: insufficient balance`);
     return;
   }
 
