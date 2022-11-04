@@ -60,51 +60,19 @@ export const placeBatchOrder = async (
 
   if (!strategy || !lastPrice) return;
 
-  return Promise.all([
-    (async () => {
-      const buyPrice = getNumber(
-        (lastPrice * (100 - strategy.buyLvPrc1)) / 100,
-        2,
-      );
+  const buyPrice = getNumber((lastPrice * (100 - strategy.buyLvPrc1)) / 100, 2);
+  const qty =
+    !avgPrice || avgPrice < buyPrice ? strategy.buyLvQty1 : strategy.buyLvQty2;
 
-      const qty =
-        !avgPrice || avgPrice < buyPrice
-          ? strategy.buyLvQty1
-          : strategy.buyLvQty2;
+  // don't buy more
+  if (allocation >= strategy.allocation) {
+    console.log(`R. ${instrument} reached the allocation`);
+    return;
+  }
+  // insufficient balance
+  if (buyPrice * qty > balance.purchasingPower) {
+    return;
+  }
 
-      // dont buy more
-      if (allocation >= strategy.allocation) {
-        console.log(`R. ${instrument} reached the allocation`);
-        return;
-      }
-      // insufficient balance
-      if (buyPrice * qty > balance.purchasingPower) {
-        return;
-      }
-
-      return placeOrder(instrument, 'B', buyPrice, qty);
-    })(),
-    (async () => {
-      const sellPrice = getNumber(
-        (lastPrice * (100 + strategy.sellLvPrc1)) / 100,
-        2,
-      );
-
-      const qty =
-        !avgPrice || avgPrice > sellPrice
-          ? strategy.sellLvQty1
-          : strategy.sellLvQty2;
-
-      if ((position?.sellableQty || 0) < qty) {
-        return;
-      }
-
-      // don't sell low
-      if (!checkTolerantLoss(strategy.tolerantLoss, avgPrice, sellPrice)) {
-        return;
-      }
-
-      return placeOrder(instrument, 'S', sellPrice, qty);
-    })(),
-  ]);
+  return placeOrder(instrument, 'B', buyPrice, qty);
 };
