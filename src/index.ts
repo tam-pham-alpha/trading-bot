@@ -175,6 +175,12 @@ const ssiData = rqData({
           const price = data.LastPrice;
           onTrade(symbol, price);
         }
+
+        if (type === 'X-QUOTE') {
+          const symbol = data.Symbol;
+          const price = data.BidPrice1;
+          onTrade(symbol, price);
+        }
       });
 
       stream.subscribe('FcMarketDataV2Hub', 'Reconnected', (message: any) => {
