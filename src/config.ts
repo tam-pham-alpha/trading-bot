@@ -66,7 +66,7 @@ export const strategies: Strategy[] = [
     buyLvQty2: 400,
 
     takeProfit: 2.5,
-    allocation: 10,
+    allocation: 1,
     tolerantLoss: 0,
   },
   {
@@ -92,7 +92,7 @@ export const strategies: Strategy[] = [
     buyLvQty2: 100,
 
     takeProfit: 2.5,
-    allocation: 10,
+    allocation: 1,
     tolerantLoss: 0,
   },
   {
@@ -144,11 +144,31 @@ export const strategies: Strategy[] = [
     ...based,
     symbol: 'REE',
     interval: INTERVAL.m45,
-    buyLvPrc1: 1.45,
+    allocation: 1,
   },
   {
     ...based,
     symbol: 'BID',
+    interval: INTERVAL.m45,
+    buyLvPrc1: 1.45,
+  },
+  {
+    ...based,
+    symbol: 'PLX',
+    interval: INTERVAL.m45,
+    buyLvPrc1: 1.45,
+    buyLvQty1: 100,
+    buyLvQty2: 100,
+  },
+  {
+    ...based,
+    symbol: 'VIC',
+    interval: INTERVAL.m45,
+    buyLvPrc1: 1.45,
+  },
+  {
+    ...based,
+    symbol: 'VJC',
     interval: INTERVAL.m45,
     buyLvPrc1: 1.45,
   },
