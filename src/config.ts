@@ -79,7 +79,7 @@ export const strategies: Strategy[] = [
     buyLvQty2: 300,
 
     takeProfit: 2.5,
-    allocation: 25,
+    allocation: 10,
     tolerantLoss: 0,
   },
   {
@@ -143,6 +143,12 @@ export const strategies: Strategy[] = [
   {
     ...based,
     symbol: 'REE',
+    interval: INTERVAL.m45,
+    buyLvPrc1: 1.45,
+  },
+  {
+    ...based,
+    symbol: 'BID',
     interval: INTERVAL.m45,
     buyLvPrc1: 1.45,
   },
