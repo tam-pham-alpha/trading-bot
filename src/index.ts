@@ -85,7 +85,14 @@ const onOrderUpdate = async (e: any, data: any) => {
 };
 
 const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
+  // ignore old events
+  const matchTime = data.data.matchTime;
+  if (parseInt(matchTime) + 120000 < Date.now()) {
+    return;
+  }
+
   if (session !== 'LO') return;
+
   console.log('R: ORDER MATCH');
   const symbol = data.data.instrumentID;
 
