@@ -9,11 +9,6 @@ type Strategy = {
   buyLvQty1: number;
   buyLvQty2: number;
 
-  sellLvPrc1: number;
-  sellLvPrc2: number;
-  sellLvQty1: number;
-  sellLvQty2: number;
-
   takeProfit: number;
   allocation: number;
   tolerantLoss: number;
@@ -39,11 +34,6 @@ const based: Strategy = {
   buyLvQty1: 200,
   buyLvQty2: 400,
 
-  sellLvPrc1: 1.35,
-  sellLvPrc2: 2.55,
-  sellLvQty1: 100,
-  sellLvQty2: 200,
-
   takeProfit: 2.5,
   allocation: 10,
   tolerantLoss: 0,
@@ -61,11 +51,6 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 400,
 
-    sellLvPrc1: 1.35,
-    sellLvPrc2: 2.55,
-    sellLvQty1: 100,
-    sellLvQty2: 200,
-
     takeProfit: 2.5,
     tolerantLoss: 0,
     allocation: 25,
@@ -80,11 +65,6 @@ export const strategies: Strategy[] = [
     buyLvPrc2: 1.55,
     buyLvQty1: 200,
     buyLvQty2: 400,
-
-    sellLvPrc1: 1.35,
-    sellLvPrc2: 2.55,
-    sellLvQty1: 100,
-    sellLvQty2: 200,
 
     takeProfit: 2.5,
     allocation: 10,
@@ -101,11 +81,6 @@ export const strategies: Strategy[] = [
     buyLvQty1: 100,
     buyLvQty2: 300,
 
-    sellLvPrc1: 1.45,
-    sellLvPrc2: 2.45,
-    sellLvQty1: 100,
-    sellLvQty2: 200,
-
     takeProfit: 2.5,
     allocation: 25,
     tolerantLoss: 0,
@@ -120,11 +95,6 @@ export const strategies: Strategy[] = [
     buyLvPrc2: 1.45,
     buyLvQty1: 100,
     buyLvQty2: 100,
-
-    sellLvPrc1: 1.45,
-    sellLvPrc2: 2.45,
-    sellLvQty1: 100,
-    sellLvQty2: 100,
 
     takeProfit: 2.5,
     allocation: 10,
@@ -141,11 +111,6 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 400,
 
-    sellLvPrc1: 1.45,
-    sellLvPrc2: 2.45,
-    sellLvQty1: 100,
-    sellLvQty2: 200,
-
     takeProfit: 2.5,
     allocation: 10,
     tolerantLoss: 0,
@@ -161,11 +126,6 @@ export const strategies: Strategy[] = [
     buyLvQty1: 100,
     buyLvQty2: 100,
 
-    sellLvPrc1: 1.45,
-    sellLvPrc2: 2.45,
-    sellLvQty1: 100,
-    sellLvQty2: 100,
-
     takeProfit: 2.5,
     allocation: 25,
     tolerantLoss: 0,
@@ -180,11 +140,6 @@ export const strategies: Strategy[] = [
     buyLvPrc2: 1.45,
     buyLvQty1: 100,
     buyLvQty2: 100,
-
-    sellLvPrc1: 1.45,
-    sellLvPrc2: 2.45,
-    sellLvQty1: 100,
-    sellLvQty2: 100,
 
     takeProfit: 2.5,
     allocation: 25,

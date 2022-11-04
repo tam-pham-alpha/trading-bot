@@ -24,9 +24,9 @@ export const getAccountTable = (accounts: Account[]) => {
     account: i.account,
     totalAssets: i.totalAssets,
     purchasingPower: i.purchasingPower,
+    withdrawable: i.withdrawable,
     receivingCashT1: i.receivingCashT1,
     receivingCashT2: i.receivingCashT2,
-    withdrawable: i.withdrawable,
     secureAmount: i.secureAmount,
     cashBal: i.cashBal,
   }));
