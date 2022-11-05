@@ -9,6 +9,8 @@ Dự kiến
 - Có nghĩa là mình cần khoảng 200.000.000 mỗi tháng (để lời 5%)
 - Thêm tính năng mua giá trị trường nếu giá đạt delta% (2.5%) so với avgPrice
 - Fix connection abort issue
+- Apply ticksize
+- Get ceiling + floor prices (GetDailyIndex, GetStockPrice)
 
 
 ## Todo list

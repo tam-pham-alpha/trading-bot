@@ -1,9 +1,9 @@
 // @ts-nocheck
-
 import client from 'ssi-api-client';
 import rn from 'random-number';
-import { fetch } from '../utils/fetch';
 
+import { fetch } from '../utils/fetch';
+import { dataFetch } from '../utils/dataFetch';
 import config from '../config';
 import { deri, spot } from '../mock';
 
@@ -18,6 +18,62 @@ const parseBool = (str: string) => {
 };
 
 export default function (app: any, access_token: string) {
+  app.get('/getStockDetails', (req, res) => {
+    const lookupRequest = {
+      market: '',
+      symbol: 'SSI',
+      pageIndex: 1,
+      pageSize: 1000,
+    };
+
+    return dataFetch({
+      url:
+        config.market.ApiUrl +
+        'SecuritiesDetails' +
+        '?lookupRequest.market=' +
+        lookupRequest.market +
+        '&lookupRequest.pageIndex=' +
+        lookupRequest.pageIndex +
+        '&lookupRequest.pageSize=' +
+        lookupRequest.pageSize +
+        '&lookupRequest.symbol=' +
+        lookupRequest.symbol,
+    }).then((response) => {
+      res.send(JSON.parse(JSON.stringify(response.data)));
+    });
+  });
+
+  app.get('/getDailyStockPrice', (req, res) => {
+    const lookupRequest = {
+      symbol: 'SSI',
+      market: '',
+      fromDate: '04/11/2022',
+      toDate: '04/11/2022',
+      pageIndex: 1,
+      pageSize: 1000,
+    };
+
+    return dataFetch({
+      url:
+        config.market.ApiUrl +
+        'DailyStockPrice' +
+        '?lookupRequest.symbol=' +
+        lookupRequest.symbol +
+        '&lookupRequest.fromDate=' +
+        lookupRequest.fromDate +
+        '&lookupRequest.toDate=' +
+        lookupRequest.toDate +
+        '&lookupRequest.pageIndex=' +
+        lookupRequest.pageIndex +
+        '&lookupRequest.pageSize=' +
+        lookupRequest.pageSize +
+        '&lookupRequest.market=' +
+        lookupRequest.market,
+    }).then((response) => {
+      res.send(JSON.parse(JSON.stringify(response.data)));
+    });
+  });
+
   app.get('/getOtp', (req, res) => {
     const request = {
       consumerID: config.trading.ConsumerID,

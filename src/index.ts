@@ -1,4 +1,3 @@
-import axios from 'axios';
 import express from 'express';
 import ssi from 'ssi-api-client';
 
@@ -20,6 +19,7 @@ import { getLiveOrder } from './biz/order';
 import { OrderMatchEvent } from './types/Order';
 import BalanceFactory from './factory/BalanceFactory';
 import PositionFactory from './factory/PositionFactory';
+import { dataFetch, setDataAccessToken } from './utils/dataFetch';
 
 let session: TradingSession = 'C';
 let SYS_READY = false;
@@ -81,6 +81,11 @@ const onTrade = (symbol: string, price: number) => {
 };
 
 const onOrderUpdate = async (e: any, data: any) => {
+  // ignore old events
+  const matchTime = data.data.matchTime;
+  if (parseInt(matchTime) + INTERVAL.h04 < Date.now()) {
+    return;
+  }
   if (session !== 'LO') return;
 
   console.log('R: ORDER UPDATE');
@@ -91,10 +96,9 @@ const onOrderUpdate = async (e: any, data: any) => {
 const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
   // ignore old events
   const matchTime = data.data.matchTime;
-  if (parseInt(matchTime) + 120000 < Date.now()) {
+  if (parseInt(matchTime) + INTERVAL.m10 < Date.now()) {
     return;
   }
-
   if (session !== 'LO') return;
 
   console.log('R: ORDER MATCH');
@@ -114,13 +118,7 @@ app.listen(config.port, 'localhost', () =>
   console.log(`Example app listening on port ${config.port}!`),
 );
 
-// SSI Market Data
-const rqData = axios.create({
-  baseURL: config.market.ApiUrl,
-  timeout: 5000,
-});
-
-const ssiData = rqData({
+const ssiData = dataFetch({
   url: config.market.ApiUrl + 'AccessToken',
   method: 'post',
   data: {
@@ -130,11 +128,9 @@ const ssiData = rqData({
 }).then(
   (resp) => {
     if (resp.data.status === 200) {
-      const token = 'Bearer ' + resp.data.data.accessToken;
-      axios.interceptors.request.use((axios_config: any) => {
-        axios_config.headers.Authorization = token;
-        return axios_config;
-      });
+      const access_token = resp.data.data.accessToken;
+      const token = 'Bearer ' + access_token;
+      setDataAccessToken(access_token);
 
       const stream = new Streaming({
         url: config.market.HubUrl,
