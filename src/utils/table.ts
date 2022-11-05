@@ -1,4 +1,4 @@
-import { strategies } from '../config';
+import { strategies, Strategy } from '../config';
 import { Account } from '../types/Account';
 import { OrderHistory } from '../types/Order';
 import { StockPosition } from '../types/Position';
@@ -33,18 +33,29 @@ export const getAccountTable = (accounts: Account[]) => {
 };
 
 export const getStockPositionTable = (positions: StockPosition[]) => {
-  const list = positions.map((i) => ({
-    symbol: i.instrumentID,
-    sellableQty: i.sellableQty,
-    avgPrice: i.avgPrice,
-    marketPrice: i.marketPrice,
-    buyT0: i.buyT0,
-    buyT1: i.buyT1,
-    buyT2: i.buyT2,
-    total: i.total,
-    value: i.value,
-    allocation: i.allocation,
-    target: strategies.find((s) => s.symbol === i.instrumentID)?.allocation,
-  }));
-  return orderBy(list, ['value'], ['desc']);
+  const list = positions.map((i) => {
+    const target =
+      strategies.find((s) => s.symbol === i.instrumentID)?.allocation || 0;
+
+    return {
+      symbol: i.instrumentID,
+      sellableQty: i.sellableQty,
+      avgPrice: i.avgPrice,
+      marketPrice: i.marketPrice,
+      buyT0: i.buyT0,
+      buyT1: i.buyT1,
+      buyT2: i.buyT2,
+      total: i.total,
+      value: i.value,
+      allocation: i.allocation,
+      target,
+      buying: (i.allocation || 0) <= target,
+    };
+  });
+
+  return orderBy(list, ['buying', 'value'], ['desc', 'desc']);
+};
+
+export const getStrategyTable = (strategies: Strategy[]) => {
+  return orderBy(strategies, ['allocation', 'buyLvPrc1'], ['desc', 'asc']);
 };

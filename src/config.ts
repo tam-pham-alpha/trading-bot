@@ -1,6 +1,6 @@
 const m15 = 900000;
 
-type Strategy = {
+export type Strategy = {
   symbol: string;
   interval: number;
 
@@ -35,122 +35,94 @@ const based: Strategy = {
   buyLvQty1: 100,
   buyLvQty2: 100,
 
-  takeProfit: 2.5,
-  allocation: 7,
+  takeProfit: 2.55,
+  allocation: 5,
   tolerantLoss: 0,
 };
 
 export const strategies: Strategy[] = [
   {
     ...based,
-
     symbol: 'SSI',
     interval: INTERVAL.m45,
-
     buyLvPrc1: 1.45,
     buyLvPrc2: 1.95,
     buyLvQty1: 200,
     buyLvQty2: 400,
-
-    takeProfit: 2.5,
-    tolerantLoss: 0,
     allocation: 25,
   },
   {
     ...based,
-
     symbol: 'HAG',
     interval: INTERVAL.m45,
-
     buyLvQty1: 200,
     buyLvQty2: 400,
-
-    takeProfit: 2.5,
     allocation: 1,
-    tolerantLoss: 0,
   },
   {
     ...based,
-
     symbol: 'TCB',
     interval: INTERVAL.m45,
-
     buyLvQty1: 100,
     buyLvQty2: 300,
-
-    takeProfit: 2.5,
-    allocation: 30,
-    tolerantLoss: 0,
+    allocation: 15,
   },
   {
     ...based,
-
     symbol: 'FPT',
     interval: INTERVAL.m45,
-
     buyLvQty1: 100,
     buyLvQty2: 100,
-
-    takeProfit: 2.5,
     allocation: 1,
-    tolerantLoss: 0,
   },
   {
     ...based,
-
     symbol: 'HPG',
     interval: INTERVAL.m45,
-
     buyLvQty1: 200,
     buyLvQty2: 400,
-
-    takeProfit: 2.5,
     allocation: 10,
-    tolerantLoss: 0,
   },
   {
     ...based,
-
     symbol: 'MSN',
     interval: INTERVAL.m45,
-
     buyLvQty1: 100,
     buyLvQty2: 100,
-
-    takeProfit: 2.5,
     allocation: 25,
-    tolerantLoss: 0,
   },
   {
     ...based,
-
     symbol: 'VNM',
     interval: INTERVAL.m45,
-
     buyLvQty1: 100,
     buyLvQty2: 100,
-
-    takeProfit: 2.5,
     allocation: 25,
-    tolerantLoss: 0,
   },
   {
     ...based,
     symbol: 'VHC',
     interval: INTERVAL.m45,
     buyLvPrc1: 1.45,
+    buyLvQty1: 100,
+    buyLvQty2: 100,
   },
   {
     ...based,
     symbol: 'REE',
     interval: INTERVAL.m45,
     allocation: 1,
+    buyLvQty1: 100,
+    buyLvQty2: 100,
   },
   {
     ...based,
     symbol: 'BID',
     interval: INTERVAL.m45,
     buyLvPrc1: 1.45,
+    buyLvQty1: 100,
+    buyLvQty2: 100,
+    allocation: 25,
   },
   {
     ...based,
@@ -165,12 +137,16 @@ export const strategies: Strategy[] = [
     symbol: 'VIC',
     interval: INTERVAL.m45,
     buyLvPrc1: 1.45,
+    buyLvQty1: 100,
+    buyLvQty2: 100,
   },
   {
     ...based,
     symbol: 'VJC',
     interval: INTERVAL.m45,
     buyLvPrc1: 1.45,
+    buyLvQty1: 100,
+    buyLvQty2: 100,
   },
 ];
 

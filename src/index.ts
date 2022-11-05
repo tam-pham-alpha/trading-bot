@@ -12,6 +12,7 @@ import {
   getAccountTable,
   getOrderTable,
   getStockPositionTable,
+  getStrategyTable,
 } from './utils/table';
 import { TradingSession } from './types/Market';
 import OrderFactory from './factory/OrderFactory';
@@ -26,6 +27,9 @@ const lastPrice: Record<string, number> = {};
 const tradingInterval: Record<string, any> = {};
 
 const displayPortfolio = async () => {
+  console.log('R. STRATEGY');
+  console.table(getStrategyTable(strategies));
+
   await BalanceFactory.update();
   console.log('R: ACCOUNT');
   console.table(getAccountTable([BalanceFactory.balance]));
