@@ -164,6 +164,33 @@ export const strategies: Strategy[] = [
     buyLvQty1: 300,
     buyLvQty2: 500,
   },
+  {
+    ...based,
+    symbol: 'MBB',
+    interval: INTERVAL.m45,
+    buyLvPrc1: 1.45,
+    buyLvQty1: 300,
+    buyLvQty2: 300,
+    allocation: 1,
+  },
+  {
+    ...based,
+    symbol: 'CTG',
+    interval: INTERVAL.m45,
+    buyLvPrc1: 1.45,
+    buyLvQty1: 200,
+    buyLvQty2: 200,
+    allocation: 1,
+  },
+  {
+    ...based,
+    symbol: 'DCM',
+    interval: INTERVAL.m45,
+    buyLvPrc1: 1.45,
+    buyLvQty1: 200,
+    buyLvQty2: 200,
+    allocation: 1,
+  },
 ];
 
 export default {

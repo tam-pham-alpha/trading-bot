@@ -36,12 +36,16 @@ export const getStockPositionTable = (positions: StockPosition[]) => {
   const list = positions.map((i) => {
     const target =
       strategies.find((s) => s.symbol === i.instrumentID)?.allocation || 0;
+    const pnl = i.marketPrice
+      ? Math.round(((i.avgPrice - i.marketPrice) / i.marketPrice) * 10000) / 100
+      : 0;
 
     return {
       symbol: i.instrumentID,
-      sellableQty: i.sellableQty,
       avgPrice: i.avgPrice,
       marketPrice: i.marketPrice,
+      pnl,
+      sellableQty: i.sellableQty,
       buyT0: i.buyT0,
       buyT1: i.buyT1,
       buyT2: i.buyT2,
