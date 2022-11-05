@@ -30,7 +30,7 @@ const based: Strategy = {
   symbol: '',
   interval: INTERVAL.m45,
 
-  buyLvPrc1: 1.95,
+  buyLvPrc1: 1.45,
   buyLvPrc2: 2.45,
   buyLvQty1: 100,
   buyLvQty2: 100,
@@ -147,6 +147,22 @@ export const strategies: Strategy[] = [
     buyLvPrc1: 1.45,
     buyLvQty1: 100,
     buyLvQty2: 100,
+  },
+  {
+    ...based,
+    symbol: 'VCB',
+    interval: INTERVAL.m45,
+    buyLvPrc1: 1.45,
+    buyLvQty1: 100,
+    buyLvQty2: 100,
+  },
+  {
+    ...based,
+    symbol: 'DGC',
+    interval: INTERVAL.m45,
+    buyLvPrc1: 1.45,
+    buyLvQty1: 300,
+    buyLvQty2: 500,
   },
 ];
 
