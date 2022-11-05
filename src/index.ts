@@ -174,7 +174,7 @@ const ssiData = dataFetch({
         const data = JSON.parse(resp.Content);
 
         if (type === 'F') {
-          session = data.TradingSession;
+          session = data.TradingSession as TradingSession;
           strategies.map((i) => {
             startNewTradingInterval(i.symbol);
           });
