@@ -75,5 +75,5 @@ export const placeBatchOrder = async (
     return;
   }
 
-  return placeOrder(instrument, 'B', buyPrice, qty);
+  return await placeOrder(instrument, 'B', buyPrice, qty);
 };

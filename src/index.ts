@@ -46,16 +46,15 @@ const startNewTradingInterval = async (symbol: string) => {
 
   if (session === 'LO' && lastPrice[symbol]) {
     console.log('A: CANCEL ALL ORDERS');
-    OrderFactory.cancelOrdersBySymbol(symbol);
+    await OrderFactory.cancelOrdersBySymbol(symbol);
 
     console.log('A: PLACE ORDERS', lastPrice[symbol]);
     await placeBatchOrder(symbol, lastPrice[symbol]);
 
-    console.log('R: LIVE ORDERS');
-    console.table(getOrderTable(OrderFactory.getLiveOrders()));
-
     const liveOrders = await getLiveOrder();
     OrderFactory.setOrders(liveOrders);
+    console.log('R: LIVE ORDERS');
+    console.table(getOrderTable(OrderFactory.getLiveOrders()));
   }
 
   const strategy = strategies.find((i) => i.symbol === symbol);
