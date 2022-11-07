@@ -36,7 +36,7 @@ const based: Strategy = {
   buyLvQty2: 100,
 
   takeProfit: 2.55,
-  allocation: 5,
+  allocation: 7,
   tolerantLoss: 0,
 };
 
@@ -113,7 +113,7 @@ export const strategies: Strategy[] = [
     interval: INTERVAL.m45,
     buyLvQty1: 100,
     buyLvQty2: 100,
-    allocation: 5,
+    allocation: 10,
   },
   {
     ...based,

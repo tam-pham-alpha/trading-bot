@@ -57,7 +57,7 @@ export const getStockPositionTable = (positions: StockPosition[]) => {
     };
   });
 
-  return orderBy(list, ['buying', 'value'], ['desc', 'desc']);
+  return orderBy(list, ['allocation', 'target'], ['desc', 'desc']);
 };
 
 export const getStrategyTable = (strategies: Strategy[]) => {

@@ -20,6 +20,7 @@ import { OrderMatchEvent } from './types/Order';
 import BalanceFactory from './factory/BalanceFactory';
 import PositionFactory from './factory/PositionFactory';
 import { dataFetch, setDataAccessToken } from './utils/dataFetch';
+import { wait } from './utils/time';
 
 let session: TradingSession = 'C';
 let SYS_READY = false;
@@ -36,25 +37,34 @@ const displayPortfolio = async () => {
 
   await PositionFactory.update();
   console.log('R: POSITIONS');
-  console.table(getStockPositionTable(PositionFactory.positions));
+  const positionList = getStockPositionTable(PositionFactory.positions);
+  const buyingList = positionList.filter((i) => i.buying).map((i) => i.symbol);
+  console.table(positionList);
+  console.log(`R. BUYING (${buyingList.length}):`, buyingList.join(', '));
 
   SYS_READY = true;
 };
 
-const startNewTradingInterval = async (symbol: string) => {
-  console.log('A: NEW TRADING SESSION', symbol, session, lastPrice[symbol]);
+const displayLiveOrders = async () => {
+  const liveOrders = await getLiveOrder();
+  OrderFactory.setOrders(liveOrders);
+  console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
+  console.table(getOrderTable(OrderFactory.getLiveOrders()));
+};
 
+const startNewTradingInterval = async (symbol: string) => {
   if (session === 'LO' && lastPrice[symbol]) {
+    console.log('A: NEW TRADING SESSION', symbol, session, lastPrice[symbol]);
+
     console.log('A: CANCEL ALL ORDERS');
     await OrderFactory.cancelOrdersBySymbol(symbol);
 
+    await wait(5000);
     console.log('A: PLACE ORDERS', lastPrice[symbol]);
     await placeBatchOrder(symbol, lastPrice[symbol]);
 
-    const liveOrders = await getLiveOrder();
-    OrderFactory.setOrders(liveOrders);
-    console.log('R: LIVE ORDERS');
-    console.table(getOrderTable(OrderFactory.getLiveOrders()));
+    await wait(5000);
+    await displayLiveOrders();
   }
 
   const strategy = strategies.find((i) => i.symbol === symbol);
@@ -80,35 +90,36 @@ const onTrade = (symbol: string, price: number) => {
 };
 
 const onOrderUpdate = async (e: any, data: any) => {
+  if (session !== 'LO') return;
+
   // ignore old events
   const matchTime = data.data.matchTime;
   if (parseInt(matchTime) + INTERVAL.h04 < Date.now()) {
     return;
   }
-  if (session !== 'LO') return;
 
-  console.log('R: ORDER UPDATE');
   OrderFactory.orderUpdate([data.data]);
+  console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders()})`);
   console.table(getOrderTable(OrderFactory.getLiveOrders()));
 };
 
 const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
+  if (session !== 'LO') return;
+
   // ignore old events
   const matchTime = data.data.matchTime;
   if (parseInt(matchTime) + INTERVAL.m10 < Date.now()) {
     return;
   }
-  if (session !== 'LO') return;
 
   console.log('R: ORDER MATCH');
   const symbol = data.data.instrumentID;
+  lastPrice[symbol] = data.data.matchPrice;
 
-  displayPortfolio();
+  await wait(5000);
+  await displayPortfolio();
 
-  const liveOrders = await getLiveOrder();
-  OrderFactory.setOrders(liveOrders);
-  console.table(getOrderTable(OrderFactory.getLiveOrders()));
-
+  await wait(5000);
   startNewTradingInterval(symbol);
 };
 
@@ -255,9 +266,9 @@ const ssiTrading = fetch({
         // console.log('onOrderError', JSON.stringify(data));
       });
 
-      // ssi.bind(ssi.events.onClientPortfolioEvent, function (e: any, data: any) {
-      //   console.log('onClientPortfolioEvent', JSON.stringify(data));
-      // });
+      ssi.bind(ssi.events.onClientPortfolioEvent, function (e: any, data: any) {
+        console.log('onClientPortfolioEvent', data);
+      });
 
       ssi.start();
     } else {
