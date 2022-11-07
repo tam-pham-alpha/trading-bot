@@ -49,7 +49,7 @@ export const strategies: Strategy[] = [
     buyLvPrc2: 1.95,
     buyLvQty1: 200,
     buyLvQty2: 400,
-    allocation: 25,
+    allocation: 15,
   },
   {
     ...based,
@@ -65,7 +65,7 @@ export const strategies: Strategy[] = [
     interval: INTERVAL.m45,
     buyLvQty1: 100,
     buyLvQty2: 300,
-    allocation: 24,
+    allocation: 15,
   },
   {
     ...based,
@@ -73,7 +73,7 @@ export const strategies: Strategy[] = [
     interval: INTERVAL.m45,
     buyLvQty1: 100,
     buyLvQty2: 100,
-    allocation: 1,
+    allocation: 5,
   },
   {
     ...based,
@@ -81,7 +81,7 @@ export const strategies: Strategy[] = [
     interval: INTERVAL.m45,
     buyLvQty1: 200,
     buyLvQty2: 400,
-    allocation: 10,
+    allocation: 5,
   },
   {
     ...based,
@@ -111,9 +111,9 @@ export const strategies: Strategy[] = [
     ...based,
     symbol: 'REE',
     interval: INTERVAL.m45,
-    allocation: 1,
     buyLvQty1: 100,
     buyLvQty2: 100,
+    allocation: 5,
   },
   {
     ...based,
@@ -126,27 +126,12 @@ export const strategies: Strategy[] = [
   },
   {
     ...based,
-    symbol: 'PLX',
-    interval: INTERVAL.m45,
-    buyLvPrc1: 1.45,
-    buyLvQty1: 100,
-    buyLvQty2: 100,
-  },
-  {
-    ...based,
-    symbol: 'VIC',
-    interval: INTERVAL.m45,
-    buyLvPrc1: 1.45,
-    buyLvQty1: 100,
-    buyLvQty2: 100,
-  },
-  {
-    ...based,
     symbol: 'VJC',
     interval: INTERVAL.m45,
     buyLvPrc1: 1.45,
     buyLvQty1: 100,
     buyLvQty2: 100,
+    allocation: 5,
   },
   {
     ...based,
@@ -163,6 +148,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: 1.45,
     buyLvQty1: 300,
     buyLvQty2: 500,
+    allocation: 1,
   },
   {
     ...based,
@@ -171,7 +157,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: 1.45,
     buyLvQty1: 300,
     buyLvQty2: 300,
-    allocation: 1,
+    allocation: 10,
   },
   {
     ...based,
