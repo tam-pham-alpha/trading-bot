@@ -11,6 +11,7 @@ Dự kiến
 - Fix connection abort issue
 - Apply ticksize
 - Get ceiling + floor prices (GetDailyIndex, GetStockPrice)
+- Đặt lệnh lại sau khi khớp lệnh
 
 
 ## Todo list
