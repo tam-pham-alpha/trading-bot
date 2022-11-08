@@ -30,7 +30,7 @@ const delta = 1.25;
 
 const based: Strategy = {
   symbol: '',
-  interval: INTERVAL.m45,
+  interval: INTERVAL.m60,
 
   buyLvPrc1: -1.95 * delta,
   buyLvPrc2: -2.45 * delta,
@@ -195,6 +195,14 @@ export const strategies: Strategy[] = [
   {
     ...based,
     symbol: 'MWG',
+    interval: INTERVAL.m45,
+    buyLvQty1: 100,
+    buyLvQty2: 100,
+    allocation: 1,
+  },
+  {
+    ...based,
+    symbol: 'FRT',
     interval: INTERVAL.m45,
     buyLvQty1: 100,
     buyLvQty2: 100,
