@@ -40,9 +40,6 @@ class OrderFactory {
     const orders = this.getLiveOrders().filter(
       (i) => i.instrumentID === symbol,
     );
-
-    console.log('cancelOrdersBySymbol', symbol);
-    console.table(orders);
     return Promise.all(orders.map((i: OrderHistory) => cancelOrder(i.orderID)));
   };
 }

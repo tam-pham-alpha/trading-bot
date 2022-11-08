@@ -28,6 +28,13 @@ let SYS_READY = false;
 const lastPrice: Record<string, number> = {};
 const tradingInterval: Record<string, any> = {};
 
+const displayLiveOrders = async () => {
+  const liveOrders = await getLiveOrder();
+  OrderFactory.setOrders(liveOrders);
+  console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
+  console.table(getOrderTable(OrderFactory.getLiveOrders()));
+};
+
 const displayPortfolio = async () => {
   console.log('R. STRATEGY');
   console.table(getStrategyTable(strategies));
@@ -54,13 +61,6 @@ const displayPortfolio = async () => {
   SYS_READY = true;
 };
 
-const displayLiveOrders = async () => {
-  const liveOrders = await getLiveOrder();
-  OrderFactory.setOrders(liveOrders);
-  console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
-  console.table(getOrderTable(OrderFactory.getLiveOrders()));
-};
-
 const startNewTradingInterval = async (symbol: string) => {
   if (session === 'LO' && lastPrice[symbol]) {
     console.log('A: NEW TRADING SESSION', symbol, session, lastPrice[symbol]);
@@ -71,9 +71,6 @@ const startNewTradingInterval = async (symbol: string) => {
     await wait(5000);
     console.log('A: PLACE ORDERS', lastPrice[symbol]);
     await placeBatchOrder(symbol, lastPrice[symbol]);
-
-    await wait(5000);
-    await displayLiveOrders();
   }
 
   const strategy = strategies.find((i) => i.symbol === symbol);
@@ -88,14 +85,8 @@ const startNewTradingInterval = async (symbol: string) => {
 const onTrade = (symbol: string, price: number) => {
   if (session !== 'LO' || !SYS_READY) return;
 
-  const tmp = lastPrice[symbol];
   lastPrice[symbol] = price;
-
   placeTakeProfitOrder(symbol, price);
-
-  if (!tmp) {
-    startNewTradingInterval(symbol);
-  }
 };
 
 const onOrderUpdate = async (e: any, data: any) => {
@@ -126,10 +117,10 @@ const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
   lastPrice[symbol] = data.data.matchPrice;
 
   await wait(5000);
-  await displayPortfolio();
+  startNewTradingInterval(symbol);
 
   await wait(5000);
-  startNewTradingInterval(symbol);
+  displayPortfolio();
 };
 
 const app = express();
@@ -194,9 +185,6 @@ const ssiData = dataFetch({
 
         if (type === 'F') {
           session = data.TradingSession as TradingSession;
-          strategies.map((i) => {
-            startNewTradingInterval(i.symbol);
-          });
         }
 
         if (type === 'X-TRADE') {
@@ -290,7 +278,13 @@ const ssiTrading = fetch({
     console.log(reason);
   });
 
-Promise.all([ssiData, ssiTrading]).then(() => {
+Promise.all([ssiData, ssiTrading]).then(async () => {
   console.log('SSI-DCA-BOT Started!');
-  displayPortfolio();
+  await displayPortfolio();
+
+  await wait(15000);
+
+  strategies.map((i) => {
+    startNewTradingInterval(i.symbol);
+  });
 });
