@@ -49,6 +49,8 @@ const displayPortfolio = async () => {
   console.table(positionList);
   console.log(`R. BUYING (${buyingList.length}):`, buyingList.join(', '));
 
+  await displayLiveOrders();
+
   SYS_READY = true;
 };
 
@@ -63,7 +65,7 @@ const startNewTradingInterval = async (symbol: string) => {
   if (session === 'LO' && lastPrice[symbol]) {
     console.log('A: NEW TRADING SESSION', symbol, session, lastPrice[symbol]);
 
-    console.log('A: CANCEL ALL ORDERS');
+    console.log('A: CANCEL ALL ORDERS', symbol);
     await OrderFactory.cancelOrdersBySymbol(symbol);
 
     await wait(5000);
