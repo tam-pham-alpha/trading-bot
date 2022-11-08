@@ -10,6 +10,14 @@ export const toNumber = (str: string) => {
   return parseFloat(str);
 };
 
-export const getNumber = (number: number, digit: number = 0) => {
-  return Math.round(number / Math.pow(10, digit)) * Math.pow(10, digit);
+export const roundByTickSize = (number: number, tickSize: number) => {
+  return Math.floor(number / Math.pow(10, tickSize)) * Math.pow(10, tickSize);
+};
+
+export const getNumberByPercentage = (
+  number: number,
+  delta: number,
+  tickSize = 0,
+) => {
+  return roundByTickSize((number * (100 + delta)) / 100, tickSize);
 };

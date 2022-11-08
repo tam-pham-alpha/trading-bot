@@ -1,7 +1,7 @@
 import { strategies } from '../config';
 import BalanceFactory from '../factory/BalanceFactory';
 import PositionFactory from '../factory/PositionFactory';
-import { getNumber } from '../utils/number';
+import { getNumberByPercentage } from '../utils/number';
 import { placeOrder } from './order';
 
 export const checkTolerantLoss = (
@@ -60,7 +60,7 @@ export const placeBatchOrder = async (
 
   if (!strategy || !lastPrice) return;
 
-  const buyPrice = getNumber((lastPrice * (100 - strategy.buyLvPrc1)) / 100, 2);
+  const buyPrice = getNumberByPercentage(lastPrice, strategy.buyLvPrc1, 2);
   const qty =
     !avgPrice || avgPrice < buyPrice ? strategy.buyLvQty1 : strategy.buyLvQty2;
 

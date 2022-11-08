@@ -21,6 +21,7 @@ import BalanceFactory from './factory/BalanceFactory';
 import PositionFactory from './factory/PositionFactory';
 import { dataFetch, setDataAccessToken } from './utils/dataFetch';
 import { wait } from './utils/time';
+import { getBuyingStocks } from './utils/stock';
 
 let session: TradingSession = 'C';
 let SYS_READY = false;
@@ -38,7 +39,13 @@ const displayPortfolio = async () => {
   await PositionFactory.update();
   console.log('R: POSITIONS');
   const positionList = getStockPositionTable(PositionFactory.positions);
-  const buyingList = positionList.filter((i) => i.buying).map((i) => i.symbol);
+  const stoppedList = positionList
+    .filter((i) => !i.buying)
+    .map((i) => i.symbol);
+  const buyingList = getBuyingStocks(
+    strategies.map((i) => i.symbol),
+    stoppedList,
+  );
   console.table(positionList);
   console.log(`R. BUYING (${buyingList.length}):`, buyingList.join(', '));
 
