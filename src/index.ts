@@ -85,8 +85,13 @@ const startNewTradingInterval = async (symbol: string) => {
 const onTrade = (symbol: string, price: number) => {
   if (session !== 'LO' || !SYS_READY) return;
 
+  const t = lastPrice[symbol];
   lastPrice[symbol] = price;
   placeTakeProfitOrder(symbol, price);
+
+  if (!t) {
+    startNewTradingInterval(symbol);
+  }
 };
 
 const onOrderUpdate = async (e: any, data: any) => {
@@ -282,9 +287,8 @@ Promise.all([ssiData, ssiTrading]).then(async () => {
   console.log('SSI-DCA-BOT Started!');
   await displayPortfolio();
 
-  await wait(15000);
-
-  strategies.map((i) => {
-    startNewTradingInterval(i.symbol);
-  });
+  // await wait(15000);
+  // strategies.map((i) => {
+  //   startNewTradingInterval(i.symbol);
+  // });
 });
