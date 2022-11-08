@@ -106,7 +106,7 @@ const onOrderUpdate = async (e: any, data: any) => {
   }
 
   OrderFactory.orderUpdate([data.data]);
-  console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders()})`);
+  console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
   console.table(getOrderTable(OrderFactory.getLiveOrders()));
 };
 
