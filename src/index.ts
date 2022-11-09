@@ -62,9 +62,9 @@ const displayPortfolio = async () => {
 };
 
 const startNewTradingInterval = async (symbol: string) => {
-  if (session === 'LO' && lastPrice[symbol]) {
-    console.log('A: NEW TRADING SESSION', symbol, session, lastPrice[symbol]);
+  console.log('A: NEW TRADING SESSION', symbol, session, lastPrice[symbol]);
 
+  if (session === 'LO' && lastPrice[symbol]) {
     console.log('A: CANCEL ALL ORDERS', symbol);
     await OrderFactory.cancelOrdersBySymbol(symbol);
 
