@@ -69,7 +69,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: -2.25 * delta,
     buyLvQty1: 100,
     buyLvQty2: 300,
-    allocation: 15,
+    allocation: 25,
   },
   {
     ...based,
