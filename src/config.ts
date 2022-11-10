@@ -138,7 +138,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: -1.65 * delta,
     buyLvQty1: 100,
     buyLvQty2: 100,
-    allocation: 5,
+    allocation: -1,
   },
   {
     ...based,
@@ -206,7 +206,7 @@ export const strategies: Strategy[] = [
     interval: INTERVAL.m45,
     buyLvQty1: 100,
     buyLvQty2: 100,
-    allocation: 1,
+    allocation: -1,
   },
 ];
 
