@@ -26,19 +26,19 @@ export const INTERVAL = {
   h04: m15 * 16,
 };
 
-const delta = 1.35;
+const delta = 2;
 
 const based: Strategy = {
   symbol: '',
   interval: INTERVAL.m60,
 
-  buyLvPrc1: -1.95 * delta,
-  buyLvPrc2: -2.45 * delta,
+  buyLvPrc1: -2.55 * delta,
+  buyLvPrc2: -2.55 * delta,
   buyLvQty1: 100,
   buyLvQty2: 100,
 
   takeProfit: 2.85,
-  allocation: 7,
+  allocation: 1,
   tolerantLoss: 0,
 };
 
@@ -56,15 +56,6 @@ export const strategies: Strategy[] = [
   },
   {
     ...based,
-    symbol: 'HAG',
-    interval: INTERVAL.m60,
-    buyLvPrc1: -2.25 * delta,
-    buyLvQty1: 200,
-    buyLvQty2: 400,
-    allocation: -1,
-  },
-  {
-    ...based,
     symbol: 'TCB',
     interval: INTERVAL.m45,
     buyLvPrc1: -2.25 * delta,
@@ -72,22 +63,6 @@ export const strategies: Strategy[] = [
     buyLvQty1: 100,
     buyLvQty2: 300,
     allocation: 20,
-  },
-  {
-    ...based,
-    symbol: 'FPT',
-    interval: INTERVAL.m45,
-    buyLvQty1: 100,
-    buyLvQty2: 100,
-    allocation: 1,
-  },
-  {
-    ...based,
-    symbol: 'HPG',
-    interval: INTERVAL.m45,
-    buyLvQty1: 200,
-    buyLvQty2: 400,
-    allocation: 1,
   },
   {
     ...based,
@@ -120,21 +95,46 @@ export const strategies: Strategy[] = [
   },
   {
     ...based,
-    symbol: 'REE',
-    interval: INTERVAL.m45,
-    buyLvPrc1: -1.95 * delta,
-    buyLvQty1: 100,
-    buyLvQty2: 100,
-    allocation: 1,
-  },
-  {
-    ...based,
     symbol: 'BID',
     interval: INTERVAL.m45,
     buyLvPrc1: -1.35 * delta,
     buyLvQty1: 100,
     buyLvQty2: 100,
     allocation: 25,
+  },
+  {
+    ...based,
+    symbol: 'HAG',
+    interval: INTERVAL.m60,
+    buyLvPrc1: -2.25 * delta,
+    buyLvQty1: 200,
+    buyLvQty2: 400,
+    allocation: -1,
+  },
+  {
+    ...based,
+    symbol: 'FPT',
+    interval: INTERVAL.m45,
+    buyLvQty1: 100,
+    buyLvQty2: 100,
+    allocation: 1,
+  },
+  {
+    ...based,
+    symbol: 'HPG',
+    interval: INTERVAL.m45,
+    buyLvQty1: 200,
+    buyLvQty2: 400,
+    allocation: 1,
+  },
+  {
+    ...based,
+    symbol: 'REE',
+    interval: INTERVAL.m45,
+    buyLvPrc1: -1.95 * delta,
+    buyLvQty1: 100,
+    buyLvQty2: 100,
+    allocation: 1,
   },
   {
     ...based,
@@ -152,6 +152,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: -1.55 * delta,
     buyLvQty1: 100,
     buyLvQty2: 100,
+    allocation: 1,
   },
   {
     ...based,
@@ -169,7 +170,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: -1.85 * delta,
     buyLvQty1: 300,
     buyLvQty2: 300,
-    allocation: 10,
+    allocation: 1,
   },
   {
     ...based,
