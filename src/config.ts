@@ -52,7 +52,7 @@ export const strategies: Strategy[] = [
     takeProfit: 7.2,
     buyLvQty1: 200,
     buyLvQty2: 400,
-    allocation: 25,
+    allocation: 20,
   },
   {
     ...based,
@@ -71,7 +71,7 @@ export const strategies: Strategy[] = [
     takeProfit: 7.2,
     buyLvQty1: 100,
     buyLvQty2: 300,
-    allocation: 25,
+    allocation: 20,
   },
   {
     ...based,
@@ -94,6 +94,7 @@ export const strategies: Strategy[] = [
     symbol: 'MSN',
     interval: INTERVAL.m45,
     buyLvPrc1: -1.75 * delta,
+    takeProfit: 7.5,
     buyLvQty1: 100,
     buyLvQty2: 100,
     allocation: 25,
@@ -103,6 +104,7 @@ export const strategies: Strategy[] = [
     symbol: 'VNM',
     interval: INTERVAL.m45,
     buyLvPrc1: -1.45 * delta,
+    takeProfit: 7.5,
     buyLvQty1: 100,
     buyLvQty2: 100,
     allocation: 25,
@@ -114,6 +116,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: -1.75 * delta,
     buyLvQty1: 100,
     buyLvQty2: 100,
+    allocation: 25,
   },
   {
     ...based,
