@@ -26,7 +26,7 @@ export const INTERVAL = {
   h04: m15 * 16,
 };
 
-const delta = 1.15;
+const delta = 1.35;
 
 const based: Strategy = {
   symbol: '',
@@ -61,7 +61,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: -2.25 * delta,
     buyLvQty1: 200,
     buyLvQty2: 400,
-    allocation: 1,
+    allocation: -1,
   },
   {
     ...based,
@@ -157,7 +157,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: -1.85 * delta,
     buyLvQty1: 300,
     buyLvQty2: 500,
-    allocation: 1,
+    allocation: -1,
   },
   {
     ...based,
