@@ -205,14 +205,6 @@ export const strategies: Strategy[] = [
     buyLvQty2: 100,
     allocation: 1,
   },
-  {
-    ...based,
-    symbol: 'FRT',
-    interval: INTERVAL.m45,
-    buyLvQty1: 100,
-    buyLvQty2: 100,
-    allocation: -1,
-  },
 ];
 
 export default {
