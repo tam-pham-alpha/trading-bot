@@ -89,7 +89,7 @@ const onTrade = (symbol: string, price: number) => {
   lastPrice[symbol] = price;
   placeTakeProfitOrder(symbol, price);
 
-  if (!t) {
+  if (!t && lastPrice[symbol]) {
     startNewTradingInterval(symbol);
   }
 };
