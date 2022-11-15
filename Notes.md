@@ -12,6 +12,8 @@ Dự kiến
 - Apply ticksize
 - Get ceiling + floor prices (GetDailyIndex, GetStockPrice)
 - Đặt lệnh lại sau khi khớp lệnh
+- Thêm tính năng cmd, hỗ trợ đặt lệnh nhanh bằng dòng lệnh
+- Reset orders sau khi nhận thêm tiền
 
 
 ## Todo list

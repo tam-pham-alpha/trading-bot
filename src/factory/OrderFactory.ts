@@ -1,6 +1,6 @@
 import { uniqBy } from 'lodash';
-import { cancelOrder } from '../biz/order';
 
+import { cancelOrder } from '../biz/order';
 import { OrderHistory } from '../types/Order';
 
 class OrderFactory {
@@ -36,10 +36,12 @@ class OrderFactory {
     );
   };
 
+  getLiveOrdersBySymbol = (symbol: string) => {
+    return this.getLiveOrders().filter((i) => i.instrumentID === symbol);
+  };
+
   cancelOrdersBySymbol = async (symbol: string) => {
-    const orders = this.getLiveOrders().filter(
-      (i) => i.instrumentID === symbol,
-    );
+    const orders = this.getLiveOrdersBySymbol(symbol);
     return Promise.all(orders.map((i: OrderHistory) => cancelOrder(i.orderID)));
   };
 }

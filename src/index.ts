@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import express from 'express';
 import ssi from 'ssi-api-client';
 
@@ -5,7 +6,7 @@ import { setAccessToken, fetch } from './utils/fetch';
 import config, { INTERVAL, strategies } from './config';
 import apis from './biz/apis';
 
-import { placeBatchOrder, placeTakeProfitOrder } from './biz/trade';
+import { placeBuyOrder, placeTakeProfitOrder } from './biz/trade';
 import Streaming from './streaming';
 import {
   getAccountTable,
@@ -50,7 +51,7 @@ const displayPortfolio = async () => {
     .filter((i) => !i.buying)
     .map((i) => i.symbol);
   const buyingList = getBuyingStocks(
-    strategies.map((i) => i.symbol),
+    strategies.filter((i) => i.allocation > 0).map((i) => i.symbol),
     stoppedList,
   );
   console.table(positionList);
@@ -65,12 +66,15 @@ const startNewTradingInterval = async (symbol: string) => {
   console.log('A: NEW TRADING SESSION', symbol, session, lastPrice[symbol]);
 
   if (session === 'LO' && lastPrice[symbol]) {
-    console.log('A: CANCEL ALL ORDERS', symbol);
-    await OrderFactory.cancelOrdersBySymbol(symbol);
+    // cancel existing orders if any
+    if (OrderFactory.getLiveOrdersBySymbol(symbol).length) {
+      console.log('A: CANCEL ALL ORDERS', symbol);
+      await OrderFactory.cancelOrdersBySymbol(symbol);
+      await wait(5000);
+    }
 
-    await wait(5000);
     console.log('A: PLACE ORDERS', lastPrice[symbol]);
-    await placeBatchOrder(symbol, lastPrice[symbol]);
+    await placeBuyOrder(symbol, lastPrice[symbol]);
   }
 
   const strategy = strategies.find((i) => i.symbol === symbol);
@@ -82,7 +86,7 @@ const startNewTradingInterval = async (symbol: string) => {
   }, strategy?.interval || INTERVAL.m30);
 };
 
-const onTrade = (symbol: string, price: number) => {
+const onLastPrice = (symbol: string, price: number) => {
   if (session !== 'LO' || !SYS_READY) return;
 
   const t = lastPrice[symbol];
@@ -113,7 +117,7 @@ const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
 
   // ignore old events
   const matchTime = data.data.matchTime;
-  if (parseInt(matchTime) + INTERVAL.m10 < Date.now()) {
+  if (parseInt(matchTime) + INTERVAL.m01 < Date.now()) {
     return;
   }
 
@@ -195,13 +199,13 @@ const ssiData = dataFetch({
         if (type === 'X-TRADE') {
           const symbol = data.Symbol;
           const price = data.LastPrice;
-          onTrade(symbol, price);
+          onLastPrice(symbol, price);
         }
 
         if (type === 'X-QUOTE') {
           const symbol = data.Symbol;
           const price = data.BidPrice1;
-          onTrade(symbol, price);
+          onLastPrice(symbol, price);
         }
       });
 
@@ -260,17 +264,17 @@ const ssiTrading = fetch({
 
       ssi.bind(ssi.events.onOrderMatch, onOrderMatch);
 
-      ssi.bind(ssi.events.onError, function (e: any, data: any) {
-        console.log('onError', JSON.stringify(data));
-      });
+      // ssi.bind(ssi.events.onError, function (e: any, data: any) {
+      //   console.log('onError', JSON.stringify(data));
+      // });
 
-      ssi.bind(ssi.events.onOrderError, function (e: any, data: any) {
-        // console.log('onOrderError', JSON.stringify(data));
-      });
+      // ssi.bind(ssi.events.onOrderError, function (e: any, data: any) {
+      //   console.log('onOrderError', JSON.stringify(data));
+      // });
 
-      ssi.bind(ssi.events.onClientPortfolioEvent, function (e: any, data: any) {
-        console.log('onClientPortfolioEvent', data);
-      });
+      // ssi.bind(ssi.events.onClientPortfolioEvent, function (e: any, data: any) {
+      //   console.log('onClientPortfolioEvent', data);
+      // });
 
       ssi.start();
     } else {
@@ -286,9 +290,4 @@ const ssiTrading = fetch({
 Promise.all([ssiData, ssiTrading]).then(async () => {
   console.log('SSI-DCA-BOT Started!');
   await displayPortfolio();
-
-  // await wait(15000);
-  // strategies.map((i) => {
-  //   startNewTradingInterval(i.symbol);
-  // });
 });

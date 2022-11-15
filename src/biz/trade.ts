@@ -46,10 +46,7 @@ export const placeTakeProfitOrder = async (
   return await placeOrder(instrument, 'S', lastPrice, sellQty);
 };
 
-export const placeBatchOrder = async (
-  instrument: string,
-  lastPrice: number,
-) => {
+export const placeBuyOrder = async (instrument: string, lastPrice: number) => {
   const positionList = PositionFactory.positions;
   const balance = BalanceFactory.balance;
 

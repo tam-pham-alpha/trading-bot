@@ -1,0 +1,1 @@
+# Bot hoạt động thế nào?

@@ -5,8 +5,6 @@ export type Strategy = {
   interval: number;
 
   buyLvPrc1: number;
-  buyLvPrc2: number;
-
   buyLvQty1: number;
   buyLvQty2: number;
 
@@ -16,6 +14,7 @@ export type Strategy = {
 };
 
 export const INTERVAL = {
+  m01: 60000,
   m10: 600000, // 10 mins
   m15: 900000, // 15 mins
   m20: 1200000, // 20 mins
@@ -33,7 +32,6 @@ const based: Strategy = {
   interval: INTERVAL.m60,
 
   buyLvPrc1: -2.55 * delta,
-  buyLvPrc2: -2.55 * delta,
   buyLvQty1: 100,
   buyLvQty2: 100,
 
@@ -48,7 +46,6 @@ export const strategies: Strategy[] = [
     symbol: 'SSI',
     interval: INTERVAL.m45,
     buyLvPrc1: -2.25 * delta,
-    buyLvPrc2: -1.95 * delta,
     takeProfit: 7.2,
     buyLvQty1: 200,
     buyLvQty2: 400,
@@ -91,7 +88,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: -1.75 * delta,
     buyLvQty1: 100,
     buyLvQty2: 100,
-    allocation: 25,
+    allocation: 1,
   },
   {
     ...based,
@@ -179,7 +176,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: -1.85 * delta,
     buyLvQty1: 200,
     buyLvQty2: 200,
-    allocation: 1,
+    allocation: -1,
   },
   {
     ...based,
