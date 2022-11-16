@@ -65,6 +65,8 @@ const displayPortfolio = async () => {
 const startNewTradingInterval = async (symbol: string) => {
   console.log('A: NEW TRADING SESSION', symbol, session, lastPrice[symbol]);
 
+  let order;
+
   if (session === 'LO' && lastPrice[symbol]) {
     // cancel existing orders if any
     if (OrderFactory.getLiveOrdersBySymbol(symbol).length) {
@@ -74,16 +76,22 @@ const startNewTradingInterval = async (symbol: string) => {
     }
 
     console.log('A: PLACE ORDERS', lastPrice[symbol]);
-    await placeBuyOrder(symbol, lastPrice[symbol]);
+    order = await placeBuyOrder(symbol, lastPrice[symbol]);
   }
 
   const strategy = strategies.find((i) => i.symbol === symbol);
   if (tradingInterval[symbol]) {
     clearInterval(tradingInterval[symbol]);
   }
-  tradingInterval[symbol] = setInterval(() => {
-    startNewTradingInterval(symbol);
-  }, strategy?.interval || INTERVAL.m30);
+
+  if (order) {
+    tradingInterval[symbol] = setInterval(() => {
+      startNewTradingInterval(symbol);
+    }, strategy?.interval || INTERVAL.m30);
+  } else {
+    // waiting for the new trade to trigger this again
+    lastPrice[symbol] = 0;
+  }
 };
 
 const onLastPrice = (symbol: string, price: number) => {

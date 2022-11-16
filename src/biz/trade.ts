@@ -64,13 +64,14 @@ export const placeBuyOrder = async (instrument: string, lastPrice: number) => {
   // don't buy more
   if (allocation >= strategy.allocation) {
     console.log(`ERROR ${instrument}: reached the allocation`);
-    return;
+    return 0;
   }
   // insufficient balance
   if (buyPrice * qty > balance.purchasingPower) {
     console.log(`ERROR ${instrument}: insufficient balance`);
-    return;
+    return 0;
   }
 
-  return await placeOrder(instrument, 'B', buyPrice, qty);
+  await placeOrder(instrument, 'B', buyPrice, qty);
+  return 1;
 };
