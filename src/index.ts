@@ -136,10 +136,10 @@ const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
   lastPrice[symbol] = data.data.matchPrice;
 
   await wait(5000);
-  startNewTradingInterval(symbol);
+  displayPortfolio();
 
   await wait(5000);
-  displayPortfolio();
+  startNewTradingInterval(symbol);
 };
 
 const app = express();
