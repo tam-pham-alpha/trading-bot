@@ -209,8 +209,8 @@ export const strategies: Strategy[] = [
     symbol: 'GVR',
     interval: INTERVAL.m45,
     buyLvPrc1: -2.05 * delta,
-    buyLvQty1: 100,
-    buyLvQty2: 100,
+    buyLvQty1: 500,
+    buyLvQty2: 500,
     allocation: 1,
   },
 ];

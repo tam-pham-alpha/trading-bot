@@ -73,6 +73,8 @@ const startNewTradingInterval = async (symbol: string) => {
       console.log('A: CANCEL ALL ORDERS', symbol);
       await OrderFactory.cancelOrdersBySymbol(symbol);
       await wait(5000);
+      await BalanceFactory.update();
+      await wait(5000);
     }
 
     console.log('A: PLACE ORDERS', lastPrice[symbol]);
