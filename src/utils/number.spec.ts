@@ -1,4 +1,9 @@
-import { roundByTickSize, getNumberByPercentage, roundByDp } from './number';
+import {
+  roundByTickSize,
+  getNumberByPercentage,
+  roundByDp,
+  checkCrossProfit,
+} from './number';
 
 describe('number', () => {
   it('round 1', () => {
@@ -34,5 +39,16 @@ describe('roundByDp', () => {
     expect(roundByDp(12.345, 2)).toBe(12.34);
     expect(roundByDp(12.35, 2)).toBe(12.35);
     expect(roundByDp(12.5, 2)).toBe(12.5);
+  });
+});
+
+describe('check take profit', () => {
+  it('should work', () => {
+    expect(checkCrossProfit(2.5, 15000, 14000)).toBe(false);
+    expect(checkCrossProfit(2.5, 15000, 15000)).toBe(false);
+    expect(checkCrossProfit(2.5, 15000, 15375)).toBe(false);
+    expect(checkCrossProfit(2.5, 15000, 15376)).toBe(true);
+    expect(checkCrossProfit(2.5, 15000, 16000)).toBe(true);
+    expect(checkCrossProfit(2.5, 15000, 17000)).toBe(true);
   });
 });

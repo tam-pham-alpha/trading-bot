@@ -3,10 +3,10 @@ import express from 'express';
 import ssi from 'ssi-api-client';
 
 import { setAccessToken, fetch } from './utils/fetch';
-import config, { INTERVAL, strategies } from './config';
+import { INTERVAL, strategies } from './strategies';
+import config from './config';
 import apis from './biz/apis';
 
-import { placeBuyOrder, placeTakeProfitOrder } from './biz/trade';
 import Streaming from './streaming';
 import {
   getAccountTable,
@@ -23,19 +23,13 @@ import PositionFactory from './factory/PositionFactory';
 import { dataFetch, setDataAccessToken } from './utils/dataFetch';
 import { wait } from './utils/time';
 import { getBuyingStocks } from './utils/stock';
+import { Mavelli } from './mavelli';
 
-let session: TradingSession = 'C';
-let SYS_READY = false;
-const LAST_PRICE: Record<string, number> = {};
-const TRADING_INTERVAL: Record<string, any> = {};
-const TRADING_SESSION: Record<string, boolean> = {};
+const BOT: Record<string, Mavelli> = {};
 
-const displayLiveOrders = async () => {
-  const liveOrders = await getLiveOrder();
-  OrderFactory.setOrders(liveOrders);
-  console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
-  console.table(getOrderTable(OrderFactory.getLiveOrders()));
-};
+strategies.forEach((i) => {
+  BOT[i.symbol] = new Mavelli(i.symbol, i);
+});
 
 const displayPortfolio = async () => {
   console.log('R. STRATEGY');
@@ -45,6 +39,7 @@ const displayPortfolio = async () => {
   console.log('R: ACCOUNT');
   console.table(getAccountTable([BalanceFactory.balance]));
 
+  await wait(500);
   await PositionFactory.update();
   console.log('R: POSITIONS');
   const positionList = getStockPositionTable(PositionFactory.positions);
@@ -58,67 +53,27 @@ const displayPortfolio = async () => {
   console.table(positionList);
   console.log(`R. BUYING (${buyingList.length}):`, buyingList.join(', '));
 
-  await displayLiveOrders();
-
-  SYS_READY = true;
+  await wait(500);
+  const liveOrders = await getLiveOrder();
+  OrderFactory.setOrders(liveOrders);
+  console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
+  console.table(getOrderTable(OrderFactory.getLiveOrders()));
 };
 
-const startNewTradingSession = async (symbol: string) => {
-  console.log('A: NEW TRADING SESSION', symbol, session, LAST_PRICE[symbol]);
-
-  if (TRADING_SESSION[symbol]) {
-    return;
-  }
-
-  let order;
-  TRADING_SESSION[symbol] = true;
-
-  if (session === 'LO' && LAST_PRICE[symbol]) {
-    // cancel existing orders if any
-    if (OrderFactory.getLiveOrdersBySymbol(symbol).length) {
-      console.log('A: CANCEL ALL ORDERS', symbol);
-      await OrderFactory.cancelOrdersBySymbol(symbol);
-      await wait(5000);
-      await BalanceFactory.update();
-      await wait(5000);
-    }
-
-    console.log('A: PLACE ORDERS', LAST_PRICE[symbol]);
-    order = await placeBuyOrder(symbol, LAST_PRICE[symbol]);
-  }
-
-  const strategy = strategies.find((i) => i.symbol === symbol);
-  if (TRADING_INTERVAL[symbol]) {
-    clearInterval(TRADING_INTERVAL[symbol]);
-  }
-
-  if (order) {
-    TRADING_INTERVAL[symbol] = setInterval(() => {
-      startNewTradingSession(symbol);
-    }, strategy?.interval || INTERVAL.m30);
-  } else {
-    // waiting for the new trade to trigger this again
-    LAST_PRICE[symbol] = 0;
-  }
-
-  TRADING_SESSION[symbol] = false;
+const onSessionUpdate = (session: TradingSession) => {
+  Object.values(BOT).forEach((b) => {
+    b.setSession(session);
+  });
 };
 
 const onLastPrice = (symbol: string, price: number) => {
-  if (session !== 'LO' || !SYS_READY) return;
-
-  const t = LAST_PRICE[symbol];
-  LAST_PRICE[symbol] = price;
-  placeTakeProfitOrder(symbol, price);
-
-  if (!t && LAST_PRICE[symbol]) {
-    startNewTradingSession(symbol);
-  }
+  BOT[symbol].setLastPrice(price);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onOrderUpdate = async (e: any, data: OrderUpdateEvent) => {
-  if (session !== 'LO') return;
   const order = data.data;
+  const symbol = order.instrumentID;
 
   // ignore old events
   const modifiedTime = order.modifiedTime;
@@ -130,14 +85,13 @@ const onOrderUpdate = async (e: any, data: OrderUpdateEvent) => {
   console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
   console.table(getOrderTable(OrderFactory.getLiveOrders()));
 
-  // if order is cancel by user start a new session
-  if (order.orderStatus === 'CL' && order.ipAddress) {
-    startNewTradingSession(order.instrumentID);
-  }
+  BOT[symbol].onOrderUpdate(data);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
-  if (session !== 'LO') return;
+  const order = data.data;
+  const symbol = order.instrumentID;
 
   // ignore old events
   const matchTime = data.data.matchTime;
@@ -146,14 +100,12 @@ const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
   }
 
   console.log('R: ORDER MATCH');
-  const symbol = data.data.instrumentID;
-  LAST_PRICE[symbol] = data.data.matchPrice;
 
   await wait(5000);
   displayPortfolio();
 
   await wait(5000);
-  startNewTradingSession(symbol);
+  BOT[symbol].onOrderMatch(data);
 };
 
 const app = express();
@@ -211,13 +163,14 @@ const ssiData = dataFetch({
           );
       };
 
-      stream.subscribe('FcMarketDataV2Hub', 'Broadcast', (message: any) => {
+      stream.subscribe('FcMarketDataV2Hub', 'Broadcast', (message: string) => {
         const resp = JSON.parse(message);
         const type = resp.DataType;
         const data = JSON.parse(resp.Content);
 
         if (type === 'F') {
-          session = data.TradingSession as TradingSession;
+          const session = data.TradingSession as TradingSession;
+          onSessionUpdate(session);
         }
 
         if (type === 'X-TRADE') {
@@ -233,15 +186,23 @@ const ssiData = dataFetch({
         }
       });
 
-      stream.subscribe('FcMarketDataV2Hub', 'Reconnected', (message: any) => {
-        console.log('Reconnected' + message);
-      });
+      stream.subscribe(
+        'FcMarketDataV2Hub',
+        'Reconnected',
+        (message: string) => {
+          console.log('Reconnected' + message);
+        },
+      );
 
-      stream.subscribe('FcMarketDataV2Hub', 'Disconnected', (message: any) => {
-        console.log('Disconnected' + message);
-      });
+      stream.subscribe(
+        'FcMarketDataV2Hub',
+        'Disconnected',
+        (message: string) => {
+          console.log('Disconnected' + message);
+        },
+      );
 
-      stream.subscribe('FcMarketDataV2Hub', 'Error', (message: any) => {
+      stream.subscribe('FcMarketDataV2Hub', 'Error', (message: string) => {
         console.log(message);
       });
 
@@ -314,4 +275,8 @@ const ssiTrading = fetch({
 Promise.all([ssiData, ssiTrading]).then(async () => {
   console.log('SSI-DCA-BOT Started!');
   await displayPortfolio();
+
+  Object.values(BOT).forEach((b) => {
+    b.setReady();
+  });
 });

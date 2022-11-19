@@ -25,3 +25,13 @@ export const getNumberByPercentage = (
 ) => {
   return roundByTickSize((number * (100 + delta)) / 100, tickSize);
 };
+
+export const checkCrossProfit = (
+  takeProfit: number,
+  avgPrice: number,
+  price: number,
+) => {
+  if (!avgPrice) return false;
+  const acceptedPrice = (avgPrice * (100 + takeProfit)) / 100;
+  return price > acceptedPrice;
+};

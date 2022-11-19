@@ -1,4 +1,4 @@
-import { strategies, Strategy } from '../config';
+import { strategies, Strategy } from '../strategies';
 import { Account } from '../types/Account';
 import { OrderHistory } from '../types/Order';
 import { StockPosition } from '../types/Position';
