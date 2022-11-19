@@ -96,3 +96,39 @@ export type OrderMatchEvent = {
     matchTime: string;
   };
 };
+
+export type OrderUpdateEvent = {
+  type: string;
+  data: {
+    orderID: string;
+    notifyID: number;
+    instrumentID: string;
+    uniqueID: string;
+    buySell: Side;
+    orderType: OrderType;
+    ipAddress: string;
+    price: number;
+    prefix: string;
+    quantity: number;
+    marketID: string;
+    origOrderId: string;
+    account: string;
+    cancelQty: number;
+    osQty: number;
+    filledQty: number;
+    avgPrice: number;
+    channel: string;
+    inputTime: string;
+    modifiedTime: string;
+    isForceSell: boolean;
+    isShortSell: boolean;
+    orderStatus: OrderStatus;
+    rejectReason: string;
+    origRequestID: string;
+    stopOrder: boolean;
+    stopPrice: number;
+    stopType: string;
+    stopStep: number;
+    profitPrice: number;
+  };
+};

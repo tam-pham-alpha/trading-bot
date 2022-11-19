@@ -17,7 +17,7 @@ import {
 import { TradingSession } from './types/Market';
 import OrderFactory from './factory/OrderFactory';
 import { getLiveOrder } from './biz/order';
-import { OrderMatchEvent } from './types/Order';
+import { OrderHistory, OrderMatchEvent, OrderUpdateEvent } from './types/Order';
 import BalanceFactory from './factory/BalanceFactory';
 import PositionFactory from './factory/PositionFactory';
 import { dataFetch, setDataAccessToken } from './utils/dataFetch';
@@ -26,8 +26,9 @@ import { getBuyingStocks } from './utils/stock';
 
 let session: TradingSession = 'C';
 let SYS_READY = false;
-const lastPrice: Record<string, number> = {};
-const tradingInterval: Record<string, any> = {};
+const LAST_PRICE: Record<string, number> = {};
+const TRADING_INTERVAL: Record<string, any> = {};
+const TRADING_SESSION: Record<string, boolean> = {};
 
 const displayLiveOrders = async () => {
   const liveOrders = await getLiveOrder();
@@ -62,12 +63,17 @@ const displayPortfolio = async () => {
   SYS_READY = true;
 };
 
-const startNewTradingInterval = async (symbol: string) => {
-  console.log('A: NEW TRADING SESSION', symbol, session, lastPrice[symbol]);
+const startNewTradingSession = async (symbol: string) => {
+  console.log('A: NEW TRADING SESSION', symbol, session, LAST_PRICE[symbol]);
+
+  if (TRADING_SESSION[symbol]) {
+    return;
+  }
 
   let order;
+  TRADING_SESSION[symbol] = true;
 
-  if (session === 'LO' && lastPrice[symbol]) {
+  if (session === 'LO' && LAST_PRICE[symbol]) {
     // cancel existing orders if any
     if (OrderFactory.getLiveOrdersBySymbol(symbol).length) {
       console.log('A: CANCEL ALL ORDERS', symbol);
@@ -77,49 +83,57 @@ const startNewTradingInterval = async (symbol: string) => {
       await wait(5000);
     }
 
-    console.log('A: PLACE ORDERS', lastPrice[symbol]);
-    order = await placeBuyOrder(symbol, lastPrice[symbol]);
+    console.log('A: PLACE ORDERS', LAST_PRICE[symbol]);
+    order = await placeBuyOrder(symbol, LAST_PRICE[symbol]);
   }
 
   const strategy = strategies.find((i) => i.symbol === symbol);
-  if (tradingInterval[symbol]) {
-    clearInterval(tradingInterval[symbol]);
+  if (TRADING_INTERVAL[symbol]) {
+    clearInterval(TRADING_INTERVAL[symbol]);
   }
 
   if (order) {
-    tradingInterval[symbol] = setInterval(() => {
-      startNewTradingInterval(symbol);
+    TRADING_INTERVAL[symbol] = setInterval(() => {
+      startNewTradingSession(symbol);
     }, strategy?.interval || INTERVAL.m30);
   } else {
     // waiting for the new trade to trigger this again
-    lastPrice[symbol] = 0;
+    LAST_PRICE[symbol] = 0;
   }
+
+  TRADING_SESSION[symbol] = false;
 };
 
 const onLastPrice = (symbol: string, price: number) => {
   if (session !== 'LO' || !SYS_READY) return;
 
-  const t = lastPrice[symbol];
-  lastPrice[symbol] = price;
+  const t = LAST_PRICE[symbol];
+  LAST_PRICE[symbol] = price;
   placeTakeProfitOrder(symbol, price);
 
-  if (!t && lastPrice[symbol]) {
-    startNewTradingInterval(symbol);
+  if (!t && LAST_PRICE[symbol]) {
+    startNewTradingSession(symbol);
   }
 };
 
-const onOrderUpdate = async (e: any, data: any) => {
+const onOrderUpdate = async (e: any, data: OrderUpdateEvent) => {
   if (session !== 'LO') return;
+  const order = data.data;
 
   // ignore old events
-  const matchTime = data.data.matchTime;
-  if (parseInt(matchTime) + INTERVAL.h04 < Date.now()) {
+  const modifiedTime = order.modifiedTime;
+  if (parseInt(modifiedTime) + INTERVAL.h04 < Date.now()) {
     return;
   }
 
-  OrderFactory.orderUpdate([data.data]);
+  OrderFactory.orderUpdate([order as OrderHistory]);
   console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
   console.table(getOrderTable(OrderFactory.getLiveOrders()));
+
+  // if order is cancel by user start a new session
+  if (order.orderStatus === 'CL' && order.ipAddress) {
+    startNewTradingSession(order.instrumentID);
+  }
 };
 
 const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
@@ -133,13 +147,13 @@ const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
 
   console.log('R: ORDER MATCH');
   const symbol = data.data.instrumentID;
-  lastPrice[symbol] = data.data.matchPrice;
+  LAST_PRICE[symbol] = data.data.matchPrice;
 
   await wait(5000);
   displayPortfolio();
 
   await wait(5000);
-  startNewTradingInterval(symbol);
+  startNewTradingSession(symbol);
 };
 
 const app = express();

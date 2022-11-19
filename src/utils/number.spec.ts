@@ -1,4 +1,4 @@
-import { roundByTickSize, getNumberByPercentage } from './number';
+import { roundByTickSize, getNumberByPercentage, roundByDp } from './number';
 
 describe('number', () => {
   it('round 1', () => {
@@ -26,5 +26,13 @@ describe('number', () => {
     expect(getNumberByPercentage(100, -1, 1)).toBe(90);
     expect(getNumberByPercentage(1234, -1.5, 1)).toBe(1210);
     expect(getNumberByPercentage(15000, -2.5, 2)).toBe(14600);
+  });
+});
+
+describe('roundByDp', () => {
+  it('true', () => {
+    expect(roundByDp(12.345, 2)).toBe(12.34);
+    expect(roundByDp(12.35, 2)).toBe(12.35);
+    expect(roundByDp(12.5, 2)).toBe(12.5);
   });
 });
