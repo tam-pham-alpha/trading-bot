@@ -5,6 +5,7 @@
       "script": "./build/index.js",
       "exec_mode": "fork_mode",
       "instances": 1,
+      "cron_restart": "1 45 * * *",
       "args": "start",
       "watch": false,
       "ignore_watch": [
