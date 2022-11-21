@@ -21,6 +21,7 @@ export class Mavelli {
   ready = false;
   isPlacingOrders = false;
   interval: NodeJS.Timer | undefined;
+  timestamp = 0;
 
   constructor(symbol: string, strategy: Strategy) {
     this.symbol = symbol;
@@ -57,6 +58,7 @@ export class Mavelli {
   startBuying = async () => {
     if (this.isPlacingOrders) return;
     this.isPlacingOrders = true;
+    this.timestamp = Date.now();
 
     let order;
     if (this.session === 'LO' && this.lastPrice) {
@@ -156,7 +158,7 @@ export class Mavelli {
 
     // ignore old events
     const modifiedTime = order.modifiedTime;
-    if (parseInt(modifiedTime) + INTERVAL.m10 < Date.now()) {
+    if (parseInt(modifiedTime) < this.timestamp) {
       return;
     }
 
@@ -171,7 +173,7 @@ export class Mavelli {
 
     // ignore old events
     const matchTime = data.data.matchTime;
-    if (parseInt(matchTime) + INTERVAL.m01 < Date.now()) {
+    if (parseInt(matchTime) < this.timestamp) {
       return;
     }
 
