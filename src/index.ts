@@ -3,7 +3,7 @@ import express from 'express';
 import ssi from 'ssi-api-client';
 
 import { setAccessToken, fetch } from './utils/fetch';
-import { INTERVAL, strategies } from './strategies';
+import { strategies } from './strategies';
 import config from './config';
 import apis from './biz/apis';
 
@@ -17,7 +17,7 @@ import {
 import { TradingSession } from './types/Market';
 import OrderFactory from './factory/OrderFactory';
 import { getLiveOrder } from './biz/order';
-import { OrderHistory, OrderMatchEvent, OrderUpdateEvent } from './types/Order';
+import { OrderMatchEvent, OrderUpdateEvent } from './types/Order';
 import BalanceFactory from './factory/BalanceFactory';
 import PositionFactory from './factory/PositionFactory';
 import { dataFetch, setDataAccessToken } from './utils/dataFetch';
@@ -25,6 +25,7 @@ import { wait } from './utils/time';
 import { getBuyingStocks } from './utils/stock';
 import { Mavelli } from './mavelli';
 
+let TIMESTAMP = 0;
 const BOT: Record<string, Mavelli> = {};
 
 strategies.forEach((i) => {
@@ -84,15 +85,16 @@ const onOrderUpdate = async (e: any, data: OrderUpdateEvent) => {
 
   // ignore old events
   const modifiedTime = order.modifiedTime;
-  if (parseInt(modifiedTime) + INTERVAL.h04 < Date.now()) {
+  if (parseInt(modifiedTime) < TIMESTAMP) {
     return;
   }
 
-  OrderFactory.orderUpdate([order as OrderHistory]);
-  console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
-  console.table(getOrderTable(OrderFactory.getLiveOrders()));
-
   BOT[symbol].onOrderUpdate(data);
+
+  if (OrderFactory.getLiveOrders().length) {
+    console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
+    console.table(getOrderTable(OrderFactory.getLiveOrders()));
+  }
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,7 +104,7 @@ const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
 
   // ignore old events
   const matchTime = data.data.matchTime;
-  if (parseInt(matchTime) + INTERVAL.m01 < Date.now()) {
+  if (parseInt(matchTime) < TIMESTAMP) {
     return;
   }
 
@@ -284,7 +286,9 @@ Promise.all([ssiData, ssiTrading]).then(async () => {
 
   await resetOrders();
   await displayPortfolio();
-  await wait(10000);
+  await wait(1000);
+
+  TIMESTAMP = Date.now();
 
   Object.values(BOT).forEach((b) => {
     b.setReady();

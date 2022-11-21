@@ -5,12 +5,10 @@ import OrderFactory from './factory/OrderFactory';
 import PositionFactory from './factory/PositionFactory';
 import { INTERVAL, Strategy } from './strategies';
 import { TradingSession } from './types/Market';
-import { OrderMatchEvent, OrderUpdateEvent } from './types/Order';
+import { OrderHistory, OrderMatchEvent, OrderUpdateEvent } from './types/Order';
 import { getNumberByPercentage } from './utils/number';
 import { wait } from './utils/time';
 import { checkCrossProfit } from './utils/number';
-
-const SERVER_IP = '13.215.51.234';
 
 // The SSI auto trading bot
 export class Mavelli {
@@ -67,13 +65,12 @@ export class Mavelli {
         console.log('A: CANCEL ALL ORDERS', this.symbol);
 
         await OrderFactory.cancelOrdersBySymbol(this.symbol);
-        await wait(5000);
 
+        await wait(1000);
         await BalanceFactory.update();
-        await wait(5000);
       }
-
-      console.log('A: PLACE ORDERS', this.lastPrice);
+    } else {
+      console.log('A: PLACE ORDERS', this.symbol, this.lastPrice);
       order = await this.placeBuyOrder();
     }
 
@@ -161,12 +158,13 @@ export class Mavelli {
     if (parseInt(modifiedTime) < this.timestamp) {
       return;
     }
-    console.log('onOrderUpdate ipAddress', order.ipAddress);
 
     // if order is cancel by user start a new session
-    if (order.orderStatus === 'CL' && order.ipAddress !== SERVER_IP) {
+    if (order.orderStatus === 'CL') {
       this.startBuying();
     }
+
+    OrderFactory.orderUpdate([order as OrderHistory]);
   };
 
   onOrderMatch = (data: OrderMatchEvent) => {
