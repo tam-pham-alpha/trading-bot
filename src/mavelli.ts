@@ -161,6 +161,7 @@ export class Mavelli {
     if (parseInt(modifiedTime) < this.timestamp) {
       return;
     }
+    console.log('onOrderUpdate ipAddress', order.ipAddress);
 
     // if order is cancel by user start a new session
     if (order.orderStatus === 'CL' && order.ipAddress !== SERVER_IP) {
