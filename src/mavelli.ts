@@ -156,7 +156,7 @@ export class Mavelli {
 
     // ignore old events
     const modifiedTime = order.modifiedTime;
-    if (parseInt(modifiedTime) + INTERVAL.h04 < Date.now()) {
+    if (parseInt(modifiedTime) + INTERVAL.m10 < Date.now()) {
       return;
     }
 
