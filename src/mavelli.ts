@@ -85,9 +85,13 @@ export class Mavelli {
       // waiting for the new trade to trigger this again
       this.lastPrice = 0;
     }
+
+    this.isPlacingOrders = false;
   };
 
   placeBuyOrder = async () => {
+    if (!this.ready) return;
+
     const positionList = PositionFactory.positions;
     const balance = BalanceFactory.balance;
 
@@ -155,9 +159,9 @@ export class Mavelli {
     }
 
     // if order is cancel by user start a new session
-    if (order.orderStatus === 'CL' && order.ipAddress) {
-      this.startBuying();
-    }
+    // if (order.orderStatus === 'CL' && order.ipAddress) {
+    //   this.startBuying();
+    // }
   };
 
   onOrderMatch = (data: OrderMatchEvent) => {

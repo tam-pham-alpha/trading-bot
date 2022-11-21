@@ -44,6 +44,11 @@ class OrderFactory {
     const orders = this.getLiveOrdersBySymbol(symbol);
     return Promise.all(orders.map((i: OrderHistory) => cancelOrder(i.orderID)));
   };
+
+  cancelAllOrders = async () => {
+    const orders = this.getLiveOrders();
+    return Promise.all(orders.map((i: OrderHistory) => cancelOrder(i.orderID)));
+  };
 }
 
 export default new OrderFactory();

@@ -31,15 +31,22 @@ strategies.forEach((i) => {
   BOT[i.symbol] = new Mavelli(i.symbol, i);
 });
 
+const resetOrders = async () => {
+  const liveOrders = await getLiveOrder();
+  OrderFactory.setOrders(liveOrders);
+  OrderFactory.cancelAllOrders();
+};
+
 const displayPortfolio = async () => {
   console.log('R. STRATEGY');
   console.table(getStrategyTable(strategies));
 
+  await wait(1000);
   await BalanceFactory.update();
   console.log('R: ACCOUNT');
   console.table(getAccountTable([BalanceFactory.balance]));
 
-  await wait(500);
+  await wait(1000);
   await PositionFactory.update();
   console.log('R: POSITIONS');
   const positionList = getStockPositionTable(PositionFactory.positions);
@@ -53,7 +60,7 @@ const displayPortfolio = async () => {
   console.table(positionList);
   console.log(`R. BUYING (${buyingList.length}):`, buyingList.join(', '));
 
-  await wait(500);
+  await wait(1000);
   const liveOrders = await getLiveOrder();
   OrderFactory.setOrders(liveOrders);
   console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
@@ -274,7 +281,10 @@ const ssiTrading = fetch({
 
 Promise.all([ssiData, ssiTrading]).then(async () => {
   console.log('SSI-DCA-BOT Started!');
+
+  await resetOrders();
   await displayPortfolio();
+  await wait(10000);
 
   Object.values(BOT).forEach((b) => {
     b.setReady();
