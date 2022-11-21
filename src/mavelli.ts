@@ -10,6 +10,8 @@ import { getNumberByPercentage } from './utils/number';
 import { wait } from './utils/time';
 import { checkCrossProfit } from './utils/number';
 
+const SERVER_IP = '13.215.51.234';
+
 // The SSI auto trading bot
 export class Mavelli {
   session: TradingSession = 'C';
@@ -159,9 +161,9 @@ export class Mavelli {
     }
 
     // if order is cancel by user start a new session
-    // if (order.orderStatus === 'CL' && order.ipAddress) {
-    //   this.startBuying();
-    // }
+    if (order.orderStatus === 'CL' && order.ipAddress !== SERVER_IP) {
+      this.startBuying();
+    }
   };
 
   onOrderMatch = (data: OrderMatchEvent) => {
