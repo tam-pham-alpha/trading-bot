@@ -26,7 +26,7 @@ export const INTERVAL = {
   h04: m15 * 16,
 };
 
-const delta = 1.25;
+const delta = 1.45;
 
 const based: Strategy = {
   symbol: '',
