@@ -137,15 +137,6 @@ export const strategies: Strategy[] = [
   },
   {
     ...based,
-    symbol: 'VJC',
-    interval: INTERVAL.m45,
-    buyLvPrc1: roundByDp(-1.65 * delta, 2),
-    buyLvQty1: 100,
-    buyLvQty2: 100,
-    allocation: -1,
-  },
-  {
-    ...based,
     symbol: 'VCB',
     interval: INTERVAL.m45,
     buyLvPrc1: roundByDp(-1.15 * delta, 2),
@@ -212,6 +203,15 @@ export const strategies: Strategy[] = [
     buyLvPrc1: roundByDp(-2.05 * delta, 2),
     buyLvQty1: 500,
     buyLvQty2: 500,
+    allocation: 5,
+  },
+  {
+    ...based,
+    symbol: 'VIC',
+    interval: INTERVAL.m45,
+    buyLvPrc1: roundByDp(-2.05 * delta, 2),
+    buyLvQty1: 100,
+    buyLvQty2: 100,
     allocation: 5,
   },
 ];
