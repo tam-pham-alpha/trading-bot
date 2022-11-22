@@ -68,10 +68,10 @@ export class Mavelli {
 
         await wait(1000);
         await BalanceFactory.update();
+      } else {
+        console.log('A: PLACE ORDERS', this.symbol, this.lastPrice);
+        order = await this.placeBuyOrder();
       }
-    } else {
-      console.log('A: PLACE ORDERS', this.symbol, this.lastPrice);
-      order = await this.placeBuyOrder();
     }
 
     if (this.interval) {
