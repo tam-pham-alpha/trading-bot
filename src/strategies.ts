@@ -218,7 +218,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: roundByDp(-3.25 * delta, 2),
     buyLvQty1: 200,
     buyLvQty2: 300,
-    allocation: 1,
+    allocation: 5,
   },
   {
     ...based,
