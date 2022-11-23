@@ -36,7 +36,7 @@ const based: Strategy = {
   buyLvQty1: 100,
   buyLvQty2: 100,
 
-  takeProfit: 2.75,
+  takeProfit: 2.45,
   allocation: 1,
 };
 
