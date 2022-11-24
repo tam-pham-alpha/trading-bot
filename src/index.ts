@@ -177,7 +177,7 @@ const ssiData = dataFetch({
         const type = resp.DataType;
         const data = JSON.parse(resp.Content);
 
-        if (type === 'F') {
+        if (type === 'F' && data.MarketId === 'HOSE') {
           const session = data.TradingSession as TradingSession;
           onSessionUpdate(session);
         }
