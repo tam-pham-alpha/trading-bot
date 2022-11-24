@@ -3,9 +3,15 @@ import express from 'express';
 import ssi from 'ssi-api-client';
 
 import { setAccessToken, fetch } from './utils/fetch';
-import { strategies } from './strategies';
+import { strategies, Strategy } from './strategies';
 import config from './config';
 import apis from './biz/apis';
+
+import {
+  fetchStrategies,
+  FirebaseStrategy,
+  onDataChange,
+} from './firestore/strategies';
 
 import Streaming from './streaming';
 import {
@@ -26,11 +32,21 @@ import { getBuyingStocks } from './utils/stock';
 import { Mavelli } from './mavelli';
 
 let TIMESTAMP = 0;
+let AGG_STRATEGIES: Strategy[] = strategies;
 const BOT: Record<string, Mavelli> = {};
 
-strategies.forEach((i) => {
-  BOT[i.symbol] = new Mavelli(i.symbol, i);
-});
+const mergerStrategies = (
+  oldList: Strategy[],
+  newList: Partial<Strategy>[],
+) => {
+  return oldList.map((i) => {
+    const configStrategy = newList.find((c) => c.symbol === i.symbol);
+    return {
+      ...i,
+      ...configStrategy,
+    };
+  });
+};
 
 const resetOrders = async () => {
   const liveOrders = await getLiveOrder();
@@ -40,7 +56,7 @@ const resetOrders = async () => {
 
 const displayPortfolio = async () => {
   console.log('R. STRATEGY');
-  console.table(getStrategyTable(strategies));
+  console.table(getStrategyTable(AGG_STRATEGIES));
 
   await wait(1000);
   await BalanceFactory.update();
@@ -283,6 +299,30 @@ const ssiTrading = fetch({
 
 Promise.all([ssiData, ssiTrading]).then(async () => {
   console.log('SSI-DCA-BOT Started!');
+
+  const strategyList = await fetchStrategies();
+  AGG_STRATEGIES = mergerStrategies(AGG_STRATEGIES, strategyList);
+  AGG_STRATEGIES.forEach((i) => {
+    BOT[i.symbol] = new Mavelli(i.symbol, i);
+  });
+
+  onDataChange((list: FirebaseStrategy[]) => {
+    AGG_STRATEGIES = mergerStrategies(AGG_STRATEGIES, list);
+    console.log('R. STRATEGY');
+    console.table(getStrategyTable(AGG_STRATEGIES));
+
+    list.forEach((i) => {
+      const symbol = i.symbol;
+      if (!symbol) return;
+
+      const newStrategy = {
+        ...strategies.find((i) => i.symbol === symbol),
+        ...i,
+      } as Strategy;
+
+      BOT[symbol].setStrategy(newStrategy);
+    });
+  });
 
   await resetOrders();
   await displayPortfolio();

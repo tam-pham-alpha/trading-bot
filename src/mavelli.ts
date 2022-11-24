@@ -35,6 +35,11 @@ export class Mavelli {
     this.ready = true;
   };
 
+  setStrategy = (strategy: Strategy) => {
+    this.strategy = strategy;
+    this.startBuying();
+  };
+
   setSession = (session: TradingSession) => {
     this.session = session;
   };
@@ -92,6 +97,7 @@ export class Mavelli {
 
   placeBuyOrder = async () => {
     if (!this.ready) return;
+    if (this.strategy.buyLvPrc1 >= 0) return;
 
     const positionList = PositionFactory.positions;
     const balance = BalanceFactory.balance;
@@ -129,6 +135,8 @@ export class Mavelli {
   };
 
   placeTpOrder = async () => {
+    if (this.strategy.takeProfit < 0) return;
+
     const strategy = this.strategy;
     const positionList = PositionFactory.positions;
     const position = positionList.find((i) => i.instrumentID === this.symbol);
