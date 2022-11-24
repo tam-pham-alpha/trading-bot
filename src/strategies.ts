@@ -26,7 +26,7 @@ export const INTERVAL = {
   h04: m15 * 16,
 };
 
-const delta = 1.45;
+const delta = 1.25;
 
 const based: Strategy = {
   symbol: '',
@@ -36,7 +36,7 @@ const based: Strategy = {
   buyLvQty1: 100,
   buyLvQty2: 100,
 
-  takeProfit: 2.45,
+  takeProfit: 2.25,
   allocation: 1,
 };
 
@@ -55,7 +55,7 @@ export const strategies: Strategy[] = [
     ...based,
     symbol: 'BID',
     interval: INTERVAL.m45,
-    buyLvPrc1: roundByDp(-0.75 * delta, 2),
+    buyLvPrc1: roundByDp(-1.25 * delta, 2),
     takeProfit: 10.5,
     buyLvQty1: 200,
     buyLvQty2: 200,
@@ -93,7 +93,7 @@ export const strategies: Strategy[] = [
     ...based,
     symbol: 'VHC',
     interval: INTERVAL.m45,
-    buyLvPrc1: roundByDp(-1.75 * delta, 2),
+    buyLvPrc1: roundByDp(-2.25 * delta, 2),
     buyLvQty1: 200,
     buyLvQty2: 200,
     allocation: 1,
@@ -102,7 +102,7 @@ export const strategies: Strategy[] = [
     ...based,
     symbol: 'HAG',
     interval: INTERVAL.m60,
-    buyLvPrc1: roundByDp(-2.25 * delta, 2),
+    buyLvPrc1: roundByDp(-2.45 * delta, 2),
     buyLvQty1: 200,
     buyLvQty2: 400,
     allocation: 5,
@@ -220,7 +220,7 @@ export const strategies: Strategy[] = [
     buyLvPrc1: roundByDp(-3.25 * delta, 2),
     buyLvQty1: 200,
     buyLvQty2: 300,
-    allocation: 5,
+    allocation: 1,
   },
   {
     ...based,
