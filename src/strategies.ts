@@ -224,7 +224,7 @@ export const strategies: Strategy[] = [
   },
   {
     ...based,
-    symbol: 'KHD',
+    symbol: 'KDH',
     interval: INTERVAL.m45,
     buyLvPrc1: roundByDp(-3.25 * delta, 2),
     buyLvQty1: 300,
