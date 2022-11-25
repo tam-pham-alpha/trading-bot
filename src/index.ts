@@ -30,23 +30,11 @@ import { dataFetch, setDataAccessToken } from './utils/dataFetch';
 import { wait } from './utils/time';
 import { getBuyingStocks } from './utils/stock';
 import { Mavelli } from './mavelli';
+import { mergeStrategies } from './utils/strategy';
 
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = strategies;
 const BOT: Record<string, Mavelli> = {};
-
-const mergerStrategies = (
-  oldList: Strategy[],
-  newList: Partial<Strategy>[],
-) => {
-  return oldList.map((i) => {
-    const configStrategy = newList.find((c) => c.symbol === i.symbol);
-    return {
-      ...i,
-      ...configStrategy,
-    };
-  });
-};
 
 const resetOrders = async () => {
   const liveOrders = await getLiveOrder();
@@ -301,27 +289,34 @@ Promise.all([ssiData, ssiTrading]).then(async () => {
   console.log('SSI-DCA-BOT Started!');
 
   const strategyList = await fetchStrategies();
-  AGG_STRATEGIES = mergerStrategies(AGG_STRATEGIES, strategyList);
+  AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, strategyList);
   AGG_STRATEGIES.forEach((i) => {
     BOT[i.symbol] = new Mavelli(i.symbol, i);
   });
 
   onDataChange((list: FirebaseStrategy[]) => {
-    AGG_STRATEGIES = mergerStrategies(AGG_STRATEGIES, list);
+    AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, list);
     console.log('R. STRATEGY');
     console.table(getStrategyTable(AGG_STRATEGIES));
 
-    list.forEach((i) => {
-      const symbol = i.symbol;
-      if (!symbol) return;
+    const updatedSymbols = list.map((i) => i.symbol).join(', ');
+    AGG_STRATEGIES.filter((i) => updatedSymbols.indexOf(i.symbol) >= 0).forEach(
+      (i) => {
+        const symbol = i.symbol;
+        if (!symbol) return;
 
-      const newStrategy = {
-        ...strategies.find((i) => i.symbol === symbol),
-        ...i,
-      } as Strategy;
+        const newStrategy = {
+          ...strategies.find((i) => i.symbol === symbol),
+          ...i,
+        } as Strategy;
 
-      BOT[symbol].setStrategy(newStrategy);
-    });
+        if (BOT[symbol]) {
+          BOT[symbol].setStrategy(newStrategy);
+        } else {
+          BOT[symbol] = new Mavelli(symbol, i);
+        }
+      },
+    );
   });
 
   await resetOrders();

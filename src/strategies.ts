@@ -28,7 +28,7 @@ export const INTERVAL = {
 
 const delta = 1.25;
 
-const based: Strategy = {
+export const based: Strategy = {
   symbol: '',
   interval: INTERVAL.m60,
 
