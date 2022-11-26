@@ -5,8 +5,6 @@ import serviceAccount from '../../mavelli-ssi-firebase-adminsdk-tysp4-d80f9020c2
 
 initializeApp({
   credential: cert(serviceAccount),
-  databaseURL:
-    'https://mavelli-ssi-default-rtdb.asia-southeast1.firebasedatabase.app',
 });
 
 const db = getFirestore();
