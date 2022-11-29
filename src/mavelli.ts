@@ -96,8 +96,9 @@ export class Mavelli {
   };
 
   placeBuyOrder = async () => {
-    if (!this.ready) return;
-    if (this.strategy.buyLvPrc1 >= 0) return;
+    if (!this.ready || !this.strategy.active || this.strategy.buyLvPrc1 >= 0) {
+      return;
+    }
 
     const positionList = PositionFactory.positions;
     const balance = BalanceFactory.balance;

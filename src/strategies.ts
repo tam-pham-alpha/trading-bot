@@ -1,18 +1,7 @@
 import { roundByDp } from './utils/number';
 
 const m15 = 900000;
-
-export type Strategy = {
-  symbol: string;
-  interval: number;
-
-  buyLvPrc1: number;
-  buyLvQty1: number;
-  buyLvQty2: number;
-
-  takeProfit: number;
-  allocation: number;
-};
+const delta = 1.25;
 
 export const INTERVAL = {
   m01: 60000,
@@ -26,18 +15,26 @@ export const INTERVAL = {
   h04: m15 * 16,
 };
 
-const delta = 1.25;
+export type Strategy = {
+  symbol: string;
+  interval: number;
+  buyLvPrc1: number;
+  buyLvQty1: number;
+  buyLvQty2: number;
+  takeProfit: number;
+  allocation: number;
+  active: boolean;
+};
 
 export const based: Strategy = {
   symbol: '',
   interval: INTERVAL.m60,
-
   buyLvPrc1: roundByDp(-2.55 * delta, 2),
   buyLvQty1: 100,
   buyLvQty2: 100,
-
   takeProfit: 2.25,
   allocation: 1,
+  active: false,
 };
 
 export const strategies: Strategy[] = [
@@ -50,6 +47,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 400,
     buyLvQty2: 600,
     allocation: 20,
+    active: true,
   },
   {
     ...based,
@@ -60,6 +58,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 200,
     allocation: 15,
+    active: true,
   },
   {
     ...based,
@@ -70,6 +69,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 300,
     allocation: 10,
+    active: true,
   },
   {
     ...based,
@@ -79,6 +79,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 200,
     allocation: 10,
+    active: true,
   },
   {
     ...based,
@@ -88,6 +89,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 200,
     allocation: 15,
+    active: true,
   },
   {
     ...based,
@@ -97,6 +99,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 200,
     allocation: 1,
+    active: true,
   },
   {
     ...based,
@@ -106,6 +109,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 400,
     allocation: 5,
+    active: true,
   },
   {
     ...based,
@@ -115,6 +119,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 100,
     buyLvQty2: 100,
     allocation: 5,
+    active: true,
   },
   {
     ...based,
@@ -124,6 +129,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 400,
     allocation: 10,
+    active: true,
   },
   {
     ...based,
@@ -133,6 +139,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 100,
     buyLvQty2: 100,
     allocation: 1,
+    active: true,
   },
   {
     ...based,
@@ -142,6 +149,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 100,
     buyLvQty2: 100,
     allocation: 1,
+    active: true,
   },
   {
     ...based,
@@ -151,6 +159,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 300,
     buyLvQty2: 300,
     allocation: 1,
+    active: true,
   },
   {
     ...based,
@@ -160,6 +169,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 300,
     buyLvQty2: 500,
     allocation: -1,
+    active: true,
   },
   {
     ...based,
@@ -169,6 +179,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 200,
     allocation: -1,
+    active: true,
   },
   {
     ...based,
@@ -178,6 +189,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 200,
     allocation: 1,
+    active: true,
   },
   {
     ...based,
@@ -186,6 +198,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 200,
     allocation: 1,
+    active: true,
   },
   {
     ...based,
@@ -194,6 +207,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 100,
     buyLvQty2: 100,
     allocation: 1,
+    active: true,
   },
   {
     ...based,
@@ -203,6 +217,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 500,
     buyLvQty2: 500,
     allocation: 5,
+    active: true,
   },
   {
     ...based,
@@ -212,6 +227,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 100,
     buyLvQty2: 100,
     allocation: 5,
+    active: true,
   },
   {
     ...based,
@@ -221,6 +237,7 @@ export const strategies: Strategy[] = [
     buyLvQty1: 200,
     buyLvQty2: 300,
     allocation: 1,
+    active: true,
   },
   {
     ...based,
@@ -230,5 +247,6 @@ export const strategies: Strategy[] = [
     buyLvQty1: 300,
     buyLvQty2: 400,
     allocation: 1,
+    active: true,
   },
 ];

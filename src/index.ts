@@ -79,7 +79,9 @@ const onSessionUpdate = (session: TradingSession) => {
 };
 
 const onLastPrice = (symbol: string, price: number) => {
-  BOT[symbol].setLastPrice(price);
+  if (BOT[symbol] && price) {
+    BOT[symbol].setLastPrice(price);
+  }
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
