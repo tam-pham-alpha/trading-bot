@@ -9,6 +9,10 @@ class PositionFactory {
     this.positions = await getStockPosition();
     return this.positions;
   };
+
+  getBySymbol = (symbol: string) => {
+    return this.positions.find((i) => i.instrumentID === symbol);
+  };
 }
 
 export default new PositionFactory();

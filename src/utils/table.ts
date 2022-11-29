@@ -1,4 +1,4 @@
-import { strategies, Strategy } from '../strategies';
+import { Strategy } from '../strategies';
 import { Account } from '../types/Account';
 import { OrderHistory } from '../types/Order';
 import { StockPosition } from '../types/Position';
@@ -32,10 +32,15 @@ export const getAccountTable = (accounts: Account[]) => {
   }));
 };
 
-export const getStockPositionTable = (positions: StockPosition[]) => {
+export const getStockPositionTable = (
+  positions: StockPosition[],
+  strategies: Strategy[],
+) => {
   const list = positions.map((i) => {
-    const target =
-      strategies.find((s) => s.symbol === i.instrumentID)?.allocation || 0;
+    const strategy = strategies.find((s) => s.symbol === i.instrumentID) || {
+      allocation: 0,
+    };
+    const target = strategy.allocation;
     const pnl = i.marketPrice
       ? Math.round(((i.avgPrice - i.marketPrice) / i.marketPrice) * 10000) / 100
       : 0;

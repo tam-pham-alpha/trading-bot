@@ -96,7 +96,7 @@ export class Mavelli {
   };
 
   placeBuyOrder = async () => {
-    if (!this.ready || !this.strategy.active || this.strategy.buyLvPrc1 >= 0) {
+    if (!this.ready || !this.strategy.active || this.strategy.buyPrc >= 0) {
       return;
     }
 
@@ -110,15 +110,9 @@ export class Mavelli {
 
     if (!this.lastPrice) return;
 
-    const buyPrice = getNumberByPercentage(
-      this.lastPrice,
-      strategy.buyLvPrc1,
-      2,
-    );
+    const buyPrice = getNumberByPercentage(this.lastPrice, strategy.buyPrc, 2);
     const qty =
-      !avgPrice || avgPrice < buyPrice
-        ? strategy.buyLvQty1
-        : strategy.buyLvQty2;
+      !avgPrice || avgPrice < buyPrice ? strategy.buyQty1 : strategy.buyQty2;
 
     // insufficient balance
     if (buyPrice * qty > balance.purchasingPower) {

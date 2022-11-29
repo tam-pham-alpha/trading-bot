@@ -1,6 +1,6 @@
 import { uniqBy } from 'lodash';
 
-import { cancelOrder } from '../biz/order';
+import { cancelOrder, getLiveOrder } from '../biz/order';
 import { OrderHistory } from '../types/Order';
 
 class OrderFactory {
@@ -9,6 +9,11 @@ class OrderFactory {
   constructor() {
     this.orders = [];
   }
+
+  update = async () => {
+    const liveOrders = await getLiveOrder();
+    this.orders = liveOrders;
+  };
 
   setOrders = (newOrders: OrderHistory[]) => {
     this.orders = newOrders;
