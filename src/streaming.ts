@@ -17,6 +17,7 @@ class Streaming {
   _client: any;
   connected: () => void;
   reconnecting: () => void;
+  disconnected: () => void;
 
   constructor(options: any) {
     const url = resoleURL(options.url, api.SIGNALR);
@@ -24,6 +25,7 @@ class Streaming {
 
     this.connected = () => null;
     this.reconnecting = () => null;
+    this.disconnected = () => null;
 
     this._client._eventsListener = [];
     this._client.headers['Authorization'] = options.token;
@@ -33,6 +35,9 @@ class Streaming {
     };
     this._client.serviceHandlers.reconnecting = () => {
       this.reconnecting();
+    };
+    this._client.serviceHandlers.disconnected = () => {
+      this.disconnected();
     };
   }
 

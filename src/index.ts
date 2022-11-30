@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import ssi from 'ssi-api-client';
+import * as Sentry from '@sentry/node';
 
 import { setAccessToken, fetch } from './utils/fetch';
 import { INTERVAL, strategies, Strategy } from './strategies';
@@ -28,6 +29,8 @@ import { wait } from './utils/time';
 import { getBuyingStocks } from './utils/stock';
 import { Mavelli } from './mavelli';
 import { mergeStrategies } from './utils/strategy';
+
+import './sentry';
 
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = strategies;
@@ -207,6 +210,14 @@ const initSsiMarketData = () => {
             );
         };
 
+        stream.disconnected = () => {
+          Sentry.captureMessage('Market Data got disconnected', {
+            tags: {
+              domain: 'SSI MARKET',
+            },
+          });
+        };
+
         stream.subscribe(
           'FcMarketDataV2Hub',
           'Broadcast',
@@ -292,17 +303,27 @@ const initSsiTrading = () => {
 
         ssi.bind(ssi.events.onOrderMatch, onOrderMatch);
 
-        ssi.bind(ssi.events.onError, function (e: any, data: any) {
-          console.log('onError', JSON.stringify(data));
+        ssi.bind(ssi.events.onError, (e: any, data: any) => {
+          Sentry.captureMessage(JSON.stringify(data), {
+            tags: {
+              type: 'onError',
+            },
+          });
         });
-
-        ssi.bind(ssi.events.onOrderError, function (e: any, data: any) {
-          console.log('onOrderError', JSON.stringify(data));
+        ssi.bind(ssi.events.onOrderError, (e: any, data: any) => {
+          Sentry.captureMessage(JSON.stringify(data), {
+            tags: {
+              type: 'onOrderError',
+            },
+          });
         });
-
-        // ssi.bind(ssi.events.onClientPortfolioEvent, function (e: any, data: any) {
-        //   console.log('onClientPortfolioEvent', data);
-        // });
+        ssi.bind(ssi.events.onClientPortfolioEvent, (e: any, data: any) => {
+          Sentry.captureMessage(JSON.stringify(data), {
+            tags: {
+              type: 'onClientPortfolioEvent',
+            },
+          });
+        });
 
         ssi.start();
       } else {
