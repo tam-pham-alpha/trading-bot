@@ -110,7 +110,11 @@ export class Mavelli {
 
     if (!this.lastPrice) return;
 
-    const buyPrice = getNumberByPercentage(this.lastPrice, strategy.buyPrc, 2);
+    const buyPrice = getNumberByPercentage(
+      this.lastPrice,
+      strategy.buyPrc,
+      strategy.tickSize,
+    );
     const qty =
       !avgPrice || avgPrice < buyPrice ? strategy.buyQty1 : strategy.buyQty2;
 

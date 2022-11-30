@@ -24,6 +24,7 @@ export type Strategy = {
   takeProfit: number;
   allocation: number;
   active: boolean;
+  tickSize: number;
 };
 
 export const based: Strategy = {
@@ -35,6 +36,7 @@ export const based: Strategy = {
   takeProfit: 2.25,
   allocation: 1,
   active: false,
+  tickSize: 2,
 };
 
 export const strategies: Strategy[] = [
