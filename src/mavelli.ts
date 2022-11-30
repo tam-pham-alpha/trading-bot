@@ -4,7 +4,7 @@ import BalanceFactory from './factory/BalanceFactory';
 import OrderFactory from './factory/OrderFactory';
 import PositionFactory from './factory/PositionFactory';
 import { INTERVAL, Strategy } from './strategies';
-import { TradingSession } from './types/Market';
+import { QuoteMessage, TradeMessage, TradingSession } from './types/Market';
 import { OrderHistory, OrderMatchEvent, OrderUpdateEvent } from './types/Order';
 import { getNumberByPercentage } from './utils/number';
 import { wait } from './utils/time';
@@ -20,6 +20,8 @@ export class Mavelli {
   isPlacingOrders = false;
   interval: NodeJS.Timer | undefined;
   timestamp = 0;
+  quote: QuoteMessage | undefined;
+  trade: TradeMessage | undefined;
 
   constructor(symbol: string, strategy: Strategy) {
     this.symbol = symbol;
@@ -33,6 +35,13 @@ export class Mavelli {
 
   setReady = () => {
     this.ready = true;
+  };
+
+  setQuote = (quote: QuoteMessage) => {
+    this.quote = quote;
+  };
+  setTrade = (trade: TradeMessage) => {
+    this.trade = trade;
   };
 
   setStrategy = (strategy: Strategy) => {
@@ -110,10 +119,9 @@ export class Mavelli {
 
     if (!this.lastPrice) return;
 
-    const buyPrice = getNumberByPercentage(
-      this.lastPrice,
-      strategy.buyPrc,
-      strategy.tickSize,
+    const buyPrice = Math.max(
+      getNumberByPercentage(this.lastPrice, strategy.buyPrc, strategy.tickSize),
+      this.trade?.Floor || 0,
     );
     const qty =
       !avgPrice || avgPrice < buyPrice ? strategy.buyQty1 : strategy.buyQty2;

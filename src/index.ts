@@ -18,7 +18,7 @@ import {
   getStockPositionTable,
   getStrategyTable,
 } from './utils/table';
-import { TradingSession } from './types/Market';
+import { QuoteMessage, TradeMessage, TradingSession } from './types/Market';
 import OrderFactory from './factory/OrderFactory';
 import { OrderMatchEvent, OrderUpdateEvent } from './types/Order';
 import BalanceFactory from './factory/BalanceFactory';
@@ -91,6 +91,28 @@ const onLastPrice = (symbol: string, price: number) => {
   if (BOT[symbol] && price) {
     BOT[symbol].setLastPrice(price);
   }
+};
+
+const onTrade = (data: TradeMessage) => {
+  const symbol = data.Symbol;
+  const price = data.LastPrice;
+
+  if (BOT[symbol]) {
+    BOT[symbol].setTrade(data);
+  }
+
+  onLastPrice(symbol, price);
+};
+
+const onQuote = (data: QuoteMessage) => {
+  const symbol = data.Symbol;
+  const price = data.BidPrice1;
+
+  if (BOT[symbol]) {
+    BOT[symbol].setQuote(data);
+  }
+
+  onLastPrice(symbol, price);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -199,15 +221,11 @@ const initSsiMarketData = () => {
             }
 
             if (type === 'X-TRADE') {
-              const symbol = data.Symbol;
-              const price = data.LastPrice;
-              onLastPrice(symbol, price);
+              onTrade(data as TradeMessage);
             }
 
             if (type === 'X-QUOTE') {
-              const symbol = data.Symbol;
-              const price = data.BidPrice1;
-              onLastPrice(symbol, price);
+              onQuote(data as QuoteMessage);
             }
           },
         );
@@ -274,13 +292,13 @@ const initSsiTrading = () => {
 
         ssi.bind(ssi.events.onOrderMatch, onOrderMatch);
 
-        // ssi.bind(ssi.events.onError, function (e: any, data: any) {
-        //   console.log('onError', JSON.stringify(data));
-        // });
+        ssi.bind(ssi.events.onError, function (e: any, data: any) {
+          console.log('onError', JSON.stringify(data));
+        });
 
-        // ssi.bind(ssi.events.onOrderError, function (e: any, data: any) {
-        //   console.log('onOrderError', JSON.stringify(data));
-        // });
+        ssi.bind(ssi.events.onOrderError, function (e: any, data: any) {
+          console.log('onOrderError', JSON.stringify(data));
+        });
 
         // ssi.bind(ssi.events.onClientPortfolioEvent, function (e: any, data: any) {
         //   console.log('onClientPortfolioEvent', data);
