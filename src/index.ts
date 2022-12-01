@@ -26,7 +26,6 @@ import BalanceFactory from './factory/BalanceFactory';
 import PositionFactory from './factory/PositionFactory';
 import { dataFetch, setDataAccessToken } from './utils/dataFetch';
 import { wait } from './utils/time';
-import { getBuyingStocks } from './utils/stock';
 import { Mavelli } from './mavelli';
 import { mergeStrategies } from './utils/strategy';
 import { based } from './strategies';
@@ -34,8 +33,11 @@ import { based } from './strategies';
 import './sentry';
 import {
   fetchDefaultStrategy,
+  fetchMavelliConfig,
   onDefaultStrategyChange,
+  onMavelliConfigChange,
 } from './firestore/configs';
+import { MAX_ORDER } from './consts';
 
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = strategies;
@@ -369,6 +371,14 @@ const main = async () => {
     console.log('setInterval');
     displayPortfolio();
   }, INTERVAL.m10);
+
+  // set default config
+  fetchMavelliConfig().then((data) => {
+    PositionFactory.setMaxOrder(data.maxOrder || MAX_ORDER);
+  });
+  onMavelliConfigChange((data) => {
+    PositionFactory.setMaxOrder(data.maxOrder || MAX_ORDER);
+  });
 
   onDefaultStrategyChange((data) => {
     DEFAULT_STRATEGY = { ...DEFAULT_STRATEGY, ...data };

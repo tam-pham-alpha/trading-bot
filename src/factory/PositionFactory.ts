@@ -5,8 +5,7 @@ import { Strategy } from '../strategies';
 import BalanceFactory from './BalanceFactory';
 import { StockPosition } from '../types/Position';
 import { roundByDp } from '../utils/number';
-
-const MAX_ORDER = 8;
+import { MAX_ORDER } from '../consts';
 
 const normalizeStrategies = (
   positions: StockPosition[],
@@ -33,16 +32,7 @@ class PositionFactory {
   positions: StockPosition[] = [];
   strategies: Strategy[] = [];
   buyingList: string[] = [];
-
-  setStrategies = (strategies: Strategy[]) => {
-    this.strategies = strategies;
-    this.positions = normalizeStrategies(
-      this.positions,
-      this.strategies,
-      BalanceFactory.balance.totalAssets,
-    );
-    this.getBuyingList();
-  };
+  maxOrder = MAX_ORDER;
 
   update = async () => {
     if (!this.strategies.length) return;
@@ -57,13 +47,28 @@ class PositionFactory {
     return this.positions;
   };
 
+  setMaxOrder = (max: number) => {
+    this.maxOrder = max;
+    this.getBuyingList();
+  };
+
+  setStrategies = (strategies: Strategy[]) => {
+    this.strategies = strategies;
+    this.positions = normalizeStrategies(
+      this.positions,
+      this.strategies,
+      BalanceFactory.balance.totalAssets,
+    );
+    this.getBuyingList();
+  };
+
   getBuyingList = () => {
     const symbols = orderBy(
       this.positions.filter((i) => i.buying),
       ['allocation'],
       ['asc'],
     )
-      .slice(0, MAX_ORDER)
+      .slice(0, this.maxOrder)
       .map((i) => i.instrumentID);
 
     this.buyingList = symbols;
