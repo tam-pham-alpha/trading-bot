@@ -78,7 +78,6 @@ export class Mavelli {
         console.log('A: CANCEL ALL ORDERS', this.symbol);
         await OrderFactory.cancelOrdersBySymbol(this.symbol);
       } else {
-        console.log('A: PLACE ORDERS', this.symbol, this.lastPrice);
         order = await this.placeBuyOrder();
       }
     }
@@ -132,6 +131,7 @@ export class Mavelli {
       return 1;
     }
 
+    console.log('R. PLACE ORDER', this.symbol, 'B', buyPrice, qty);
     await placeOrder(this.symbol, 'B', buyPrice, qty);
     return 1;
   };
