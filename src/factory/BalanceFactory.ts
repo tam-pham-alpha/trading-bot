@@ -4,7 +4,9 @@ import { getAccountBalance } from '../biz/account';
 import { Account } from '../types/Account';
 
 class BalanceFactory {
-  balance: Account = {} as Account;
+  balance: Account = {
+    totalAssets: 0,
+  } as Account;
 
   sync = (value: Account) => {
     this.balance = value;
