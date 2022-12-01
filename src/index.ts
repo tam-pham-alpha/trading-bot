@@ -29,11 +29,17 @@ import { wait } from './utils/time';
 import { getBuyingStocks } from './utils/stock';
 import { Mavelli } from './mavelli';
 import { mergeStrategies } from './utils/strategy';
+import { based } from './strategies';
 
 import './sentry';
+import {
+  fetchDefaultStrategy,
+  onDefaultStrategyChange,
+} from './firestore/configs';
 
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = strategies;
+let DEFAULT_STRATEGY: Strategy = based;
 const BOT: Record<string, Mavelli> = {};
 
 const displayStrategies = () => {
@@ -341,33 +347,19 @@ const main = async () => {
   TIMESTAMP = Date.now();
   console.log('Mavelli SSI started!', TIMESTAMP);
 
+  const defaultStrategy = await fetchDefaultStrategy();
   const strategyList = await fetchStrategies();
-  AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, strategyList);
+
+  DEFAULT_STRATEGY = { ...DEFAULT_STRATEGY, ...defaultStrategy };
+
+  AGG_STRATEGIES = mergeStrategies(
+    AGG_STRATEGIES,
+    strategyList,
+    DEFAULT_STRATEGY,
+  );
+
   AGG_STRATEGIES.forEach((i) => {
     BOT[i.symbol] = new Mavelli(i.symbol, i);
-  });
-
-  onDataChange((list: FirebaseStrategy[]) => {
-    AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, list);
-    console.log('R. STRATEGY');
-    console.table(getStrategyTable(AGG_STRATEGIES));
-
-    const updatedSymbols = list.map((i) => i.symbol).join(', ');
-    AGG_STRATEGIES.filter((i) => updatedSymbols.indexOf(i.symbol) >= 0).forEach(
-      (i) => {
-        const symbol = i.symbol;
-        if (!symbol) return;
-
-        const newStrategy = {
-          ...AGG_STRATEGIES.find((i) => i.symbol === symbol),
-          ...i,
-        } as Strategy;
-
-        if (BOT[symbol]) {
-          BOT[symbol].setStrategy(newStrategy);
-        }
-      },
-    );
   });
 
   const ssiData = initSsiMarketData();
@@ -386,6 +378,35 @@ const main = async () => {
   setInterval(() => {
     displayPortfolio();
   }, INTERVAL.m10);
+
+  onDefaultStrategyChange((data) => {
+    DEFAULT_STRATEGY = { ...DEFAULT_STRATEGY, ...data };
+    AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, [], DEFAULT_STRATEGY);
+    console.log('R. STRATEGY');
+    console.table(getStrategyTable(AGG_STRATEGIES));
+
+    AGG_STRATEGIES.forEach((i) => {
+      if (BOT[i.symbol]) {
+        BOT[i.symbol].setStrategy(i);
+      }
+    });
+  });
+
+  onDataChange((list: FirebaseStrategy[]) => {
+    AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, list, DEFAULT_STRATEGY);
+    console.log('R. STRATEGY');
+    console.table(getStrategyTable(AGG_STRATEGIES));
+
+    const symbols = list.map((i) => i.symbol).join(', ');
+    const updatedStrategies = AGG_STRATEGIES.filter(
+      (i) => symbols.indexOf(i.symbol) >= 0,
+    );
+    updatedStrategies.forEach((i) => {
+      if (BOT[i.symbol]) {
+        BOT[i.symbol].setStrategy(i);
+      }
+    });
+  });
 };
 
 main();

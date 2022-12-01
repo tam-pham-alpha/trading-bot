@@ -18,7 +18,7 @@ jest.mock('../strategies', () => ({
 
 describe('mergeStrategies', () => {
   test('it should be accept new strategy', () => {
-    const t = mergeStrategies([], [{ symbol: 'SSI' }]);
+    const t = mergeStrategies([], [{ symbol: 'SSI' }], based);
 
     expect(t).toHaveLength(1);
     expect(t[0].symbol).toBe('SSI');
@@ -29,6 +29,7 @@ describe('mergeStrategies', () => {
     const t = mergeStrategies(
       [{ ...based }],
       [{ symbol: 'SSI', allocation: 6 }],
+      based,
     );
 
     expect(t).toHaveLength(1);
@@ -40,6 +41,7 @@ describe('mergeStrategies', () => {
     const t = mergeStrategies(
       [{ ...based }],
       [{ symbol: 'VHC', allocation: 6 }],
+      based,
     );
 
     expect(t).toHaveLength(2);

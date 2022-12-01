@@ -10,3 +10,4 @@ initializeApp({
 const db = getFirestore();
 
 export const StrategyCollection = db.collection('strategies');
+export const ConfigCollection = db.collection('configs');
