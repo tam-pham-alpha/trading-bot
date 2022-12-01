@@ -12,6 +12,10 @@ class BalanceFactory {
     this.balance = value;
   };
 
+  getTotalAsset = () => {
+    return this.balance.totalAssets || 0;
+  };
+
   update = async () => {
     try {
       const balance = await getAccountBalance();

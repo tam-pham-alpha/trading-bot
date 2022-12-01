@@ -41,7 +41,7 @@ class PositionFactory {
     this.positions = normalizeStrategies(
       positions,
       this.strategies,
-      BalanceFactory.balance.totalAssets,
+      BalanceFactory.getTotalAsset(),
     );
     this.getBuyingList();
     return this.positions;
@@ -57,7 +57,7 @@ class PositionFactory {
     this.positions = normalizeStrategies(
       this.positions,
       this.strategies,
-      BalanceFactory.balance.totalAssets,
+      BalanceFactory.getTotalAsset(),
     );
     this.getBuyingList();
   };
