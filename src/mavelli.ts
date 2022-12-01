@@ -7,7 +7,6 @@ import { INTERVAL, Strategy } from './strategies';
 import { QuoteMessage, TradeMessage, TradingSession } from './types/Market';
 import { OrderHistory, OrderMatchEvent, OrderUpdateEvent } from './types/Order';
 import { getNumberByPercentage } from './utils/number';
-import { wait } from './utils/time';
 import { checkCrossProfit } from './utils/number';
 
 // The SSI auto trading bot
@@ -77,11 +76,7 @@ export class Mavelli {
       // cancel existing orders if any
       if (OrderFactory.getLiveOrdersBySymbol(this.symbol).length) {
         console.log('A: CANCEL ALL ORDERS', this.symbol);
-
         await OrderFactory.cancelOrdersBySymbol(this.symbol);
-
-        await wait(1000);
-        await BalanceFactory.update();
       } else {
         console.log('A: PLACE ORDERS', this.symbol, this.lastPrice);
         order = await this.placeBuyOrder();

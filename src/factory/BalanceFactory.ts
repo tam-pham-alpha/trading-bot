@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/node';
+
 import { getAccountBalance } from '../biz/account';
 import { Account } from '../types/Account';
 
@@ -9,7 +11,16 @@ class BalanceFactory {
   };
 
   update = async () => {
-    this.balance = await getAccountBalance();
+    try {
+      const balance = await getAccountBalance();
+      this.balance = balance;
+    } catch (err) {
+      Sentry.captureMessage(JSON.stringify(err), {
+        tags: {
+          type: 'Account.update',
+        },
+      });
+    }
     return this.balance;
   };
 }

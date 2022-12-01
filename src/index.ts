@@ -152,10 +152,10 @@ const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
 
   console.log('R: ORDER MATCH');
 
-  await wait(5000);
+  await wait(1000);
   displayPortfolio();
 
-  await wait(5000);
+  await wait(1000);
   BOT[symbol].onOrderMatch(data);
 };
 
