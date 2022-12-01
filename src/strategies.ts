@@ -168,8 +168,6 @@ export const strategies: Strategy[] = [
     symbol: 'DGC',
     interval: INTERVAL.m45,
     buyPrc: roundByDp(-1.85 * delta, 2),
-    buyQty1: 300,
-    buyQty2: 500,
     allocation: -1,
     active: true,
   },
