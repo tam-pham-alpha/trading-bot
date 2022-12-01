@@ -155,7 +155,8 @@ export class Mavelli {
       return;
     }
 
-    return await placeOrder(this.symbol, 'S', this.lastPrice, sellQty);
+    await placeOrder(this.symbol, 'S', this.lastPrice, sellQty);
+    await PositionFactory.update();
   };
 
   onOrderUpdate = (data: OrderUpdateEvent) => {
