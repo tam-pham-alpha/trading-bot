@@ -18,22 +18,18 @@ export const getStockPosition = async () => {
       return response.data.data.stockPositions as StockPosition[];
     })
     .then((positions: StockPosition[]) => {
-      let totalValue = 0;
-      return positions
-        .map((i) => {
-          const total = i.buyT0 + i.buyT1 + i.buyT2 + i.sellableQty;
-          const value = total * (i.marketPrice || i.avgPrice);
-          totalValue += value;
+      return positions.map((i) => {
+        const total = i.buyT0 + i.buyT1 + i.buyT2 + i.sellableQty;
+        const value = total * i.avgPrice;
 
-          return {
-            ...i,
-            total,
-            value,
-          };
-        })
-        .map((i) => ({
+        return {
           ...i,
-          allocation: Math.round((i.value / totalValue) * 10000) / 100,
-        }));
+          total,
+          value,
+          allocation: 0,
+          target: 0,
+          buying: false,
+        };
+      });
     });
 };

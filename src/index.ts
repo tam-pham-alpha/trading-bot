@@ -55,19 +55,9 @@ const displayAccount = async () => {
 
 const displayPositions = async () => {
   await PositionFactory.update();
+  const buyingList = PositionFactory.getBuyingList();
   console.log('R: POSITIONS');
-  const positionList = getStockPositionTable(
-    PositionFactory.positions,
-    AGG_STRATEGIES,
-  );
-  const stoppedList = positionList
-    .filter((i) => !i.buying)
-    .map((i) => i.symbol);
-  const buyingList = getBuyingStocks(
-    AGG_STRATEGIES.filter((i) => i.allocation > 0).map((i) => i.symbol),
-    stoppedList,
-  );
-  console.table(positionList);
+  console.table(getStockPositionTable(PositionFactory.positions));
   console.log(`R. BUYING (${buyingList.length}):`, buyingList.join(', '));
 };
 
@@ -351,13 +341,13 @@ const main = async () => {
   const strategyList = await fetchStrategies();
 
   DEFAULT_STRATEGY = { ...DEFAULT_STRATEGY, ...defaultStrategy };
-
   AGG_STRATEGIES = mergeStrategies(
     AGG_STRATEGIES,
     strategyList,
     DEFAULT_STRATEGY,
   );
 
+  PositionFactory.setStrategies(AGG_STRATEGIES);
   AGG_STRATEGIES.forEach((i) => {
     BOT[i.symbol] = new Mavelli(i.symbol, i);
   });
@@ -376,12 +366,15 @@ const main = async () => {
 
   // update data every 10 mins
   setInterval(() => {
+    console.log('setInterval');
     displayPortfolio();
   }, INTERVAL.m10);
 
   onDefaultStrategyChange((data) => {
     DEFAULT_STRATEGY = { ...DEFAULT_STRATEGY, ...data };
     AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, [], DEFAULT_STRATEGY);
+    PositionFactory.setStrategies(AGG_STRATEGIES);
+
     console.log('R. STRATEGY');
     console.table(getStrategyTable(AGG_STRATEGIES));
 
@@ -394,6 +387,8 @@ const main = async () => {
 
   onDataChange((list: FirebaseStrategy[]) => {
     AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, list, DEFAULT_STRATEGY);
+    PositionFactory.setStrategies(AGG_STRATEGIES);
+
     console.log('R. STRATEGY');
     console.table(getStrategyTable(AGG_STRATEGIES));
 

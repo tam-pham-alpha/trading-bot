@@ -39,13 +39,17 @@ export class Mavelli {
   setQuote = (quote: QuoteMessage) => {
     this.quote = quote;
   };
+
   setTrade = (trade: TradeMessage) => {
     this.trade = trade;
   };
 
   setStrategy = (strategy: Strategy) => {
+    const old = this.strategy;
     this.strategy = strategy;
-    this.startBuying();
+    if (old.buyPrc !== this.strategy.buyPrc) {
+      this.startBuying();
+    }
   };
 
   setSession = (session: TradingSession) => {
@@ -99,7 +103,12 @@ export class Mavelli {
   };
 
   placeBuyOrder = async () => {
-    if (!this.ready || !this.strategy.active || this.strategy.buyPrc >= 0) {
+    if (
+      !this.ready ||
+      !this.strategy.active ||
+      this.strategy.buyPrc >= 0 ||
+      !PositionFactory.checkIsBuyingStock(this.symbol)
+    ) {
       return;
     }
 

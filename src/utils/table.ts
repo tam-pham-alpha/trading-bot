@@ -32,24 +32,11 @@ export const getAccountTable = (accounts: Account[]) => {
   }));
 };
 
-export const getStockPositionTable = (
-  positions: StockPosition[],
-  strategies: Strategy[],
-) => {
+export const getStockPositionTable = (positions: StockPosition[]) => {
   const list = positions.map((i) => {
-    const strategy = strategies.find((s) => s.symbol === i.instrumentID) || {
-      allocation: 0,
-    };
-    const target = strategy.allocation;
-    const pnl = i.marketPrice
-      ? Math.round(((i.avgPrice - i.marketPrice) / i.marketPrice) * 10000) / 100
-      : 0;
-
     return {
       symbol: i.instrumentID,
       avgPrice: i.avgPrice,
-      marketPrice: i.marketPrice,
-      pnl,
       sellableQty: i.sellableQty,
       buyT0: i.buyT0,
       buyT1: i.buyT1,
@@ -57,12 +44,12 @@ export const getStockPositionTable = (
       total: i.total,
       value: i.value,
       allocation: i.allocation,
-      target,
-      buying: (i.allocation || 0) <= target,
+      target: i.target,
+      buying: i.buying,
     };
   });
 
-  return orderBy(list, ['allocation', 'target'], ['desc', 'desc']);
+  return orderBy(list, ['allocation'], ['asc']);
 };
 
 export const getStrategyTable = (strategies: Strategy[]) => {
