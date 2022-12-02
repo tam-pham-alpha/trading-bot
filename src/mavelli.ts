@@ -144,8 +144,7 @@ export class Mavelli {
     }
 
     console.log('R. PLACE ORDER', this.symbol, 'B', buyPrice, qty);
-    await placeOrder(this.symbol, 'B', buyPrice, qty);
-    return 1;
+    return await placeOrder(this.symbol, 'B', buyPrice, qty);
   };
 
   placeTpOrder = async () => {
