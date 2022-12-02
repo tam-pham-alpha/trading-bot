@@ -47,7 +47,10 @@ export class Mavelli {
   setStrategy = (strategy: Strategy) => {
     const old = this.strategy;
     this.strategy = strategy;
-    if (old.buyPrc !== this.strategy.buyPrc) {
+    if (
+      old.buyPrc !== this.strategy.buyPrc ||
+      old.buyQty1 !== this.strategy.buyQty1
+    ) {
       this.startBuying();
     }
   };
