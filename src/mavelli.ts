@@ -129,8 +129,12 @@ export class Mavelli {
       getNumberByPercentage(this.lastPrice, strategy.buyPrc, strategy.tickSize),
       this.trade?.Floor || 0,
     );
+
+    // sometime buyQty2 is missing, hence it uses default config
     const qty =
-      !avgPrice || avgPrice < buyPrice ? strategy.buyQty1 : strategy.buyQty2;
+      !avgPrice || avgPrice < buyPrice
+        ? strategy.buyQty1
+        : Math.max(strategy.buyQty1, strategy.buyQty2);
 
     // insufficient balance
     if (buyPrice * qty > balance.purchasingPower) {
