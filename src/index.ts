@@ -3,7 +3,7 @@ import ssi from 'ssi-api-client';
 import * as Sentry from '@sentry/node';
 
 import { setAccessToken, fetch } from './utils/fetch';
-import { INTERVAL, strategies, Strategy } from './strategies';
+import { INTERVAL, Strategy } from './strategies';
 import config from './config';
 
 import {
@@ -38,9 +38,10 @@ import {
   onMavelliConfigChange,
 } from './firestore/configs';
 import { MAX_ORDER } from './consts';
+import { unionBy } from 'lodash';
 
 let TIMESTAMP = 0;
-let AGG_STRATEGIES: Strategy[] = strategies;
+let AGG_STRATEGIES: Strategy[] = [];
 let DEFAULT_STRATEGY: Strategy = based;
 const BOT: Record<string, Mavelli> = {};
 
@@ -340,14 +341,10 @@ const main = async () => {
   console.log('Mavelli SSI started!', TIMESTAMP);
 
   const defaultStrategy = await fetchDefaultStrategy();
-  const strategyList = await fetchStrategies();
+  let firebaseStrategyList = await fetchStrategies();
 
   DEFAULT_STRATEGY = { ...DEFAULT_STRATEGY, ...defaultStrategy };
-  AGG_STRATEGIES = mergeStrategies(
-    AGG_STRATEGIES,
-    strategyList,
-    DEFAULT_STRATEGY,
-  );
+  AGG_STRATEGIES = mergeStrategies(firebaseStrategyList, DEFAULT_STRATEGY);
 
   PositionFactory.setStrategies(AGG_STRATEGIES);
   AGG_STRATEGIES.forEach((i) => {
@@ -382,7 +379,7 @@ const main = async () => {
 
   onDefaultStrategyChange((data) => {
     DEFAULT_STRATEGY = { ...DEFAULT_STRATEGY, ...data };
-    AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, [], DEFAULT_STRATEGY);
+    AGG_STRATEGIES = mergeStrategies(firebaseStrategyList, DEFAULT_STRATEGY);
     PositionFactory.setStrategies(AGG_STRATEGIES);
 
     console.log('R. STRATEGY');
@@ -396,7 +393,11 @@ const main = async () => {
   });
 
   onDataChange((list: FirebaseStrategy[]) => {
-    AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, list, DEFAULT_STRATEGY);
+    firebaseStrategyList = unionBy(
+      [...list, ...firebaseStrategyList],
+      'symbol',
+    );
+    AGG_STRATEGIES = mergeStrategies(firebaseStrategyList, DEFAULT_STRATEGY);
     PositionFactory.setStrategies(AGG_STRATEGIES);
 
     console.log('R. STRATEGY');

@@ -7,18 +7,20 @@ jest.mock('../strategies', () => ({
     symbol: 'SSI',
     interval: 1,
 
-    buyLvPrc1: 1,
-    buyLvQty1: 100,
-    buyLvQty2: 100,
+    buyPrc: 1,
+    buyQty1: 100,
+    buyQty2: 100,
 
     takeProfit: 2.25,
     allocation: 5,
+    active: true,
+    tickSize: 2,
   },
 }));
 
 describe('mergeStrategies', () => {
   test('it should be accept new strategy', () => {
-    const t = mergeStrategies([], [{ symbol: 'SSI' }], based);
+    const t = mergeStrategies([{ symbol: 'SSI' }], based);
 
     expect(t).toHaveLength(1);
     expect(t[0].symbol).toBe('SSI');
@@ -26,25 +28,43 @@ describe('mergeStrategies', () => {
   });
 
   test('symbols should be merged', () => {
-    const t = mergeStrategies(
-      [{ ...based }],
-      [{ symbol: 'SSI', allocation: 6 }],
-      based,
-    );
+    const t = mergeStrategies([{ symbol: 'SSI', allocation: 6 }], based);
 
     expect(t).toHaveLength(1);
     expect(t[0].symbol).toBe('SSI');
     expect(t[0].allocation).toBe(6);
   });
 
-  test('symbols should be merged 02', () => {
+  test('fallback should not be use', () => {
     const t = mergeStrategies(
-      [{ ...based }],
-      [{ symbol: 'VHC', allocation: 6 }],
-      based,
+      [{ symbol: 'SSI', allocation: 6, buyPrc: 2.45 }],
+      {
+        ...based,
+        buyPrc: 2.55,
+      },
     );
 
-    expect(t).toHaveLength(2);
-    expect(t.map((i) => i.symbol).join(', ')).toBe('SSI, VHC');
+    expect(t[0].buyPrc).toBe(2.45);
+  });
+
+  test('fallback should not be use', () => {
+    const t = mergeStrategies([{ symbol: 'SSI', allocation: 6 }], {
+      ...based,
+      buyPrc: 2.55,
+    });
+
+    expect(t[0].buyPrc).toBe(2.55);
+  });
+
+  test('fallback should be use', () => {
+    const t = mergeStrategies([{ symbol: 'SSI', allocation: 6 }], {
+      ...based,
+      buyPrc: 2.55,
+    });
+
+    expect(t).toHaveLength(1);
+    expect(t[0].symbol).toBe('SSI');
+    expect(t[0].allocation).toBe(6);
+    expect(t[0].buyPrc).toBe(2.55);
   });
 });
