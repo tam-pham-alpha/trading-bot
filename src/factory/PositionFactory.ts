@@ -10,7 +10,7 @@ import { MAX_ORDER } from '../consts';
 const normalizeStrategies = (
   positions: StockPosition[],
   strategies: Strategy[],
-  totalBalance: number,
+  totalBalance = 0,
 ) => {
   return positions.map((i) => {
     const strategy = strategies.find((s) => s.symbol === i.instrumentID) || {
@@ -18,7 +18,7 @@ const normalizeStrategies = (
       active: false,
     };
     const target = strategy.allocation;
-    const allocation = roundByDp((i.value / totalBalance) * 100, 2);
+    const allocation = roundByDp(((i.value || 0) / totalBalance) * 100, 2);
 
     return {
       ...i,
@@ -66,8 +66,8 @@ class PositionFactory {
   getBuyingList = () => {
     const symbols = orderBy(
       this.positions.filter((i) => i.buying),
-      ['allocation'],
-      ['asc'],
+      ['target', 'allocation'],
+      ['desc', 'asc'],
     )
       .slice(0, this.maxOrder)
       .map((i) => i.instrumentID);

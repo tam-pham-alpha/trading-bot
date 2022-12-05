@@ -12,13 +12,13 @@ import { checkCrossProfit } from './utils/number';
 // The SSI auto trading bot
 export class Mavelli {
   session: TradingSession = 'C';
-  strategy: Strategy;
   lastPrice: number;
   symbol: string;
   ready = false;
   isPlacingOrders = false;
   interval: NodeJS.Timer | undefined;
   timestamp = 0;
+  strategy: Strategy;
   quote: QuoteMessage | undefined;
   trade: TradeMessage | undefined;
 
@@ -47,9 +47,11 @@ export class Mavelli {
   setStrategy = (strategy: Strategy) => {
     const old = this.strategy;
     this.strategy = strategy;
+
     if (
       old.buyPrc !== this.strategy.buyPrc ||
-      old.buyQty1 !== this.strategy.buyQty1
+      old.buyQty1 !== this.strategy.buyQty1 ||
+      old.buyQty2 !== this.strategy.buyQty2
     ) {
       this.startBuying();
     }

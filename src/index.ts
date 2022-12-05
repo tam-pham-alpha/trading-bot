@@ -51,37 +51,44 @@ const displayStrategies = () => {
   console.table(getStrategyTable(AGG_STRATEGIES));
 };
 
-const displayAccount = async () => {
-  await BalanceFactory.update();
+const displayAccount = () => {
   console.log('R: ACCOUNT');
   console.table(getAccountTable([BalanceFactory.balance]));
 };
 
-const displayPositions = async () => {
-  await PositionFactory.update();
+const displayPositions = () => {
   const buyingList = PositionFactory.getBuyingList();
   console.log('R: POSITIONS');
   console.table(getStockPositionTable(PositionFactory.positions));
   console.log(`R. BUYING (${buyingList.length}):`, buyingList.join(', '));
 };
 
-const displayOrders = async () => {
-  await OrderFactory.update();
+const displayOrders = () => {
   console.log(`R: LIVE ORDERS (${OrderFactory.getLiveOrders().length})`);
   console.table(getOrderTable(OrderFactory.getLiveOrders()));
 };
 
-const displayPortfolio = async () => {
+const updatePortfolio = async () => {
   displayStrategies();
 
   await wait(1000);
-  await displayAccount();
+  await BalanceFactory.update();
+  displayAccount();
 
   await wait(1000);
-  await displayPositions();
+  await PositionFactory.update();
+  displayPositions();
 
   await wait(1000);
-  await displayOrders();
+  await OrderFactory.update();
+  displayOrders();
+};
+
+const displayPortfolio = () => {
+  displayStrategies();
+  displayAccount();
+  displayPositions();
+  displayOrders();
 };
 
 const onSessionUpdate = (session: TradingSession) => {
@@ -154,7 +161,7 @@ const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
   console.log('R: ORDER MATCH');
 
   await wait(1000);
-  displayPortfolio();
+  updatePortfolio();
 
   if (BOT[symbol]) {
     await wait(1000);
@@ -356,11 +363,13 @@ const main = async () => {
   const ssiTrading = initSsiTrading();
 
   Promise.all([ssiData, ssiTrading]).then(async () => {
-    await displayPortfolio();
+    await updatePortfolio();
+
     if (OrderFactory.getLiveOrders().length) {
       await OrderFactory.cancelAllOrders();
       await wait(1000);
-      await displayOrders();
+      await OrderFactory.update();
+      displayOrders();
     }
 
     AGG_STRATEGIES.forEach((i) => {
@@ -372,8 +381,7 @@ const main = async () => {
 
   // update data every 10 mins
   setInterval(() => {
-    console.log('setInterval');
-    displayPortfolio();
+    updatePortfolio();
   }, INTERVAL.m10);
 
   // set default config
@@ -382,6 +390,7 @@ const main = async () => {
   });
   onMavelliConfigChange((data) => {
     PositionFactory.setMaxOrder(data.maxOrder || MAX_ORDER);
+    displayPortfolio();
   });
 
   onDefaultStrategyChange((data) => {
@@ -389,8 +398,8 @@ const main = async () => {
     AGG_STRATEGIES = mergeStrategies(firebaseStrategyList, DEFAULT_STRATEGY);
     PositionFactory.setStrategies(AGG_STRATEGIES);
 
-    console.log('R. STRATEGY');
-    console.table(getStrategyTable(AGG_STRATEGIES));
+    displayStrategies();
+    displayPositions();
 
     AGG_STRATEGIES.forEach((i) => {
       if (BOT[i.symbol]) {
@@ -407,8 +416,8 @@ const main = async () => {
     AGG_STRATEGIES = mergeStrategies(firebaseStrategyList, DEFAULT_STRATEGY);
     PositionFactory.setStrategies(AGG_STRATEGIES);
 
-    console.log('R. STRATEGY');
-    console.table(getStrategyTable(AGG_STRATEGIES));
+    displayStrategies();
+    displayPositions();
 
     const symbols = list.map((i) => i.symbol).join(', ');
     const updatedStrategies = AGG_STRATEGIES.filter(
