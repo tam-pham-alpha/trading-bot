@@ -15,6 +15,7 @@ const normalizeStrategies = (
   return positions.map((i) => {
     const strategy = strategies.find((s) => s.symbol === i.instrumentID) || {
       allocation: 0,
+      active: false,
     };
     const target = strategy.allocation;
     const allocation = roundByDp((i.value / totalBalance) * 100, 2);
@@ -23,7 +24,7 @@ const normalizeStrategies = (
       ...i,
       allocation,
       target,
-      buying: allocation < target,
+      buying: strategy.active ? allocation < target : false,
     };
   });
 };
