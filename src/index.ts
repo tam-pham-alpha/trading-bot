@@ -43,6 +43,7 @@ import { unionBy } from 'lodash';
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = [];
 let DEFAULT_STRATEGY: Strategy = based;
+let SESSION: TradingSession;
 const BOT: Record<string, Mavelli> = {};
 
 const displayStrategies = () => {
@@ -84,6 +85,7 @@ const displayPortfolio = async () => {
 };
 
 const onSessionUpdate = (session: TradingSession) => {
+  SESSION = session;
   Object.values(BOT).forEach((b) => {
     b.setSession(session);
   });
@@ -154,8 +156,10 @@ const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
   await wait(1000);
   displayPortfolio();
 
-  await wait(1000);
-  BOT[symbol].onOrderMatch(data);
+  if (BOT[symbol]) {
+    await wait(1000);
+    BOT[symbol].onOrderMatch(data);
+  }
 };
 
 const initSsiMarketData = () => {
@@ -347,19 +351,22 @@ const main = async () => {
   AGG_STRATEGIES = mergeStrategies(firebaseStrategyList, DEFAULT_STRATEGY);
 
   PositionFactory.setStrategies(AGG_STRATEGIES);
-  AGG_STRATEGIES.forEach((i) => {
-    BOT[i.symbol] = new Mavelli(i.symbol, i);
-  });
 
   const ssiData = initSsiMarketData();
   const ssiTrading = initSsiTrading();
 
   Promise.all([ssiData, ssiTrading]).then(async () => {
     await displayPortfolio();
-    await OrderFactory.cancelAllOrders();
+    if (OrderFactory.getLiveOrders().length) {
+      await OrderFactory.cancelAllOrders();
+      await wait(1000);
+      await displayOrders();
+    }
 
-    Object.values(BOT).forEach((b) => {
-      b.setReady();
+    AGG_STRATEGIES.forEach((i) => {
+      BOT[i.symbol] = new Mavelli(i.symbol, i);
+      BOT[i.symbol].setSession(SESSION);
+      BOT[i.symbol].setReady();
     });
   });
 
