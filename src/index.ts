@@ -168,7 +168,7 @@ const onOrderMatch = async (e: any, data: OrderMatchEvent) => {
   console.log('R: ORDER MATCH');
 
   await wait(1000);
-  updatePortfolio();
+  await updatePortfolio();
 
   if (BOT[symbol]) {
     await wait(1000);
