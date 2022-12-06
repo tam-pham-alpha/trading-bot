@@ -226,6 +226,8 @@ const initSsiMarketData = () => {
               domain: 'SSI MARKET',
             },
           });
+          // pm2 will restart the process then
+          process.exit();
         };
 
         stream.subscribe(
