@@ -118,7 +118,7 @@ export class Mavelli {
     }
 
     const positionList = PositionFactory.positions;
-    const balance = BalanceFactory.balance;
+    const purchasingPower = BalanceFactory.getPurchasingPower();
 
     const position = positionList.find((i) => i.instrumentID === this.symbol);
     const strategy = this.strategy;
@@ -139,7 +139,7 @@ export class Mavelli {
         : Math.max(strategy.buyQty1, strategy.buyQty2);
 
     // insufficient balance
-    if (buyPrice * qty > balance.purchasingPower) {
+    if (buyPrice * qty > purchasingPower) {
       console.log(`ERROR ${this.symbol}: insufficient balance`);
       return 0;
     }

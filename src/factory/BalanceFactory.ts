@@ -6,10 +6,15 @@ import { Account } from '../types/Account';
 class BalanceFactory {
   balance: Account = {
     totalAssets: 0,
+    purchasingPower: 0,
   } as Account;
 
   sync = (value: Account) => {
     this.balance = value;
+  };
+
+  getPurchasingPower = () => {
+    return this.balance.purchasingPower;
   };
 
   getTotalAsset = () => {
