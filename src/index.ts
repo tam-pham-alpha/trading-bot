@@ -91,8 +91,15 @@ const displayPortfolio = () => {
   displayOrders();
 };
 
-const onSessionUpdate = (session: TradingSession) => {
+const onSessionUpdate = async (session: TradingSession) => {
   SESSION = session;
+
+  await OrderFactory.update();
+  if (OrderFactory.getLiveOrders().length) {
+    await OrderFactory.cancelAllOrders();
+    displayOrders();
+  }
+
   Object.values(BOT).forEach((b) => {
     b.setSession(session);
   });
