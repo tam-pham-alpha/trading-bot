@@ -82,7 +82,7 @@ class PositionFactory {
     return this.positions;
   };
 
-  setMaxOrder = (max: number) => {
+  setMaxOrder = (max = 0) => {
     this.maxOrder = max;
     this.getBuyingList();
   };
@@ -98,6 +98,9 @@ class PositionFactory {
   };
 
   getBuyingList = () => {
+    // disabled buying if maxOrder = 0
+    if (!this.maxOrder) return [];
+
     const symbols = orderBy(
       this.positions.filter((i) => i.buying),
       ['target', 'allocation'],

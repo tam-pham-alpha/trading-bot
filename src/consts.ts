@@ -1,1 +1,1 @@
-export const MAX_ORDER = 8;
+export const MAX_ORDER = 1;
