@@ -1,5 +1,6 @@
 import client from 'ssi-api-client';
 import { format } from 'date-fns';
+import * as Sentry from '@sentry/node';
 
 import { fetch } from '../utils/fetch';
 import { spot } from '../mock';
@@ -19,9 +20,14 @@ export const getOrderHistory = async () => {
     url: client.api.GET_ORDER_HISTORY,
     method: 'get',
     params: request,
-  }).then((resp: any) => {
-    return resp.data.data.orderHistories as OrderHistory[];
-  });
+  })
+    .then((resp: any) => {
+      return resp.data.data.orderHistories as OrderHistory[];
+    })
+    .catch((err) => {
+      Sentry.captureMessage('Unable to load order histories', {});
+      return [];
+    });
 };
 
 export const getLiveOrder = async () => {
