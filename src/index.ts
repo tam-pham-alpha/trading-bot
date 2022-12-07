@@ -3,7 +3,7 @@ import ssi from 'ssi-api-client';
 import * as Sentry from '@sentry/node';
 
 import { setAccessToken, fetch } from './utils/fetch';
-import { INTERVAL, Strategy } from './strategies';
+import { Strategy } from './strategies';
 import config from './config';
 
 import {
@@ -387,11 +387,6 @@ const main = async () => {
       BOT[i.symbol].setReady();
     });
   });
-
-  // update data every 10 mins
-  setInterval(() => {
-    updatePortfolio();
-  }, INTERVAL.m10);
 
   // set default config
   fetchMavelliConfig().then((data) => {
