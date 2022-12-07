@@ -1,4 +1,5 @@
 import client from 'ssi-api-client';
+import * as Sentry from '@sentry/node';
 
 import { fetch } from '../utils/fetch';
 import { spot } from '../mock';
@@ -13,7 +14,12 @@ export const getAccountBalance = async () => {
     url: client.api.GET_ACCOUNT_BALANCE,
     method: 'get',
     params: request,
-  }).then((response) => {
-    return response.data.data as Account;
-  });
+  })
+    .then((response) => {
+      return response.data.data as Account;
+    })
+    .catch(() => {
+      Sentry.captureMessage('Unable to load account balance', {});
+      return {} as any;
+    });
 };
