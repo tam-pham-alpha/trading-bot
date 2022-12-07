@@ -1,4 +1,4 @@
-import { orderBy } from 'lodash';
+import { orderBy, uniq } from 'lodash';
 import { getStockPosition } from '../biz/position';
 import { Strategy } from '../strategies';
 
@@ -7,21 +7,55 @@ import { StockPosition } from '../types/Position';
 import { roundByDp } from '../utils/number';
 import { MAX_ORDER } from '../consts';
 
+const defaultPosition: StockPosition = {
+  instrumentID: '',
+  marketID: '',
+  onHand: 0,
+  block: 0,
+  bonus: 0,
+  buyT0: 0,
+  buyT1: 0,
+  buyT2: 0,
+  sellT0: 0,
+  sellT1: 0,
+  sellT2: 0,
+  avgPrice: 0,
+  mortgage: 0,
+  sellableQty: 0,
+  holdForTrade: 0,
+  marketPrice: 0,
+  total: 0,
+  value: 0,
+  allocation: 0,
+  target: 0,
+  buying: false,
+};
+
 const normalizeStrategies = (
   positions: StockPosition[],
   strategies: Strategy[],
   totalBalance = 0,
 ) => {
-  return positions.map((i) => {
-    const strategy = strategies.find((s) => s.symbol === i.instrumentID) || {
+  const list = uniq([
+    ...positions.map((i) => i.instrumentID),
+    ...strategies.map((i) => i.symbol),
+  ]);
+  return list.map((symbol) => {
+    const item = positions.find((i) => i.instrumentID === symbol) || {
+      ...defaultPosition,
+      instrumentID: symbol,
+    };
+    const strategy = strategies.find((s) => s.symbol === item.instrumentID) || {
       allocation: 0,
       active: false,
     };
     const target = strategy.allocation;
-    const allocation = roundByDp(((i.value || 0) / totalBalance) * 100, 2);
+    const allocation = !totalBalance
+      ? 0
+      : roundByDp(((item.value || 0) / totalBalance) * 100, 2);
 
     return {
-      ...i,
+      ...item,
       allocation,
       target,
       buying: strategy.active ? allocation < target : false,
