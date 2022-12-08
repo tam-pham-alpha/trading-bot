@@ -18,8 +18,11 @@ export const getAccountBalance = async () => {
     .then((response) => {
       return response.data.data as Account;
     })
-    .catch(() => {
-      Sentry.captureMessage('Unable to load account balance', {});
+    .catch((err) => {
+      Sentry.captureMessage(
+        `Unable to load account balance: ${JSON.stringify(err)}`,
+        {},
+      );
       return {} as any;
     });
 };

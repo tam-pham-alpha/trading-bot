@@ -26,11 +26,14 @@ class BalanceFactory {
       const balance = await getAccountBalance();
       this.balance = balance;
     } catch (err) {
-      Sentry.captureMessage(JSON.stringify(err), {
-        tags: {
-          type: 'Account.update',
+      Sentry.captureMessage(
+        `Unable to update account balance: ${JSON.stringify(err)}`,
+        {
+          tags: {
+            type: 'Account.update',
+          },
         },
-      });
+      );
     }
     return this.balance;
   };

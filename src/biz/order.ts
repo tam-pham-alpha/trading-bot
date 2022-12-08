@@ -25,7 +25,10 @@ export const getOrderHistory = async () => {
       return resp.data.data.orderHistories as OrderHistory[];
     })
     .catch((err) => {
-      Sentry.captureMessage('Unable to load order histories', {});
+      Sentry.captureMessage(
+        `Unable to load order histories: ${JSON.stringify(err)}`,
+        {},
+      );
       return [];
     });
 };
