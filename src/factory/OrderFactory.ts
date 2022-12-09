@@ -46,7 +46,9 @@ class OrderFactory {
   };
 
   cancelOrdersBySymbol = async (symbol: string) => {
-    const orders = this.getLiveOrdersBySymbol(symbol);
+    const orders = this.getLiveOrdersBySymbol(symbol).filter(
+      (i) => i.buySell === 'B',
+    );
     await Promise.all(orders.map((i: OrderHistory) => cancelOrder(i.orderID)));
     this.orders = this.orders.filter((i) => i.instrumentID !== symbol);
     return orders;
