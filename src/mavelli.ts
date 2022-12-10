@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+import * as Sentry from '@sentry/node';
+
 import { placeOrder } from './biz/order';
 import BalanceFactory from './factory/BalanceFactory';
 import OrderFactory from './factory/OrderFactory';
@@ -88,6 +90,9 @@ export class Mavelli {
         await OrderFactory.cancelOrdersBySymbol(this.symbol);
       } else {
         order = await this.placeBuyOrder();
+        if (!order) {
+          Sentry.captureMessage('Mavelli: Unable to place order', {});
+        }
       }
     }
 
