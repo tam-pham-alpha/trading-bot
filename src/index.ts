@@ -34,10 +34,10 @@ import './sentry';
 import {
   fetchDefaultStrategy,
   fetchMavelliConfig,
+  FirebaseMavelliConfig,
   onDefaultStrategyChange,
   onMavelliConfigChange,
 } from './firestore/configs';
-import { MAX_ORDER } from './consts';
 import { unionBy } from 'lodash';
 
 let TIMESTAMP = 0;
@@ -389,11 +389,11 @@ const main = async () => {
   });
 
   // set default config
-  fetchMavelliConfig().then((data) => {
-    PositionFactory.setMaxOrder(data.maxOrder || MAX_ORDER);
+  fetchMavelliConfig().then((data: FirebaseMavelliConfig) => {
+    PositionFactory.setConfig(data);
   });
-  onMavelliConfigChange((data) => {
-    PositionFactory.setMaxOrder(data.maxOrder || MAX_ORDER);
+  onMavelliConfigChange((data: FirebaseMavelliConfig) => {
+    PositionFactory.setConfig(data);
     displayPortfolio();
   });
 

@@ -1,4 +1,4 @@
-import { orderBy, uniq } from 'lodash';
+import { orderBy, trim, uniq } from 'lodash';
 import { getStockPosition } from '../biz/position';
 import { Strategy } from '../strategies';
 
@@ -6,6 +6,7 @@ import BalanceFactory from './BalanceFactory';
 import { StockPosition } from '../types/Position';
 import { roundByDp } from '../utils/number';
 import { MAX_ORDER } from '../consts';
+import { FirebaseMavelliConfig } from '../firestore/configs';
 
 const defaultPosition: StockPosition = {
   instrumentID: '',
@@ -68,6 +69,8 @@ class PositionFactory {
   strategies: Strategy[] = [];
   buyingList: string[] = [];
   maxOrder = MAX_ORDER;
+  priorityList: string[] = [];
+  ignoreIndividualConfig = false;
 
   update = async () => {
     if (!this.strategies.length) return;
@@ -82,8 +85,19 @@ class PositionFactory {
     return this.positions;
   };
 
-  setMaxOrder = (max = 0) => {
-    this.maxOrder = max;
+  setConfig = (config: FirebaseMavelliConfig) => {
+    if (config.maxOrder) {
+      this.maxOrder = config.maxOrder;
+    }
+
+    if (config.priorityList) {
+      this.priorityList = config.priorityList.split(',').map((i) => trim(i));
+    }
+
+    if (config.ignoreIndividualConfig) {
+      this.ignoreIndividualConfig = config.ignoreIndividualConfig;
+    }
+
     this.getBuyingList();
   };
 
@@ -109,7 +123,10 @@ class PositionFactory {
       .slice(0, this.maxOrder)
       .map((i) => i.instrumentID);
 
-    this.buyingList = symbols;
+    this.buyingList = uniq([...this.priorityList, ...symbols]).slice(
+      0,
+      this.maxOrder,
+    );
     return this.buyingList;
   };
 

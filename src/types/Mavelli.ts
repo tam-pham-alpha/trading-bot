@@ -5,4 +5,14 @@ export type MavelliConfig = {
    * - selling won't be impacted
    */
   maxOrder: number;
+
+  /**
+   * ignoreIndividualConfig
+   */
+  ignoreIndividualConfig: boolean;
+
+  /**
+   * priorityList
+   */
+  priorityList: string;
 };
