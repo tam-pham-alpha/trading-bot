@@ -17,7 +17,7 @@
     "prettier-watch:darwin:linux": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
     "prettier-watch:default": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
     "test": "jest --watch",
-    "login": "ssh -i _deploy/goingsunny-sg.pem ec2-user@13.215.51.234",
+    "login": "ssh -i _deploy/goingsunny-sg.pem ec2-user@18.142.250.176",
     "deploy:prod": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
     "deploy:stag": "npm run login 'cd stag/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && yarn run build && pm2 startOrRestart pm2-stag.json --env production'",
     "test:dev": "jest --watchAll"
