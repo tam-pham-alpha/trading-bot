@@ -16,6 +16,9 @@ export const getAccountBalance = async () => {
     params: request,
   })
     .then((response) => {
+      if (response.data.status === 401) {
+        throw new Error(response.data.message);
+      }
       return response.data.data as Account;
     })
     .catch((err) => {
@@ -23,6 +26,9 @@ export const getAccountBalance = async () => {
         `Unable to load account balance: ${JSON.stringify(err)}`,
         {},
       );
-      return {} as any;
+      return {
+        totalAssets: 0,
+        purchasingPower: 0,
+      } as Account;
     });
 };

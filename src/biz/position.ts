@@ -15,6 +15,9 @@ export const getStockPosition = async () => {
     params: request,
   })
     .then((response) => {
+      if (!response.data.data) {
+        return [];
+      }
       return response.data.data.stockPositions as StockPosition[];
     })
     .then((positions: StockPosition[]) => {

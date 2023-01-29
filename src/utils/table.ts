@@ -20,16 +20,18 @@ export const getOrderTable = (orders: OrderHistory[]) => {
 };
 
 export const getAccountTable = (accounts: Account[]) => {
-  return accounts.map((i) => ({
-    account: i.account,
-    totalAssets: i.totalAssets,
-    purchasingPower: i.purchasingPower,
-    withdrawable: i.withdrawable,
-    receivingCashT1: i.receivingCashT1,
-    receivingCashT2: i.receivingCashT2,
-    secureAmount: i.secureAmount,
-    cashBal: i.cashBal,
-  }));
+  return accounts
+    .filter((i) => i)
+    .map((i) => ({
+      account: i.account,
+      totalAssets: i.totalAssets,
+      purchasingPower: i.purchasingPower,
+      withdrawable: i.withdrawable,
+      receivingCashT1: i.receivingCashT1,
+      receivingCashT2: i.receivingCashT2,
+      secureAmount: i.secureAmount,
+      cashBal: i.cashBal,
+    }));
 };
 
 export const getStockPositionTable = (positions: StockPosition[]) => {
