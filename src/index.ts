@@ -1,16 +1,11 @@
 /* eslint-disable no-console */
 import ssi from 'ssi-api-client';
 import * as Sentry from '@sentry/node';
+import './sentry';
 
 import { setAccessToken, fetch } from './utils/fetch';
 import { Strategy } from './strategies';
 import config from './config';
-
-import {
-  fetchStrategies,
-  FirebaseStrategy,
-  onDataChange,
-} from './firestore/strategies';
 
 import Streaming from './streaming';
 import {
@@ -27,22 +22,13 @@ import PositionFactory from './factory/PositionFactory';
 import { dataFetch, setDataAccessToken } from './utils/dataFetch';
 import { wait } from './utils/time';
 import { Mavelli } from './mavelli';
-import { mergeStrategies } from './utils/strategy';
-import { based } from './strategies';
 
-import './sentry';
-import {
-  fetchDefaultStrategy,
-  fetchMavelliConfig,
-  FirebaseMavelliConfig,
-  onDefaultStrategyChange,
-  onMavelliConfigChange,
-} from './firestore/configs';
-import { unionBy } from 'lodash';
+import { onConfigChange } from './spreadsheet/loadConfigs';
+import { loadStrategies, onStrategyChange } from './spreadsheet/loadStrategies';
+import { MavelliConfig } from './types/Mavelli';
 
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = [];
-let DEFAULT_STRATEGY: Strategy = based;
 let SESSION: TradingSession;
 const BOT: Record<string, Mavelli> = {};
 
@@ -360,12 +346,7 @@ const main = async () => {
   TIMESTAMP = Date.now();
   console.log('Mavelli SSI started!', TIMESTAMP);
 
-  const defaultStrategy = await fetchDefaultStrategy();
-  let firebaseStrategyList = await fetchStrategies();
-
-  DEFAULT_STRATEGY = { ...DEFAULT_STRATEGY, ...defaultStrategy };
-  AGG_STRATEGIES = mergeStrategies(firebaseStrategyList, DEFAULT_STRATEGY);
-
+  AGG_STRATEGIES = await loadStrategies();
   PositionFactory.setStrategies(AGG_STRATEGIES);
 
   const ssiData = initSsiMarketData();
@@ -388,36 +369,13 @@ const main = async () => {
     });
   });
 
-  // set default config
-  fetchMavelliConfig().then((data: FirebaseMavelliConfig) => {
-    PositionFactory.setConfig(data);
-  });
-  onMavelliConfigChange((data: FirebaseMavelliConfig) => {
+  onConfigChange((data: MavelliConfig) => {
     PositionFactory.setConfig(data);
     displayPortfolio();
   });
 
-  onDefaultStrategyChange((data) => {
-    DEFAULT_STRATEGY = { ...DEFAULT_STRATEGY, ...data };
-    AGG_STRATEGIES = mergeStrategies(firebaseStrategyList, DEFAULT_STRATEGY);
-    PositionFactory.setStrategies(AGG_STRATEGIES);
-
-    displayStrategies();
-    displayPositions();
-
-    AGG_STRATEGIES.forEach((i) => {
-      if (BOT[i.symbol]) {
-        BOT[i.symbol].setStrategy(i);
-      }
-    });
-  });
-
-  onDataChange((list: FirebaseStrategy[]) => {
-    firebaseStrategyList = unionBy(
-      [...list, ...firebaseStrategyList],
-      'symbol',
-    );
-    AGG_STRATEGIES = mergeStrategies(firebaseStrategyList, DEFAULT_STRATEGY);
+  onStrategyChange((list: Strategy[]) => {
+    AGG_STRATEGIES = list;
     PositionFactory.setStrategies(AGG_STRATEGIES);
 
     displayStrategies();

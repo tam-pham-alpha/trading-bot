@@ -6,7 +6,7 @@ import BalanceFactory from './BalanceFactory';
 import { StockPosition } from '../types/Position';
 import { roundByDp } from '../utils/number';
 import { MAX_ORDER } from '../consts';
-import { FirebaseMavelliConfig } from '../firestore/configs';
+import { MavelliConfig } from '../types/Mavelli';
 
 const defaultPosition: StockPosition = {
   instrumentID: '',
@@ -85,7 +85,7 @@ class PositionFactory {
     return this.positions;
   };
 
-  setConfig = (config: FirebaseMavelliConfig) => {
+  setConfig = (config: MavelliConfig) => {
     if (config.maxOrder) {
       this.maxOrder = config.maxOrder;
     }
