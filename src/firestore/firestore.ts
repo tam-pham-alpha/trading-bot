@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import serviceAccount from '../../mavelli-ssi-firebase-adminsdk-tysp4-d80f9020c2.json';
+import serviceAccount from '../../mavelli-ssi-firebase-adminsdk.json';
 
 initializeApp({
   credential: cert(serviceAccount),
