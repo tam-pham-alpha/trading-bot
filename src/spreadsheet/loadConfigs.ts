@@ -1,5 +1,5 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { isEqual } from 'lodash';
+import { isEqual, toNumber } from 'lodash';
 import { MavelliConfig } from '../types/Mavelli';
 
 import { PRIVATE_KEY, CLIENT_EMAIL } from './auth';
@@ -34,8 +34,8 @@ export const loadConfigs = async (): Promise<MavelliConfig> => {
   const rows = await sheet.getRows();
   return rows.map((i) => {
     return {
+      maxOrder: toNumber(i.MaxOrder),
       priorityList: i.PriorityList,
-      maxOrder: i.MaxOrder,
       ignoreIndividualConfig: i.IgnoreIndividualConfig,
     };
   })[0];

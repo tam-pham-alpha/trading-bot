@@ -1,5 +1,5 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { isEqual } from 'lodash';
+import { isEqual, toNumber } from 'lodash';
 import { Strategy } from '../strategies';
 
 import { PRIVATE_KEY, CLIENT_EMAIL } from './auth';
@@ -31,14 +31,14 @@ export const loadStrategies = async (): Promise<Strategy[]> => {
   return rows.map((i) => {
     return {
       symbol: i.Symbol,
-      buyPrc: i.BuyPrc,
-      buyQty1: i.BuyQty1,
-      buyQty2: i.BuyQty2,
-      takeProfit: i.TakeProfit,
-      allocation: i.Allocation,
+      buyPrc: toNumber(i.BuyPrc),
+      buyQty1: toNumber(i.BuyQty1),
+      buyQty2: toNumber(i.BuyQty2),
+      takeProfit: toNumber(i.TakeProfit),
+      allocation: toNumber(i.Allocation),
       active: i.Active,
-      tickSize: i.TickSize,
-      interval: i.Interval,
+      tickSize: toNumber(i.TickSize),
+      interval: toNumber(i.Interval),
     };
   });
 };
