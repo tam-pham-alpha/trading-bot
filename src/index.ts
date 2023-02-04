@@ -86,6 +86,7 @@ const onSessionUpdate = async (session: TradingSession) => {
     displayOrders();
   }
 
+  await wait(1000);
   Object.values(BOT).forEach((b) => {
     b.setSession(session);
   });
