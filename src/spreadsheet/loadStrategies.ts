@@ -6,6 +6,7 @@ import { PRIVATE_KEY, CLIENT_EMAIL } from './auth';
 
 const GG_SPREADSHEET_ID = '13ddFXM7xIPqbdlqHS41YbyIDLk6YnQgb6rBSD49dJSM';
 const SHEET_TITLE = 'Strategies';
+const UPDATE_INTERVAL = 30000;
 
 export const loadStrategies = async (): Promise<Strategy[]> => {
   // Initialize the sheet - doc ID is the long id in the sheets URL
@@ -52,7 +53,7 @@ export const onStrategyChange = async (callback: (l: Strategy[]) => void) => {
       oldList = newList;
       callback(newList);
     }
-  }, 30000);
+  }, UPDATE_INTERVAL);
 
   // don't need to trigger changes for the first time
 };

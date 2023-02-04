@@ -59,7 +59,10 @@ const normalizeStrategies = (
       ...item,
       allocation,
       target,
-      buying: strategy.active ? allocation < target : false,
+      buying:
+        (strategy.active ? allocation < target : false) &&
+        // waiting until t+2 to buying next batch
+        item.total === item.sellableQty,
     };
   });
 };
@@ -115,6 +118,14 @@ class PositionFactory {
     // disabled buying if maxOrder = 0
     if (!this.maxOrder) return [];
 
+    const priorityList = this.priorityList.filter((i) => {
+      const position = this.positions.find((p) => p.instrumentID === i);
+      if (!position || !position.buying) {
+        return false;
+      }
+      return true;
+    });
+
     const symbols = orderBy(
       this.positions.filter((i) => i.buying),
       ['target', 'allocation'],
@@ -123,7 +134,7 @@ class PositionFactory {
       .slice(0, this.maxOrder)
       .map((i) => i.instrumentID);
 
-    this.buyingList = uniq([...this.priorityList, ...symbols]).slice(
+    this.buyingList = uniq([...priorityList, ...symbols]).slice(
       0,
       this.maxOrder,
     );
