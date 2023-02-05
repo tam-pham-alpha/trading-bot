@@ -7,11 +7,6 @@ export type MavelliConfig = {
   maxOrder: number;
 
   /**
-   * ignoreIndividualConfig
-   */
-  ignoreIndividualConfig: boolean;
-
-  /**
    * priorityList
    */
   priorityList: string;

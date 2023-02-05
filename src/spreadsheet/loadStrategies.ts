@@ -37,7 +37,7 @@ export const loadStrategies = async (): Promise<Strategy[]> => {
       buyQty2: toNumber(i.BuyQty2),
       takeProfit: toNumber(i.TakeProfit),
       allocation: toNumber(i.Allocation),
-      active: i.Active,
+      active: i.Active === 'TRUE',
       tickSize: toNumber(i.TickSize),
       interval: toNumber(i.Interval),
     };

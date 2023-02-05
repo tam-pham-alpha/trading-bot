@@ -28,7 +28,6 @@ export const loadConfigs = async (): Promise<MavelliConfig> => {
     return {
       priorityList: 'SSI',
       maxOrder: 0,
-      ignoreIndividualConfig: false,
     };
   }
 
@@ -37,7 +36,6 @@ export const loadConfigs = async (): Promise<MavelliConfig> => {
     return {
       maxOrder: toNumber(i.MaxOrder),
       priorityList: i.PriorityList,
-      ignoreIndividualConfig: i.IgnoreIndividualConfig,
     };
   })[0];
 };

@@ -73,7 +73,6 @@ class PositionFactory {
   buyingList: string[] = [];
   maxOrder = MAX_ORDER;
   priorityList: string[] = [];
-  ignoreIndividualConfig = false;
 
   update = async () => {
     if (!this.strategies.length) return;
@@ -95,10 +94,6 @@ class PositionFactory {
 
     if (config.priorityList) {
       this.priorityList = config.priorityList.split(',').map((i) => trim(i));
-    }
-
-    if (config.ignoreIndividualConfig) {
-      this.ignoreIndividualConfig = config.ignoreIndividualConfig;
     }
 
     this.getBuyingList();
@@ -131,8 +126,8 @@ class PositionFactory {
       ['target', 'allocation'],
       ['desc', 'asc'],
     )
-      .slice(0, this.maxOrder)
-      .map((i) => i.instrumentID);
+      .map((i) => i.instrumentID)
+      .slice(0, this.maxOrder);
 
     this.buyingList = uniq([...priorityList, ...symbols]).slice(
       0,
