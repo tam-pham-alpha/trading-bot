@@ -80,13 +80,6 @@ const displayPortfolio = () => {
 const onSessionUpdate = async (session: TradingSession) => {
   SESSION = session;
 
-  await OrderFactory.update();
-  if (OrderFactory.getLiveOrders().length) {
-    await OrderFactory.cancelAllOrders();
-    displayOrders();
-  }
-
-  await wait(1000);
   Object.values(BOT).forEach((b) => {
     b.setSession(session);
   });
