@@ -10,4 +10,9 @@ export type MavelliConfig = {
    * priorityList
    */
   priorityList: string;
+
+  /**
+   * cash
+   */
+  cashPercentage: number;
 };

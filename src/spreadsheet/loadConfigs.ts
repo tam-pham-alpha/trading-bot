@@ -5,7 +5,7 @@ import { MavelliConfig } from '../types/Mavelli';
 import { PRIVATE_KEY, CLIENT_EMAIL } from './auth';
 
 const GG_SPREADSHEET_ID = '13ddFXM7xIPqbdlqHS41YbyIDLk6YnQgb6rBSD49dJSM';
-const SHEET_TITLE = 'Configs';
+const SHEET_TITLE = 'MasterConfig';
 const UPDATE_INTERVAL = 30000;
 
 export const loadConfigs = async (): Promise<MavelliConfig> => {
@@ -28,16 +28,17 @@ export const loadConfigs = async (): Promise<MavelliConfig> => {
     return {
       priorityList: 'SSI',
       maxOrder: 0,
+      cashPercentage: 100,
     };
   }
 
   const rows = await sheet.getRows();
-  return rows.map((i) => {
-    return {
-      maxOrder: toNumber(i.MaxOrder),
-      priorityList: i.PriorityList,
-    };
-  })[0];
+
+  return {
+    priorityList: rows[1].Value,
+    maxOrder: toNumber(rows[2].Value),
+    cashPercentage: toNumber(rows[3].Value),
+  };
 };
 
 export const onConfigChange = async (callback: (l: MavelliConfig) => void) => {
