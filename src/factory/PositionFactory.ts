@@ -49,6 +49,7 @@ const normalizeStrategies = (
     const strategy = strategies.find((s) => s.symbol === item.instrumentID) || {
       allocation: 0,
       active: false,
+      marketPrice: 0,
     };
     const target = strategy.allocation;
     const allocation = !totalBalance
@@ -59,6 +60,7 @@ const normalizeStrategies = (
       ...item,
       allocation,
       target,
+      marketPrice: strategy.marketPrice,
       buying:
         (strategy.active ? allocation < target : false) &&
         // waiting until t+2 to buying next batch
@@ -123,8 +125,8 @@ class PositionFactory {
 
     const symbols = orderBy(
       this.positions.filter((i) => i.buying),
-      ['target', 'allocation'],
-      ['desc', 'asc'],
+      ['marketPrice', 'target', 'allocation'],
+      ['asc', 'desc', 'asc'],
     )
       .map((i) => i.instrumentID)
       .slice(0, this.maxOrder);

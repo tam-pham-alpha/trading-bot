@@ -2,6 +2,7 @@ import { uniqBy } from 'lodash';
 
 import { cancelOrder, getLiveOrder } from '../biz/order';
 import { OrderHistory } from '../types/Order';
+import { wait } from '../utils/time';
 
 class OrderFactory {
   orders: OrderHistory[];
@@ -13,6 +14,7 @@ class OrderFactory {
   update = async () => {
     const liveOrders = await getLiveOrder();
     this.orders = liveOrders;
+    return this.orders;
   };
 
   setOrders = (newOrders: OrderHistory[]) => {
@@ -49,14 +51,27 @@ class OrderFactory {
     const orders = this.getLiveOrdersBySymbol(symbol).filter(
       (i) => i.buySell === 'B',
     );
-    await Promise.all(orders.map((i: OrderHistory) => cancelOrder(i.orderID)));
+
+    for (let i = 0; i < orders.length; i++) {
+      const item = orders[i];
+      await cancelOrder(item.orderID);
+      await wait(1000);
+    }
+
     this.orders = this.orders.filter((i) => i.instrumentID !== symbol);
     return orders;
   };
 
   cancelAllOrders = async () => {
     const orders = this.getLiveOrders();
-    return Promise.all(orders.map((i: OrderHistory) => cancelOrder(i.orderID)));
+
+    for (let i = 0; i < orders.length; i++) {
+      const item = orders[i];
+      await cancelOrder(item.orderID);
+      await wait(1000);
+    }
+
+    return [];
   };
 }
 

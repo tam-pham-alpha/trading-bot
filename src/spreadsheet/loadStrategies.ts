@@ -40,6 +40,7 @@ export const loadStrategies = async (): Promise<Strategy[]> => {
       active: i.Active === 'TRUE',
       tickSize: toNumber(i.TickSize),
       interval: toNumber(i.Interval),
+      marketPrice: toNumber(i.MarketPrice),
     };
   });
 };

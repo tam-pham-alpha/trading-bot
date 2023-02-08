@@ -53,7 +53,9 @@ export class Mavelli {
     if (
       old.buyPrc !== this.strategy.buyPrc ||
       old.buyQty1 !== this.strategy.buyQty1 ||
-      old.buyQty2 !== this.strategy.buyQty2
+      old.buyQty2 !== this.strategy.buyQty2 ||
+      old.tickSize !== this.strategy.tickSize ||
+      old.interval !== this.strategy.interval
     ) {
       this.startBuying();
     }
@@ -116,7 +118,7 @@ export class Mavelli {
     if (
       !this.ready ||
       !this.strategy.active ||
-      this.strategy.buyPrc >= 0 ||
+      this.strategy.buyPrc > 0 ||
       !PositionFactory.checkIsBuyingStock(this.symbol)
     ) {
       return;

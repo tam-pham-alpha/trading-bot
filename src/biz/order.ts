@@ -35,7 +35,7 @@ export const getOrderHistory = async () => {
 
 export const getLiveOrder = async () => {
   const orders = await getOrderHistory();
-  return orders.filter(
+  const liveOrders = orders.filter(
     (i) =>
       i.orderStatus === 'WA' ||
       i.orderStatus === 'RS' ||
@@ -43,6 +43,7 @@ export const getLiveOrder = async () => {
       i.orderStatus === 'QU' ||
       i.orderStatus === 'PF',
   );
+  return liveOrders;
 };
 
 export const placeOrder = async (
@@ -108,7 +109,12 @@ export const cancelOrder = async (orderId: string) => {
       ),
     },
     data: request,
-  }).then((response) => {
-    return response.data.data;
-  });
+  })
+    .then((response) => {
+      console.log('CANCEL ORDER RES:', response.data.data);
+      return response.data.data;
+    })
+    .catch((err) => {
+      console.log('CANCEL ORDER ERR:', err);
+    });
 };

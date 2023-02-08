@@ -22,6 +22,7 @@ export type Strategy = {
   allocation: number;
   active: boolean;
   tickSize: number;
+  marketPrice: number;
 };
 
 export const based: Strategy = {
@@ -34,4 +35,5 @@ export const based: Strategy = {
   allocation: 1,
   active: false,
   tickSize: 2,
+  marketPrice: 0,
 };

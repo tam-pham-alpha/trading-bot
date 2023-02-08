@@ -48,6 +48,7 @@ export const getStockPositionTable = (positions: StockPosition[]) => {
       allocation: i.allocation,
       target: i.target,
       buying: i.buying,
+      marketPrice: i.marketPrice,
     };
   });
 
