@@ -4,6 +4,8 @@ import { cancelOrder, getLiveOrder } from '../biz/order';
 import { OrderHistory } from '../types/Order';
 import { wait } from '../utils/time';
 
+export const LIVE_ORDER_STATUS = ['WA', 'RS', 'SD', 'QU', 'PF'];
+
 class OrderFactory {
   orders: OrderHistory[];
 
@@ -45,6 +47,12 @@ class OrderFactory {
 
   getLiveOrdersBySymbol = (symbol: string) => {
     return this.getLiveOrders().filter((i) => i.instrumentID === symbol);
+  };
+
+  cancelOrderById = async (orderId: string) => {
+    await cancelOrder(orderId);
+    await wait(1000);
+    return true;
   };
 
   cancelOrdersBySymbol = async (symbol: string) => {

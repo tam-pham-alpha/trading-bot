@@ -26,6 +26,7 @@ import { Mavelli } from './mavelli';
 import { onConfigChange } from './spreadsheet/loadConfigs';
 import { loadStrategies, onStrategyChange } from './spreadsheet/loadStrategies';
 import { MavelliConfig } from './types/Mavelli';
+import { toNumber } from 'lodash';
 
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = [];
@@ -116,8 +117,8 @@ const onOrderUpdate = async (e: any, data: OrderUpdateEvent) => {
   const symbol = order.instrumentID;
 
   // ignore old events
-  const modifiedTime = order.modifiedTime;
-  if (parseInt(modifiedTime) < TIMESTAMP) {
+  const modifiedTime = order.inputTime;
+  if (toNumber(modifiedTime) < TIMESTAMP) {
     return;
   }
 
@@ -300,6 +301,7 @@ const initSsiTrading = () => {
         ssi.bind(ssi.events.onOrderMatch, onOrderMatch);
 
         ssi.bind(ssi.events.onError, (e: any, data: any) => {
+          console.log('OnError', JSON.stringify(data));
           Sentry.captureMessage(JSON.stringify(data), {
             tags: {
               type: 'onError',
@@ -307,6 +309,7 @@ const initSsiTrading = () => {
           });
         });
         ssi.bind(ssi.events.onOrderError, (e: any, data: any) => {
+          console.log('onOrderError', JSON.stringify(data));
           Sentry.captureMessage(JSON.stringify(data), {
             tags: {
               type: 'onOrderError',
@@ -314,6 +317,7 @@ const initSsiTrading = () => {
           });
         });
         ssi.bind(ssi.events.onClientPortfolioEvent, (e: any, data: any) => {
+          console.log('onClientPortfolioEvent', JSON.stringify(data));
           Sentry.captureMessage(JSON.stringify(data), {
             tags: {
               type: 'onClientPortfolioEvent',

@@ -6,7 +6,7 @@ import { fetch } from '../utils/fetch';
 import { spot } from '../mock';
 import { getRandom } from '../utils/number';
 import config from '../config';
-import { OrderHistory, Side } from '../types/Order';
+import { NewOrder, OrderHistory, Side } from '../types/Order';
 
 export const getOrderHistory = async () => {
   const today = new Date();
@@ -21,7 +21,7 @@ export const getOrderHistory = async () => {
     method: 'get',
     params: request,
   })
-    .then((resp: any) => {
+    .then((resp) => {
       return resp.data.data.orderHistories as OrderHistory[];
     })
     .catch((err) => {
@@ -51,7 +51,7 @@ export const placeOrder = async (
   side: Side,
   price: number,
   quantity: number,
-) => {
+): Promise<NewOrder> => {
   const request = {
     market: spot.market,
     orderType: spot.orderType,
@@ -83,8 +83,8 @@ export const placeOrder = async (
       ),
     },
     data: request,
-  }).then((response) => {
-    return response.data.data;
+  }).then((resp) => {
+    return resp.data.data as NewOrder;
   });
 };
 

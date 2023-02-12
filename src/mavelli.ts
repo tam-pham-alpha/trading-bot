@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/node';
 
 import { placeOrder } from './biz/order';
 import BalanceFactory from './factory/BalanceFactory';
-import OrderFactory from './factory/OrderFactory';
+import OrderFactory, { LIVE_ORDER_STATUS } from './factory/OrderFactory';
 import PositionFactory from './factory/PositionFactory';
 import { INTERVAL, Strategy } from './strategies';
 import { QuoteMessage, TradeMessage, TradingSession } from './types/Market';
@@ -23,6 +23,7 @@ export class Mavelli {
   strategy: Strategy;
   quote: QuoteMessage | undefined;
   trade: TradeMessage | undefined;
+  orderId: string | undefined;
 
   constructor(symbol: string, strategy: Strategy) {
     this.symbol = symbol;
@@ -55,7 +56,8 @@ export class Mavelli {
       old.buyQty1 !== this.strategy.buyQty1 ||
       old.buyQty2 !== this.strategy.buyQty2 ||
       old.tickSize !== this.strategy.tickSize ||
-      old.interval !== this.strategy.interval
+      old.interval !== this.strategy.interval ||
+      !!this.orderId !== PositionFactory.checkIsBuyingStock(this.symbol)
     ) {
       this.startBuying();
     }
@@ -87,9 +89,14 @@ export class Mavelli {
     let order;
     if (this.session === 'LO' && this.lastPrice) {
       // cancel existing orders if any
-      if (OrderFactory.getLiveOrdersBySymbol(this.symbol).length) {
+      if (
+        this.orderId ||
+        OrderFactory.getLiveOrdersBySymbol(this.symbol).length
+      ) {
         console.log('A: CANCEL ALL ORDERS', this.symbol);
+        await OrderFactory.cancelOrderById(this.orderId ?? '');
         await OrderFactory.cancelOrdersBySymbol(this.symbol);
+        this.orderId = undefined;
       } else {
         order = await this.placeBuyOrder();
         if (!order) {
@@ -193,9 +200,13 @@ export class Mavelli {
       return;
     }
 
-    // if order is cancel by user start a new session
     if (order.orderStatus === 'CL') {
+      // if order is cancel by user start a new session
       this.startBuying();
+    }
+
+    if (LIVE_ORDER_STATUS.indexOf(order.orderStatus)) {
+      this.orderId = order.orderID;
     }
 
     OrderFactory.orderUpdate([order as OrderHistory]);

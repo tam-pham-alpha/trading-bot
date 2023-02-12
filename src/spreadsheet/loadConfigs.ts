@@ -35,7 +35,7 @@ export const loadConfigs = async (): Promise<MavelliConfig> => {
   const rows = await sheet.getRows();
 
   return {
-    priorityList: rows[1].Value,
+    priorityList: rows[1].Value ?? '',
     maxOrder: toNumber(rows[2].Value),
     cashInventory: toNumber(rows[3].Value),
   };

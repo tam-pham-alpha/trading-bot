@@ -125,8 +125,8 @@ class PositionFactory {
 
     const symbols = orderBy(
       this.positions.filter((i) => i.buying),
-      ['marketPrice', 'target', 'allocation'],
-      ['asc', 'desc', 'asc'],
+      ['target', 'allocation', 'marketPrice'],
+      ['desc', 'asc', 'asc'],
     )
       .map((i) => i.instrumentID)
       .slice(0, this.maxOrder);
