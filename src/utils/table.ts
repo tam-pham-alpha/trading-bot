@@ -31,6 +31,7 @@ export const getAccountTable = (accounts: Account[]) => {
       receivingCashT2: i.receivingCashT2,
       secureAmount: i.secureAmount,
       cashBal: i.cashBal,
+      cashInventory: Math.round((i.purchasingPower / i.totalAssets) * 100),
     }));
 };
 

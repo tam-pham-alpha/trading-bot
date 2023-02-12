@@ -167,8 +167,8 @@ export class Mavelli {
     const positionList = PositionFactory.positions;
     const position = positionList.find((i) => i.instrumentID === this.symbol);
 
-    const avgPrice = position?.avgPrice || 0;
-    const sellQty = position?.sellableQty || 0;
+    const avgPrice = position?.avgPrice ?? 0;
+    const sellQty = position?.sellableQty ?? 0;
 
     if (
       !this.lastPrice ||
@@ -180,7 +180,6 @@ export class Mavelli {
     }
 
     await placeOrder(this.symbol, 'S', this.lastPrice, sellQty);
-    await PositionFactory.update();
   };
 
   onOrderUpdate = (data: OrderUpdateEvent) => {

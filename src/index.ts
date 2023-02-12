@@ -54,27 +54,24 @@ const displayOrders = () => {
   console.table(getOrderTable(OrderFactory.getLiveOrders()));
 };
 
-const updatePortfolio = async () => {
-  displayStrategies();
-
-  await wait(1000);
-  await BalanceFactory.update();
-  displayAccount();
-
-  await wait(1000);
-  await PositionFactory.update();
-  displayPositions();
-
-  await wait(1000);
-  await OrderFactory.update();
-  displayOrders();
-};
-
 const displayPortfolio = () => {
   displayStrategies();
   displayAccount();
   displayPositions();
   displayOrders();
+};
+
+const updatePortfolio = async () => {
+  await wait(1000);
+  await BalanceFactory.update();
+
+  await wait(1000);
+  await PositionFactory.update();
+
+  await wait(1000);
+  await OrderFactory.update();
+
+  displayPortfolio();
 };
 
 const onSessionUpdate = async (session: TradingSession) => {
@@ -343,26 +340,6 @@ const main = async () => {
   AGG_STRATEGIES = await loadStrategies();
   PositionFactory.setStrategies(AGG_STRATEGIES);
 
-  const ssiData = initSsiMarketData();
-  const ssiTrading = initSsiTrading();
-
-  Promise.all([ssiData, ssiTrading]).then(async () => {
-    await updatePortfolio();
-
-    if (OrderFactory.getLiveOrders().length) {
-      await OrderFactory.cancelAllOrders();
-      await wait(1000);
-      await OrderFactory.update();
-      displayOrders();
-    }
-
-    AGG_STRATEGIES.forEach((i) => {
-      BOT[i.symbol] = new Mavelli(i.symbol, i);
-      BOT[i.symbol].setSession(SESSION);
-      BOT[i.symbol].setReady();
-    });
-  });
-
   onConfigChange((data: MavelliConfig) => {
     BalanceFactory.setCashInventory(data.cashInventory);
     PositionFactory.setConfig(data);
@@ -384,6 +361,26 @@ const main = async () => {
       if (BOT[i.symbol]) {
         BOT[i.symbol].setStrategy(i);
       }
+    });
+  });
+
+  const ssiData = initSsiMarketData();
+  const ssiTrading = initSsiTrading();
+
+  Promise.all([ssiData, ssiTrading]).then(async () => {
+    await updatePortfolio();
+
+    if (OrderFactory.getLiveOrders().length) {
+      await OrderFactory.cancelAllOrders();
+      await wait(1000);
+      await OrderFactory.update();
+      displayOrders();
+    }
+
+    AGG_STRATEGIES.forEach((i) => {
+      BOT[i.symbol] = new Mavelli(i.symbol, i);
+      BOT[i.symbol].setSession(SESSION);
+      BOT[i.symbol].setReady();
     });
   });
 };
