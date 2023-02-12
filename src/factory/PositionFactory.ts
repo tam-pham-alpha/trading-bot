@@ -113,7 +113,7 @@ class PositionFactory {
 
   getBuyingList = () => {
     // disabled buying if maxOrder = 0
-    if (!this.maxOrder) return [];
+    if (!this.maxOrder || !BalanceFactory.getIsBuying()) return [];
 
     const priorityList = this.priorityList.filter((i) => {
       const position = this.positions.find((p) => p.instrumentID === i);

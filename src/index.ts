@@ -364,6 +364,7 @@ const main = async () => {
   });
 
   onConfigChange((data: MavelliConfig) => {
+    BalanceFactory.setCashInventory(data.cashInventory);
     PositionFactory.setConfig(data);
     displayPortfolio();
   });

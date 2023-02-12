@@ -14,5 +14,5 @@ export type MavelliConfig = {
   /**
    * cash
    */
-  cashPercentage: number;
+  cashInventory: number;
 };

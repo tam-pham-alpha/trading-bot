@@ -28,7 +28,7 @@ export const loadConfigs = async (): Promise<MavelliConfig> => {
     return {
       priorityList: 'SSI',
       maxOrder: 0,
-      cashPercentage: 100,
+      cashInventory: 100,
     };
   }
 
@@ -37,7 +37,7 @@ export const loadConfigs = async (): Promise<MavelliConfig> => {
   return {
     priorityList: rows[1].Value,
     maxOrder: toNumber(rows[2].Value),
-    cashPercentage: toNumber(rows[3].Value),
+    cashInventory: toNumber(rows[3].Value),
   };
 };
 
