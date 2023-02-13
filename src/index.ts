@@ -121,6 +121,7 @@ const onOrderUpdate = async (e: any, data: OrderUpdateEvent) => {
   if (toNumber(modifiedTime) < TIMESTAMP) {
     return;
   }
+  console.log('onOrderUpdate', order);
 
   if (BOT[symbol]) {
     BOT[symbol].onOrderUpdate(data);

@@ -8,6 +8,7 @@ export const LIVE_ORDER_STATUS = ['WA', 'RS', 'SD', 'QU', 'PF'];
 
 class OrderFactory {
   orders: OrderHistory[];
+  ordersToCancel: string[] = [];
 
   constructor() {
     this.orders = [];

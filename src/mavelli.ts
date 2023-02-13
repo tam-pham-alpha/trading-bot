@@ -94,7 +94,6 @@ export class Mavelli {
         OrderFactory.getLiveOrdersBySymbol(this.symbol).length
       ) {
         console.log('A: CANCEL ALL ORDERS', this.symbol);
-        await OrderFactory.cancelOrderById(this.orderId ?? '');
         await OrderFactory.cancelOrdersBySymbol(this.symbol);
         this.orderId = undefined;
       } else {

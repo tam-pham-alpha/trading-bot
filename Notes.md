@@ -18,6 +18,8 @@ Dự kiến
 
 ## Todo list
 
+- Queue for orders to cancel
+
 - Mục tiêu của BOT là DCA chứng khoán
 - Hỗ trợ multiple stocks
 - Hỗ trợ option chỉ bán khi giá hiện tại >= delta (%) cho sẵn
