@@ -112,6 +112,7 @@ class PositionFactory {
   };
 
   getBuyingList = () => {
+    console.log('PositionFactory', this.maxOrder, BalanceFactory.getIsBuying());
     // disabled buying if maxOrder = 0
     if (!this.maxOrder || !BalanceFactory.getIsBuying()) return [];
 
