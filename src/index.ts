@@ -115,13 +115,14 @@ const onQuote = (data: QuoteMessage) => {
 const onOrderUpdate = async (e: any, data: OrderUpdateEvent) => {
   const order = data.data;
   const symbol = order.instrumentID;
+  console.log('onOrderUpdate A', order);
 
   // ignore old events
   const modifiedTime = order.inputTime;
   if (toNumber(modifiedTime) < TIMESTAMP) {
     return;
   }
-  console.log('onOrderUpdate', order);
+  console.log('onOrderUpdate B', order);
 
   if (BOT[symbol]) {
     BOT[symbol].onOrderUpdate(data);

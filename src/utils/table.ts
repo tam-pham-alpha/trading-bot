@@ -48,6 +48,7 @@ export const getStockPositionTable = (positions: StockPosition[]) => {
       value: i.value,
       allocation: i.allocation,
       target: i.target,
+      delta: i.delta,
       buying: i.buying,
       marketPrice: i.marketPrice,
     };
@@ -55,8 +56,8 @@ export const getStockPositionTable = (positions: StockPosition[]) => {
 
   return orderBy(
     list,
-    ['buying', 'target', 'allocation', 'marketPrice'],
-    ['desc', 'desc', 'asc', 'asc'],
+    ['buying', 'delta', 'marketPrice'],
+    ['desc', 'desc', 'asc'],
   );
 };
 

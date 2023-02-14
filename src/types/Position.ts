@@ -20,4 +20,5 @@ export type StockPosition = {
   allocation: number;
   target: number;
   buying: boolean;
+  delta: number;
 };

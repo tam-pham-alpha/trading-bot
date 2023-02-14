@@ -30,6 +30,7 @@ const defaultPosition: StockPosition = {
   allocation: 0,
   target: 0,
   buying: false,
+  delta: 0,
 };
 
 const normalizeStrategies = (
@@ -55,14 +56,16 @@ const normalizeStrategies = (
     const allocation = !totalBalance
       ? 0
       : roundByDp(((item.value || 0) / totalBalance) * 100, 2);
+    const delta = roundByDp(target - allocation, 2);
 
     return {
       ...item,
       allocation,
       target,
       marketPrice: strategy.marketPrice,
+      delta,
       buying:
-        (strategy.active ? allocation < target : false) &&
+        (strategy.active ? delta > 0 : false) &&
         // waiting until t+2 to buying next batch
         item.total === item.sellableQty,
     };
@@ -126,8 +129,8 @@ class PositionFactory {
 
     const symbols = orderBy(
       this.positions.filter((i) => i.buying),
-      ['target', 'allocation', 'marketPrice'],
-      ['desc', 'asc', 'asc'],
+      ['delta', 'marketPrice'],
+      ['desc', 'asc'],
     )
       .map((i) => i.instrumentID)
       .slice(0, this.maxOrder);
