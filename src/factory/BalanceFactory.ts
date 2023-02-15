@@ -26,17 +26,19 @@ class BalanceFactory {
     return this.balance.totalAssets || 0;
   };
 
-  getIsBuying = () => {
-    const cashPercentage = this.balance.totalAssets
+  getCashPercentage = () => {
+    return this.balance.totalAssets
       ? Math.floor(
           (this.balance.purchasingPower / this.balance.totalAssets) * 100,
         )
       : 0;
-    const isBuying = cashPercentage > this.cashInventory;
+  };
 
+  getIsBuying = () => {
+    const isBuying = this.getCashPercentage() > this.cashInventory;
     console.log(
       'BalanceFactory.getIsBuying',
-      cashPercentage,
+      this.getCashPercentage(),
       this.cashInventory,
     );
     return isBuying;

@@ -47,7 +47,11 @@ const displayPositions = () => {
   const buyingList = PositionFactory.getBuyingList();
   console.log('R: POSITIONS');
   console.table(getStockPositionTable(PositionFactory.positions));
-  console.log(`R. BUYING (${buyingList.length}):`, buyingList.join(', '));
+  console.log(
+    `R. BUYING (${buyingList.length}):`,
+    BalanceFactory.getIsBuying(),
+    buyingList.join(', '),
+  );
 };
 
 const displayOrders = () => {
