@@ -3,6 +3,7 @@ import { uniqBy } from 'lodash';
 import { cancelOrder, getLiveOrder } from '../biz/order';
 import { OrderHistory } from '../types/Order';
 import { wait } from '../utils/time';
+import PositionFactory from './PositionFactory';
 
 export const LIVE_ORDER_STATUS = ['WA', 'RS', 'SD', 'QU', 'PF'];
 
@@ -71,16 +72,32 @@ class OrderFactory {
     return orders;
   };
 
-  cancelAllOrders = async () => {
-    const orders = this.getLiveOrders();
-
-    for (let i = 0; i < orders.length; i++) {
-      const item = orders[i];
-      await cancelOrder(item.orderID);
+  cancelOrdersByIds = async (orderIds: string[]) => {
+    for (let i = 0; i < orderIds.length; i++) {
+      await cancelOrder(orderIds[i]);
       await wait(1000);
     }
+  };
 
+  cancelAllOrders = async () => {
+    const orders = this.getLiveOrders();
+    await this.cancelOrdersByIds(orders.map((i) => i.orderID));
     return [];
+  };
+
+  orderCheck = async () => {
+    await this.update();
+    const liveOrders = this.getLiveOrders();
+    const buyingTokens = PositionFactory.getBuyingList();
+
+    for (let i = 0; i < buyingTokens.length; i++) {
+      const list = liveOrders.filter((o) => o.instrumentID === buyingTokens[i]);
+      if (list.length > 1) {
+        await this.cancelOrdersByIds(list.map((j) => j.orderID).slice(1));
+      }
+    }
+
+    await wait(1000);
   };
 }
 

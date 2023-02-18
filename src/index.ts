@@ -32,6 +32,7 @@ import { saveStatusToGG, SystemStatus } from './spreadsheet/saveStatusToGG';
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = [];
 let SESSION: TradingSession;
+const SYNC_STATUS_INTERVAL = 300000; // 5 mins
 const BOT: Record<string, Mavelli> = {};
 
 const displayStrategies = () => {
@@ -344,7 +345,9 @@ const initSsiTrading = () => {
     });
 };
 
-const syncSystemStatus = () => {
+const syncSystemStatus = async () => {
+  await OrderFactory.orderCheck();
+
   const status: SystemStatus = {
     timestamp: Date.now(),
     totalAssets: BalanceFactory.getTotalAsset(),
@@ -365,7 +368,7 @@ const initSyncStatus = () => {
 
   setInterval(() => {
     syncSystemStatus();
-  }, 120000); // 2 mins
+  }, SYNC_STATUS_INTERVAL);
 };
 
 const main = async () => {
