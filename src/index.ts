@@ -32,8 +32,7 @@ import { saveStatusToGG, SystemStatus } from './spreadsheet/saveStatusToGG';
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = [];
 let SESSION: TradingSession;
-// const SYNC_STATUS_INTERVAL = 300000; // 5 mins
-const SYNC_STATUS_INTERVAL = 60000; // 5 mins
+const SYNC_STATUS_INTERVAL = 300000; // 5 mins
 const BOT: Record<string, Mavelli> = {};
 
 const displayStrategies = () => {
