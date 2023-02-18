@@ -347,10 +347,12 @@ const initSsiTrading = () => {
 const syncSystemStatus = () => {
   const status: SystemStatus = {
     timestamp: Date.now(),
-    totalAssets: 0,
-    purchasingPower: 0,
+    totalAssets: BalanceFactory.getTotalAsset(),
+    purchasingPower: BalanceFactory.getPurchasingPower(),
     buyingTokens: PositionFactory.getBuyingList().join(', '),
-    liveOrders: '',
+    liveOrders: OrderFactory.getLiveOrders()
+      .map((i) => `${i.buySell}-${i.instrumentID}:q-${i.quantity}:p-${i.price}`)
+      .join(', '),
   };
 
   saveStatusToGG(status);
