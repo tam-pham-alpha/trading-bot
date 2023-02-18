@@ -32,7 +32,8 @@ import { saveStatusToGG, SystemStatus } from './spreadsheet/saveStatusToGG';
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = [];
 let SESSION: TradingSession;
-const SYNC_STATUS_INTERVAL = 300000; // 5 mins
+// const SYNC_STATUS_INTERVAL = 300000; // 5 mins
+const SYNC_STATUS_INTERVAL = 60000; // 5 mins
 const BOT: Record<string, Mavelli> = {};
 
 const displayStrategies = () => {
@@ -352,10 +353,19 @@ const syncSystemStatus = async () => {
     timestamp: Date.now(),
     totalAssets: BalanceFactory.getTotalAsset(),
     purchasingPower: BalanceFactory.getPurchasingPower(),
-    buyingTokens: PositionFactory.getBuyingList().join(', '),
-    liveOrders: OrderFactory.getLiveOrders()
-      .map((i) => `${i.buySell}-${i.instrumentID}:q-${i.quantity}:p-${i.price}`)
-      .join(', '),
+    buyingTokens:
+      PositionFactory.getBuyingList()
+        .map((i) => {
+          const token = AGG_STRATEGIES.find((s) => s.symbol === i);
+          return `${i}@${token?.buyPrc ?? '???'}`;
+        })
+        .join(', ') || '-',
+    liveOrders:
+      OrderFactory.getLiveOrders()
+        .map(
+          (i) => `${i.buySell}-${i.instrumentID}:q-${i.quantity}:p-${i.price}`,
+        )
+        .join(', ') || '-',
   };
 
   if (!status.totalAssets) return;
