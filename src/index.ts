@@ -355,6 +355,8 @@ const syncSystemStatus = () => {
       .join(', '),
   };
 
+  if (!status.totalAssets) return;
+
   saveStatusToGG(status);
 };
 

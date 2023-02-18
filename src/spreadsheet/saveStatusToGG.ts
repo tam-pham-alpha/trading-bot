@@ -13,6 +13,7 @@ export type SystemStatus = {
 };
 
 export const saveStatusToGG = async (data: SystemStatus) => {
+  console.log('saveStatusToGG', data);
   // Initialize the sheet - doc ID is the long id in the sheets URL
   const doc = new GoogleSpreadsheet(GG_SPREADSHEET_ID);
 

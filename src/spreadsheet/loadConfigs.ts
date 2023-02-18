@@ -31,12 +31,12 @@ export const loadConfigs = async (): Promise<MavelliConfig> => {
     };
   }
 
-  const rows = await sheet.getRows();
+  await sheet.loadCells(`B3:B5`);
 
   return {
-    priorityList: rows[1].Value ?? '',
-    maxOrder: toNumber(rows[2].Value),
-    cashInventory: toNumber(rows[3].Value),
+    priorityList: sheet.getCellByA1('B3').value.toString() ?? '',
+    maxOrder: toNumber(sheet.getCellByA1('B4').value),
+    cashInventory: toNumber(sheet.getCellByA1('B5').value),
   };
 };
 
