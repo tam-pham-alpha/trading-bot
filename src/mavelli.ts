@@ -199,7 +199,7 @@ export class Mavelli {
       return;
     }
 
-    if (order.orderStatus === 'CL') {
+    if (order.orderStatus === 'CL' && order.orderID === this.orderId) {
       // if order is cancel by user start a new session
       this.startBuying();
     }
