@@ -27,6 +27,7 @@ import { onConfigChange } from './spreadsheet/loadConfigs';
 import { loadStrategies, onStrategyChange } from './spreadsheet/loadStrategies';
 import { MavelliConfig } from './types/Mavelli';
 import { toNumber } from 'lodash';
+import { saveStatusToGG, SystemStatus } from './spreadsheet/saveStatusToGG';
 
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = [];
@@ -343,6 +344,26 @@ const initSsiTrading = () => {
     });
 };
 
+const syncSystemStatus = () => {
+  const status: SystemStatus = {
+    timestamp: Date.now(),
+    totalAssets: 0,
+    purchasingPower: 0,
+    buyingTokens: PositionFactory.getBuyingList().join(', '),
+    liveOrders: '',
+  };
+
+  saveStatusToGG(status);
+};
+
+const initSyncStatus = () => {
+  syncSystemStatus();
+
+  setInterval(() => {
+    syncSystemStatus();
+  }, 120000); // 2 mins
+};
+
 const main = async () => {
   TIMESTAMP = Date.now();
   console.log('Mavelli SSI started!', TIMESTAMP);
@@ -393,6 +414,9 @@ const main = async () => {
       }
     });
   });
+
+  // sync current status to gg spreadsheets
+  initSyncStatus();
 };
 
 main();

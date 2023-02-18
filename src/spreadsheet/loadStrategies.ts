@@ -2,9 +2,8 @@ import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { isEqual, toNumber } from 'lodash';
 import { Strategy } from '../strategies';
 
-import { PRIVATE_KEY, CLIENT_EMAIL } from './auth';
+import { PRIVATE_KEY, CLIENT_EMAIL, GG_SPREADSHEET_ID } from './auth';
 
-const GG_SPREADSHEET_ID = '13ddFXM7xIPqbdlqHS41YbyIDLk6YnQgb6rBSD49dJSM';
 const SHEET_TITLE = 'Strategies';
 const UPDATE_INTERVAL = 30000;
 

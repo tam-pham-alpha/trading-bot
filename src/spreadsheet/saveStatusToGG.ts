@@ -1,13 +1,18 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { isEqual, toNumber } from 'lodash';
-import { MavelliConfig } from '../types/Mavelli';
 
 import { PRIVATE_KEY, CLIENT_EMAIL, GG_SPREADSHEET_ID } from './auth';
 
 const SHEET_TITLE = 'MasterConfig';
-const UPDATE_INTERVAL = 30000;
 
-export const loadConfigs = async (): Promise<MavelliConfig> => {
+export type SystemStatus = {
+  timestamp: number;
+  totalAssets: number;
+  purchasingPower: number;
+  buyingTokens: string;
+  liveOrders: string;
+};
+
+export const saveStatusToGG = async (data: SystemStatus) => {
   // Initialize the sheet - doc ID is the long id in the sheets URL
   const doc = new GoogleSpreadsheet(GG_SPREADSHEET_ID);
 
@@ -24,32 +29,23 @@ export const loadConfigs = async (): Promise<MavelliConfig> => {
   const sheet = doc.sheetsByTitle[SHEET_TITLE];
 
   if (!sheet) {
-    return {
-      priorityList: 'SSI',
-      maxOrder: 0,
-      cashInventory: 100,
-    };
+    return -1;
   }
 
-  const rows = await sheet.getRows();
+  await sheet.loadCells(`G2:G6`);
 
-  return {
-    priorityList: rows[1].Value ?? '',
-    maxOrder: toNumber(rows[2].Value),
-    cashInventory: toNumber(rows[3].Value),
-  };
-};
+  const timestamp = sheet.getCellByA1('G2');
+  const totalAssets = sheet.getCellByA1('G3');
+  const purchasingPower = sheet.getCellByA1('G4');
+  const buyingTokens = sheet.getCellByA1('G5');
+  const liveOrders = sheet.getCellByA1('G6');
 
-export const onConfigChange = async (callback: (l: MavelliConfig) => void) => {
-  let oldItem = await loadConfigs();
+  timestamp.value = data.timestamp;
+  totalAssets.value = data.totalAssets;
+  purchasingPower.value = data.purchasingPower;
+  buyingTokens.value = data.buyingTokens;
+  liveOrders.value = data.liveOrders;
 
-  setInterval(async () => {
-    const newItem = await loadConfigs();
-    if (!isEqual(oldItem, newItem)) {
-      oldItem = newItem;
-      callback(newItem);
-    }
-  }, UPDATE_INTERVAL);
-
-  callback(oldItem);
+  await sheet.saveUpdatedCells();
+  return 0;
 };
