@@ -12,7 +12,7 @@ deploy_stag:
     - mkdir -p _deploy
     - echo -e "$SSH_PRIVATE_KEY" > _deploy/goingsunny-sg.pem
     - chmod 700 _deploy/goingsunny-sg.pem
-    - ssh-keyscan -t rsa 18.142.250.176 >> ~/.ssh/known_hosts
+    - ssh-keyscan -t rsa 13.229.66.125 >> ~/.ssh/known_hosts
   script:
     - npm run deploy:prod
   only:
@@ -27,7 +27,7 @@ deploy_prod:
     - mkdir -p _deploy
     - echo -e "$SSH_PRIVATE_KEY" > _deploy/goingsunny-sg.pem
     - chmod 700 _deploy/goingsunny-sg.pem
-    - ssh-keyscan -t rsa 18.142.250.176 >> ~/.ssh/known_hosts
+    - ssh-keyscan -t rsa 13.229.66.125 >> ~/.ssh/known_hosts
   script:
     - npm run deploy:prod
   only:
