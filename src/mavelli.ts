@@ -10,6 +10,7 @@ import { QuoteMessage, TradeMessage, TradingSession } from './types/Market';
 import { OrderHistory, OrderMatchEvent, OrderUpdateEvent } from './types/Order';
 import { getNumberByPercentage } from './utils/number';
 import { checkCrossProfit } from './utils/number';
+import { NewOrder } from './types/Order';
 
 // The SSI auto trading bot
 export class Mavelli {
@@ -23,7 +24,8 @@ export class Mavelli {
   strategy: Strategy;
   quote: QuoteMessage | undefined;
   trade: TradeMessage | undefined;
-  orderId: string | undefined;
+  orderID: string | undefined;
+  requestID: string | undefined;
 
   constructor(symbol: string, strategy: Strategy) {
     this.symbol = symbol;
@@ -57,7 +59,7 @@ export class Mavelli {
       old.buyQty2 !== this.strategy.buyQty2 ||
       old.tickSize !== this.strategy.tickSize ||
       old.interval !== this.strategy.interval ||
-      !!this.orderId !== PositionFactory.checkIsBuyingStock(this.symbol)
+      !!this.orderID !== PositionFactory.checkIsBuyingStock(this.symbol)
     ) {
       this.startBuying();
     }
@@ -90,14 +92,16 @@ export class Mavelli {
     if (this.session === 'LO' && this.lastPrice) {
       // cancel existing orders if any
       if (
-        this.orderId ||
+        this.orderID ||
         OrderFactory.getLiveOrdersBySymbol(this.symbol).length
       ) {
         console.log('A: CANCEL ALL ORDERS', this.symbol);
         await OrderFactory.cancelOrdersBySymbol(this.symbol);
-        this.orderId = undefined;
+        this.orderID = undefined;
+        this.requestID = undefined;
       } else {
         order = await this.placeBuyOrder();
+        this.requestID = typeof order !== 'number' ? order.requestID : '-';
         if (!order) {
           Sentry.captureMessage('Mavelli: Unable to place order', {});
         }
@@ -120,14 +124,14 @@ export class Mavelli {
     this.isPlacingOrders = false;
   };
 
-  placeBuyOrder = async () => {
+  placeBuyOrder = async (): Promise<NewOrder | number> => {
     if (
       !this.ready ||
       !this.strategy.active ||
       this.strategy.buyPrc > 0 ||
       !PositionFactory.checkIsBuyingStock(this.symbol)
     ) {
-      return;
+      return 0;
     }
 
     const positionList = PositionFactory.positions;
@@ -138,7 +142,7 @@ export class Mavelli {
     const avgPrice = position?.avgPrice || 0;
     const allocation = position?.allocation || 0;
 
-    if (!this.lastPrice) return;
+    if (!this.lastPrice) return 0;
 
     const buyPrice = Math.max(
       getNumberByPercentage(this.lastPrice, strategy.buyPrc, strategy.tickSize),
@@ -199,13 +203,17 @@ export class Mavelli {
       return;
     }
 
-    if (order.orderStatus === 'CL' && order.orderID === this.orderId) {
-      // if order is cancel by user start a new session
-      this.startBuying();
+    if (
+      LIVE_ORDER_STATUS.indexOf(order.orderStatus) &&
+      order.origRequestID === this.requestID
+    ) {
+      console.log('onOrderUpdate: set orderID', order.orderID);
+      this.orderID = order.orderID;
     }
 
-    if (LIVE_ORDER_STATUS.indexOf(order.orderStatus)) {
-      this.orderId = order.orderID;
+    if (order.orderStatus === 'CL' && order.orderID === this.orderID) {
+      // if order is cancel by user start a new session
+      this.startBuying();
     }
 
     OrderFactory.orderUpdate([order as OrderHistory]);

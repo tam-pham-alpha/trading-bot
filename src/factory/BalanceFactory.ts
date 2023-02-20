@@ -36,11 +36,6 @@ class BalanceFactory {
 
   getIsBuying = () => {
     const isBuying = this.getCashPercentage() > this.cashInventory;
-    console.log(
-      'BalanceFactory.getIsBuying',
-      this.getCashPercentage(),
-      this.cashInventory,
-    );
     return isBuying;
   };
 

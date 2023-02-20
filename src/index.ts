@@ -121,14 +121,24 @@ const onQuote = (data: QuoteMessage) => {
 const onOrderUpdate = async (e: any, data: OrderUpdateEvent) => {
   const order = data.data;
   const symbol = order.instrumentID;
-  console.log('onOrderUpdate A', order);
+  console.log(
+    'onOrderUpdate A',
+    order.instrumentID,
+    order.orderID,
+    order.modifiedTime,
+  );
 
   // ignore old events
   const modifiedTime = order.modifiedTime;
   if (toNumber(modifiedTime) < TIMESTAMP) {
     return;
   }
-  console.log('onOrderUpdate B', order);
+  console.log(
+    'onOrderUpdate B',
+    order.instrumentID,
+    order.orderID,
+    order.modifiedTime,
+  );
 
   if (BOT[symbol]) {
     BOT[symbol].onOrderUpdate(data);
@@ -346,6 +356,8 @@ const initSsiTrading = () => {
 };
 
 const syncSystemStatus = async () => {
+  await updatePortfolio();
+  await wait(1000);
   await OrderFactory.orderCheck();
 
   const status: SystemStatus = {
