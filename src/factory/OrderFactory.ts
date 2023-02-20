@@ -1,4 +1,4 @@
-import { uniqBy } from 'lodash';
+import { orderBy, uniqBy } from 'lodash';
 
 import { cancelOrder, getLiveOrder } from '../biz/order';
 import { OrderHistory } from '../types/Order';
@@ -87,7 +87,7 @@ class OrderFactory {
 
   orderCheck = async () => {
     await this.update();
-    const liveOrders = this.getLiveOrders();
+    const liveOrders = orderBy(this.getLiveOrders(), ['modifiedTime'], 'asc');
     const buyingTokens = PositionFactory.getBuyingList();
 
     for (let i = 0; i < buyingTokens.length; i++) {

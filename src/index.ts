@@ -124,7 +124,7 @@ const onOrderUpdate = async (e: any, data: OrderUpdateEvent) => {
   console.log('onOrderUpdate A', order);
 
   // ignore old events
-  const modifiedTime = order.inputTime;
+  const modifiedTime = order.modifiedTime;
   if (toNumber(modifiedTime) < TIMESTAMP) {
     return;
   }
