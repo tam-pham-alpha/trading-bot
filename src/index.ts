@@ -28,6 +28,7 @@ import { loadStrategies, onStrategyChange } from './spreadsheet/loadStrategies';
 import { MavelliConfig } from './types/Mavelli';
 import { toNumber } from 'lodash';
 import { saveStatusToGG, SystemStatus } from './spreadsheet/saveStatusToGG';
+import { savePositionsToGG } from './spreadsheet/savePositionsToGG';
 
 let TIMESTAMP = 0;
 let AGG_STRATEGIES: Strategy[] = [];
@@ -384,7 +385,10 @@ const syncSystemStatus = async () => {
 
   if (!status.totalAssets) return;
 
-  saveStatusToGG(status);
+  await saveStatusToGG(status);
+  await savePositionsToGG(
+    PositionFactory.positions.filter((i) => i.total && i.avgPrice),
+  );
 };
 
 const initSyncStatus = () => {
