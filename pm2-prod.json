@@ -7,7 +7,7 @@
       "instances": 1,
       "args": "start",
       "watch": false,
-      "cron_restart": "30 23 * * *",
+      "cron_restart": "45 1 * * *",
       "ignore_watch": [
         "node_modules",
         "log"
