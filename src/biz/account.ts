@@ -26,9 +26,6 @@ export const getAccountBalance = async () => {
         `Unable to load account balance: ${JSON.stringify(err)}`,
         {},
       );
-      return {
-        totalAssets: 0,
-        purchasingPower: 0,
-      } as Account;
+      throw err;
     });
 };
