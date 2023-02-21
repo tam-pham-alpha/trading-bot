@@ -69,6 +69,7 @@ const displayPortfolio = () => {
 };
 
 const updatePortfolio = async () => {
+  console.log('DATE', Date.now());
   await wait(1000);
   await BalanceFactory.update();
 
@@ -78,7 +79,8 @@ const updatePortfolio = async () => {
   await wait(1000);
   await OrderFactory.update();
 
-  displayPortfolio();
+  displayAccount();
+  displayOrders();
 };
 
 const onSessionUpdate = async (session: TradingSession) => {
