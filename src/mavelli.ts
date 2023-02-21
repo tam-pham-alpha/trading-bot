@@ -101,7 +101,12 @@ export class Mavelli {
         this.requestID = undefined;
       } else {
         order = await this.placeBuyOrder();
-        this.requestID = typeof order !== 'number' ? order.requestID : '-';
+        if (typeof order !== 'number' && order?.requestID) {
+          this.requestID = order.requestID;
+        }
+        if (typeof order !== 'number') {
+          console.log('Start Buying: ORDER', order);
+        }
         if (!order) {
           Sentry.captureMessage('Mavelli: Unable to place order', {});
         }

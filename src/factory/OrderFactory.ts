@@ -86,9 +86,18 @@ class OrderFactory {
   };
 
   orderCheck = async () => {
+    console.log('OrderCheck');
     await this.update();
+
     const liveOrders = orderBy(this.getLiveOrders(), ['modifiedTime'], 'asc');
     const buyingTokens = PositionFactory.getBuyingList();
+
+    // cancel invalid orders
+    const tokens = liveOrders
+      .filter((i) => buyingTokens.indexOf(i.instrumentID) < 0)
+      .map((i) => i.orderID);
+    console.log('OrderCheck: cancel invalid orders', tokens);
+    await this.cancelOrdersByIds(tokens);
 
     for (let i = 0; i < buyingTokens.length; i++) {
       const list = liveOrders.filter((o) => o.instrumentID === buyingTokens[i]);

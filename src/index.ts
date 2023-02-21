@@ -127,19 +127,20 @@ const onOrderUpdate = async (e: any, data: OrderUpdateEvent) => {
     'onOrderUpdate A',
     order.instrumentID,
     order.orderID,
-    order.modifiedTime,
+    order.inputTime,
   );
 
   // ignore old events
-  const modifiedTime = order.modifiedTime;
-  if (toNumber(modifiedTime) < TIMESTAMP) {
+  const inputTime = order.inputTime;
+  if (toNumber(inputTime) < TIMESTAMP) {
     return;
   }
   console.log(
     'onOrderUpdate B',
     order.instrumentID,
     order.orderID,
-    order.modifiedTime,
+    order.inputTime,
+    order.orderStatus,
   );
 
   if (BOT[symbol]) {
