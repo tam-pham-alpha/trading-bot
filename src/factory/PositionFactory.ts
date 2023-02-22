@@ -143,7 +143,7 @@ class PositionFactory {
   };
 
   checkIsBuyingStock = (symbol: string) => {
-    return this.getBuyingList().join(', ').indexOf(symbol) >= 0;
+    return this.buyingList.join(', ').indexOf(symbol) >= 0;
   };
 
   getBySymbol = (symbol: string) => {

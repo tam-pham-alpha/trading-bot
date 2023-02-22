@@ -84,17 +84,23 @@ export class Mavelli {
   };
 
   startBuying = async () => {
-    if (this.isPlacingOrders) return;
+    if (
+      this.isPlacingOrders ||
+      !this.ready ||
+      !this.strategy.active ||
+      this.strategy.buyPrc > 0 ||
+      !PositionFactory.checkIsBuyingStock(this.symbol)
+    ) {
+      return;
+    }
+
     this.isPlacingOrders = true;
     this.timestamp = Date.now();
 
     let order;
     if (this.session === 'LO' && this.lastPrice) {
       // cancel existing orders if any
-      if (
-        this.orderID ||
-        OrderFactory.getLiveOrdersBySymbol(this.symbol).length
-      ) {
+      if (OrderFactory.getLiveOrdersBySymbol(this.symbol).length) {
         console.log('A: CANCEL ALL ORDERS', this.symbol);
         await OrderFactory.cancelOrdersBySymbol(this.symbol);
         this.orderID = undefined;
@@ -130,6 +136,11 @@ export class Mavelli {
   };
 
   placeBuyOrder = async (): Promise<NewOrder | number> => {
+    console.log(
+      'Place Buy Order',
+      this.symbol,
+      PositionFactory.checkIsBuyingStock(this.symbol),
+    );
     if (
       !this.ready ||
       !this.strategy.active ||
