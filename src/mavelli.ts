@@ -58,8 +58,7 @@ export class Mavelli {
       old.buyQty1 !== this.strategy.buyQty1 ||
       old.buyQty2 !== this.strategy.buyQty2 ||
       old.tickSize !== this.strategy.tickSize ||
-      old.interval !== this.strategy.interval ||
-      !!this.orderID !== PositionFactory.checkIsBuyingStock(this.symbol)
+      old.interval !== this.strategy.interval
     ) {
       this.startBuying();
     }
@@ -86,14 +85,15 @@ export class Mavelli {
   startBuying = async () => {
     if (
       this.isPlacingOrders ||
+      this.strategy.buyPrc > 0 ||
       !this.ready ||
       !this.strategy.active ||
-      this.strategy.buyPrc > 0 ||
       !PositionFactory.checkIsBuyingStock(this.symbol)
     ) {
       return;
     }
 
+    console.log('startBuying B', this.symbol, this.lastPrice);
     this.isPlacingOrders = true;
     this.timestamp = Date.now();
 
@@ -125,6 +125,10 @@ export class Mavelli {
 
     if (order) {
       this.interval = setInterval(() => {
+        if (!PositionFactory.checkIsBuyingStock(this.symbol)) {
+          clearInterval(this.interval);
+          return;
+        }
         this.startBuying();
       }, this.strategy?.interval || INTERVAL.m30);
     } else {
@@ -142,9 +146,9 @@ export class Mavelli {
       PositionFactory.checkIsBuyingStock(this.symbol),
     );
     if (
+      this.strategy.buyPrc > 0 ||
       !this.ready ||
       !this.strategy.active ||
-      this.strategy.buyPrc > 0 ||
       !PositionFactory.checkIsBuyingStock(this.symbol)
     ) {
       return 0;

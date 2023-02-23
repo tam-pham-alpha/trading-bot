@@ -57,26 +57,20 @@ class OrderFactory {
     return true;
   };
 
-  cancelOrdersBySymbol = async (symbol: string) => {
-    const orders = this.getLiveOrdersBySymbol(symbol).filter(
-      (i) => i.buySell === 'B',
-    );
-
-    for (let i = 0; i < orders.length; i++) {
-      const item = orders[i];
-      await cancelOrder(item.orderID);
-      await wait(1000);
-    }
-
-    this.orders = this.orders.filter((i) => i.instrumentID !== symbol);
-    return orders;
-  };
-
   cancelOrdersByIds = async (orderIds: string[]) => {
     for (let i = 0; i < orderIds.length; i++) {
       await cancelOrder(orderIds[i]);
       await wait(1000);
     }
+  };
+
+  cancelOrdersBySymbol = async (symbol: string) => {
+    const orders = this.getLiveOrdersBySymbol(symbol).filter(
+      (i) => i.buySell === 'B',
+    );
+
+    await this.cancelOrdersByIds(orders.map((i) => i.orderID));
+    return [];
   };
 
   cancelAllOrders = async () => {
