@@ -87,11 +87,11 @@ class OrderFactory {
     const buyingTokens = PositionFactory.getBuyingList();
 
     // cancel invalid orders
-    const tokens = liveOrders
+    const orderIds = liveOrders
       .filter((i) => buyingTokens.indexOf(i.instrumentID) < 0)
       .map((i) => i.orderID);
-    console.log('OrderCheck: cancel invalid orders', tokens);
-    await this.cancelOrdersByIds(tokens);
+    console.log('OrderCheck: cancel invalid orders', orderIds);
+    await this.cancelOrdersByIds(orderIds);
 
     for (let i = 0; i < buyingTokens.length; i++) {
       const list = liveOrders.filter((o) => o.instrumentID === buyingTokens[i]);

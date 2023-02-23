@@ -86,8 +86,10 @@ export class Mavelli {
     if (
       this.isPlacingOrders ||
       this.strategy.buyPrc > 0 ||
+      this.session !== 'LO' ||
       !this.ready ||
       !this.strategy.active ||
+      !this.lastPrice ||
       !PositionFactory.checkIsBuyingStock(this.symbol)
     ) {
       return;
@@ -98,24 +100,23 @@ export class Mavelli {
     this.timestamp = Date.now();
 
     let order;
-    if (this.session === 'LO' && this.lastPrice) {
-      // cancel existing orders if any
-      if (OrderFactory.getLiveOrdersBySymbol(this.symbol).length) {
-        console.log('A: CANCEL ALL ORDERS', this.symbol);
-        await OrderFactory.cancelOrdersBySymbol(this.symbol);
-        this.orderID = undefined;
-        this.requestID = undefined;
-      } else {
-        order = await this.placeBuyOrder();
-        if (typeof order !== 'number' && order?.requestID) {
-          this.requestID = order.requestID;
-        }
-        if (typeof order !== 'number') {
-          console.log('Start Buying: ORDER', order);
-        }
-        if (!order) {
-          Sentry.captureMessage('Mavelli: Unable to place order', {});
-        }
+
+    // cancel existing orders if any
+    if (OrderFactory.getLiveOrdersBySymbol(this.symbol).length) {
+      console.log('A: CANCEL ALL ORDERS', this.symbol);
+      await OrderFactory.cancelOrdersBySymbol(this.symbol);
+      this.orderID = undefined;
+      this.requestID = undefined;
+    } else {
+      order = await this.placeBuyOrder();
+      if (typeof order !== 'number' && order?.requestID) {
+        this.requestID = order.requestID;
+      }
+      if (typeof order !== 'number') {
+        console.log('Start Buying: ORDER', order);
+      }
+      if (!order) {
+        Sentry.captureMessage('Mavelli: Unable to place order', {});
       }
     }
 
