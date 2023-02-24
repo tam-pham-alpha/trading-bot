@@ -52,6 +52,8 @@ class BalanceFactory {
           },
         },
       );
+      // restart the process
+      process.exit();
     }
     return this.balance;
   };
