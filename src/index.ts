@@ -387,7 +387,14 @@ const syncSystemStatus = async () => {
 
   await saveStatusToGG(status);
   await savePositionsToGG(
-    PositionFactory.positions.filter((i) => i.total && i.avgPrice),
+    PositionFactory.positions
+      .filter((i) => i.total && i.avgPrice)
+      .map((p) => {
+        return {
+          ...p,
+          marketPrice: BOT[p.instrumentID]?.lastPrice ?? 0,
+        };
+      }),
   );
 };
 

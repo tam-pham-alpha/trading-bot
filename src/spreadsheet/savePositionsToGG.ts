@@ -66,7 +66,7 @@ export const savePositionsToGG = async (positionsOrg: StockPosition[]) => {
     return -1;
   }
 
-  await sheet.loadCells(`A2:E${positions.length + 2}`);
+  await sheet.loadCells(`A2:F${positions.length + 2}`);
 
   for (let i = 0; i < positions.length; i++) {
     const cellIndex = i + 2;
@@ -78,13 +78,17 @@ export const savePositionsToGG = async (positionsOrg: StockPosition[]) => {
     const sellableQty = sheet.getCellByA1(`B${cellIndex}`);
     const total = sheet.getCellByA1(`C${cellIndex}`);
     const avgPrice = sheet.getCellByA1(`D${cellIndex}`);
-    const timestamp = sheet.getCellByA1(`E${cellIndex}`);
+    const marketPrice = sheet.getCellByA1(`E${cellIndex}`);
+    const timestamp = sheet.getCellByA1(`F${cellIndex}`);
 
     symbol.value = position.instrumentID;
     sellableQty.value = getEmptyValue(position.sellableQty, isEmpty);
     total.value = getEmptyValue(position.total, isEmpty);
     avgPrice.value = getEmptyValue(position.avgPrice, isEmpty);
     timestamp.value = getEmptyValue(now, isEmpty);
+    if (position.marketPrice) {
+      marketPrice.value = getEmptyValue(position.marketPrice, isEmpty);
+    }
   }
 
   await sheet.saveUpdatedCells();
