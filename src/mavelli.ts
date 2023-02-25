@@ -26,13 +26,14 @@ export class Mavelli {
   trade: TradeMessage | undefined;
   orderID: string | undefined;
   requestID: string | undefined;
+  isLiveOrder = false;
 
   constructor(symbol: string, strategy: Strategy) {
     this.symbol = symbol;
     this.lastPrice = 0;
     this.strategy = strategy;
 
-    if (this.strategy) {
+    if (this.strategy && PositionFactory.checkIsBuyingStock(this.symbol)) {
       this.startBuying();
     }
   }
@@ -77,7 +78,10 @@ export class Mavelli {
     }
 
     // start when the price comes
-    if (!t && this.lastPrice) {
+    if (
+      (!t || !this.isLiveOrder) &&
+      PositionFactory.checkIsBuyingStock(this.symbol)
+    ) {
       this.startBuying();
     }
   };
@@ -107,6 +111,7 @@ export class Mavelli {
       await OrderFactory.cancelOrdersBySymbol(this.symbol);
       this.orderID = undefined;
       this.requestID = undefined;
+      this.isLiveOrder = false;
     } else {
       order = await this.placeBuyOrder();
       if (typeof order !== 'number' && order?.requestID) {
@@ -125,6 +130,7 @@ export class Mavelli {
     }
 
     if (order) {
+      this.isLiveOrder = true;
       this.interval = setInterval(() => {
         if (!PositionFactory.checkIsBuyingStock(this.symbol)) {
           clearInterval(this.interval);
@@ -132,9 +138,6 @@ export class Mavelli {
         }
         this.startBuying();
       }, this.strategy?.interval || INTERVAL.m30);
-    } else {
-      // waiting for the new trade to trigger this again
-      this.lastPrice = 0;
     }
 
     this.isPlacingOrders = false;
@@ -150,6 +153,7 @@ export class Mavelli {
       this.strategy.buyPrc > 0 ||
       !this.ready ||
       !this.strategy.active ||
+      !this.lastPrice ||
       !PositionFactory.checkIsBuyingStock(this.symbol)
     ) {
       return 0;
@@ -162,8 +166,6 @@ export class Mavelli {
     const strategy = this.strategy;
     const avgPrice = position?.avgPrice || 0;
     const allocation = position?.allocation || 0;
-
-    if (!this.lastPrice) return 0;
 
     const buyPrice = Math.max(
       getNumberByPercentage(this.lastPrice, strategy.buyPrc, strategy.tickSize),
