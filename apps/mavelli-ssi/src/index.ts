@@ -38,7 +38,7 @@ const BOT: Record<string, Mavelli> = {};
 
 const displayStrategies = () => {
   console.log('R. STRATEGY');
-  console.table(getStrategyTable(AGG_STRATEGIES));
+  console.table(getStrategyTable(AGG_STRATEGIES.filter((i) => i.active)));
 };
 
 const displayAccount = () => {
@@ -46,10 +46,17 @@ const displayAccount = () => {
   console.table(getAccountTable([BalanceFactory.balance]));
 };
 
-const displayPositions = () => {
+const displayPositions = (isBuying = false) => {
   const buyingList = PositionFactory.getBuyingList();
   console.log('R: POSITIONS');
-  console.table(getStockPositionTable(PositionFactory.positions));
+  console.table(
+    getStockPositionTable(
+      PositionFactory.positions.filter((i) => {
+        if (!isBuying) return i.total > 0;
+        return i.buying === true || i.total > 0;
+      }),
+    ),
+  );
   console.log(
     `R. BUYING (${buyingList.length}):`,
     BalanceFactory.getIsBuying(),
@@ -82,6 +89,7 @@ const updatePortfolio = async () => {
 
   displayAccount();
   displayOrders();
+  displayPositions(true);
 };
 
 const onSessionUpdate = async (session: TradingSession) => {
