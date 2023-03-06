@@ -51,10 +51,17 @@ const displayPositions = (isBuying = false) => {
   console.log('R: POSITIONS');
   console.table(
     getStockPositionTable(
-      PositionFactory.positions.filter((i) => {
-        if (!isBuying) return i.total > 0;
-        return i.buying === true || i.total > 0;
-      }),
+      PositionFactory.positions
+        .filter((i) => {
+          if (!isBuying) return i.total > 0;
+          return i.buying === true || i.total > 0;
+        })
+        .map((p) => {
+          return {
+            ...p,
+            marketPrice: BOT[p.instrumentID]?.lastPrice ?? 0,
+          };
+        }),
     ),
   );
   console.log(
