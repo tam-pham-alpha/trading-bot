@@ -15,7 +15,8 @@
   },
   "scripts": {
     "login": "ssh -i _deploy/goingsunny-sg.pem ubuntu@13.229.66.125",
-    "deploy:mavelli": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && cd apps/mavelli-ssi && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
+    "deploy:mavelli-ssi": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && cd apps/mavelli-ssi && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
+    "deploy:mavelli-bnb": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && cd apps/mavelli-bnb && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
     "start": "turbo run start --parallel"
   },
   "keywords": [],
