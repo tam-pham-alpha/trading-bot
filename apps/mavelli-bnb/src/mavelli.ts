@@ -83,23 +83,31 @@ export class Mavelli {
   };
 
   cancelOrders = async (symbol: string) => {
-    const orders = (await client.openOrders({ symbol })) || [];
-    await Promise.all([
-      orders.map((i) =>
-        client.cancelOrder({
-          symbol,
-          orderId: i.orderId,
-        }),
-      ),
-    ]);
-    return orders.length;
+    try {
+      const orders = (await client.openOrders({ symbol })) || [];
+      await Promise.all([
+        orders.map((i) =>
+          client.cancelOrder({
+            symbol,
+            orderId: i.orderId,
+          }),
+        ),
+      ]);
+      return orders.length;
+    } catch (err) {
+      console.log('cancelOrders:ERR', err);
+      return 0;
+    }
   };
 
   placeTpOrder = async () => {
     if (!this.position || !this.lastPrice || !this.position.quantity) return;
 
+    const quantity = this.position.quantity - this.strategy.holdQuantity;
+
     if (
       this.position.valid &&
+      quantity > 0 &&
       matchExpectedPrice(
         this.lastPrice,
         this.position.avgPrice,
@@ -112,7 +120,7 @@ export class Mavelli {
         symbol: this.symbol,
         side: 'SELL',
         type: 'LIMIT',
-        quantity: this.position.quantity,
+        quantity: quantity,
         price: this.lastPrice,
         newClientOrderId: `${BOT_PREFIX}-${Date.now()}`,
       };
@@ -124,8 +132,13 @@ export class Mavelli {
         this.strategy.takeProfit,
         order.quantity,
       );
-      // @ts-ignore
-      await client.order(order);
+
+      try {
+        // @ts-ignore
+        await client.order(order);
+      } catch (err) {
+        console.log('placeTpOrder:ERR', err);
+      }
     }
   };
 
@@ -154,7 +167,12 @@ export class Mavelli {
     };
 
     console.log('R. PLACE ORDER', this.symbol, order.quantity, order.price);
-    // @ts-ignore
-    await client.order(order);
+
+    try {
+      // @ts-ignore
+      await client.order(order);
+    } catch (err) {
+      console.log('placeBuyOrder:ERR', err);
+    }
   };
 }

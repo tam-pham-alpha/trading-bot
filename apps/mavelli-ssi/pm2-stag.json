@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "stg-ssi-bot",
+      "name": "stg-mavelli-ssi",
       "script": "./build/index.js",
       "exec_mode": "fork_mode",
       "instances": 1,

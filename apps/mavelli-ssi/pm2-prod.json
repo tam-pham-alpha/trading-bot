@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "prd-ssi-bot",
+      "name": "prd-mavelli-ssi",
       "script": "./build/index.js",
       "exec_mode": "fork_mode",
       "instances": 1,
