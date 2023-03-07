@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "prd-mavelli-ssi",
+      "name": "prd-mavelli-bnb",
       "script": "./build/index.js",
       "exec_mode": "fork_mode",
       "instances": 1,
