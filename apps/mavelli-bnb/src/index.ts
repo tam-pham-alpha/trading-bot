@@ -7,20 +7,13 @@ import { Strategy } from './strategies';
 import { Trade } from './types/Trade';
 import BalanceFactory from './factory/BalanceFactory';
 import { Mavelli } from './mavelli';
-import {
-  fetchStrategies,
-  FirebaseStrategy,
-  onDataChange,
-} from './firestore/strategies';
+import { loadStrategies, onStrategyChange } from './spreadsheet/loadStrategies';
 import { mergeStrategies } from './utils/strategy';
 import { getStrategyTable } from './utils/table';
 
 dotenv.config();
 
-// @ts-ignore
-import strategies from '../strategies.json';
-
-let AGG_STRATEGIES: Strategy[] = strategies;
+let AGG_STRATEGIES: Strategy[];
 const BOT: Record<string, Mavelli> = {};
 
 client.time().then((time) => {
@@ -60,35 +53,27 @@ const onOrderMatch = async (data: any) => {
 };
 
 (async () => {
-  const strategyList = await fetchStrategies();
-  AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, strategyList);
+  AGG_STRATEGIES = await loadStrategies();
+  console.table(AGG_STRATEGIES);
   AGG_STRATEGIES.forEach((i) => {
     BOT[i.symbol] = new Mavelli(i.symbol, i);
   });
 
-  onDataChange((list: FirebaseStrategy[]) => {
-    AGG_STRATEGIES = mergeStrategies(AGG_STRATEGIES, list);
+  onStrategyChange((list: Strategy[]) => {
+    AGG_STRATEGIES = list;
     console.log('R. STRATEGY');
     console.table(getStrategyTable(AGG_STRATEGIES));
 
-    const updatedSymbols = list.map((i) => i.symbol).join(', ');
-    AGG_STRATEGIES.filter((i) => updatedSymbols.indexOf(i.symbol) >= 0).forEach(
-      (i) => {
-        const symbol = i.symbol;
-        if (!symbol) return;
+    AGG_STRATEGIES.forEach((i) => {
+      const symbol = i.symbol;
+      if (!symbol) return;
 
-        const newStrategy = {
-          ...strategies.find((i: Strategy) => i.symbol === symbol),
-          ...i,
-        } as Strategy;
-
-        if (BOT[symbol]) {
-          BOT[symbol].setStrategy(newStrategy);
-        } else {
-          BOT[symbol] = new Mavelli(symbol, i);
-        }
-      },
-    );
+      if (BOT[symbol]) {
+        BOT[symbol].setStrategy(i);
+      } else {
+        BOT[symbol] = new Mavelli(symbol, i);
+      }
+    });
   });
 
   await BalanceFactory.sync();

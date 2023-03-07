@@ -144,7 +144,7 @@ export class Mavelli {
       symbol: this.symbol,
       side: 'BUY',
       type: 'LIMIT',
-      quantity: this.strategy.qty,
+      quantity: this.strategy.buyQuantity,
       price: getPriceByDelta(
         this.lastPrice,
         this.strategy.buyPrice,
