@@ -85,9 +85,7 @@ export const savePositionsToGG = async (positionsOrg: StockPosition[]) => {
     sellableQty.value = getEmptyValue(position.sellableQty, isEmpty);
     total.value = getEmptyValue(position.total, isEmpty);
     avgPrice.value = getEmptyValue(position.avgPrice, isEmpty);
-    if (position.marketPrice) {
-      marketPrice.value = getEmptyValue(position.marketPrice, isEmpty);
-    }
+    marketPrice.value = getEmptyValue(position.marketPrice, isEmpty);
     timestamp.value = getEmptyValue(now, isEmpty);
   }
 
