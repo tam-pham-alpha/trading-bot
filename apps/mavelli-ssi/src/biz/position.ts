@@ -22,7 +22,7 @@ export const getStockPosition = async () => {
     })
     .then((positions: StockPosition[]) => {
       return positions.map((i) => {
-        const total = i.buyT0 + i.buyT1 + i.buyT2 + i.onHand;
+        const total = i.buyT0 + i.buyT1 + i.sellableQty;
         const value = total * i.avgPrice;
 
         return {
