@@ -3,7 +3,7 @@ import Binance from 'binance-api-node';
 
 dotenv.config();
 
-console.log('process.env.API_SECRET', process.env.API_SECRET);
+console.log('process.env.API_KEY', process.env.API_KEY);
 
 export const client = Binance({
   apiKey: process.env.API_KEY,

@@ -1,33 +1,20 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { StockPosition } from '../types/Position';
+import { SheetPosition } from '../types/Position';
 
 import { PRIVATE_KEY, CLIENT_EMAIL, GG_SPREADSHEET_ID } from './auth';
 
-const SHEET_TITLE = 'Positions';
+const SHEET_TITLE = 'positions';
 
-export const emptyPosition: StockPosition = {
-  marketID: '',
-  instrumentID: '',
-  onHand: 0,
-  block: 0,
-  bonus: 0,
-  buyT0: 0,
-  buyT1: 0,
-  buyT2: 0,
-  sellT0: 0,
-  sellT1: 0,
-  sellT2: 0,
+export const emptyPosition: SheetPosition = {
+  symbol: '',
+  quantity: 0,
   avgPrice: 0,
-  mortgage: 0,
-  sellableQty: 0,
-  holdForTrade: 0,
+  takeProfit: 0,
+  tpPrice: 0,
+  expectedPnl: 0,
+  valid: false,
   marketPrice: 0,
-  total: 0,
-  value: 0,
-  allocation: 0,
-  target: 0,
-  buying: false,
-  delta: 0,
+  holdQuantity: 0,
 };
 
 const getEmptyValue = (value: number, isEmpty: boolean) => {
@@ -35,7 +22,7 @@ const getEmptyValue = (value: number, isEmpty: boolean) => {
   return value;
 };
 
-const fillEmptyRow = (positions: StockPosition[], maxRow: number) => {
+const fillEmptyRow = (positions: SheetPosition[], maxRow: number) => {
   const arr = [];
   for (let i = 0; i < maxRow; i++) {
     arr.push(positions[i] || emptyPosition);
@@ -43,7 +30,7 @@ const fillEmptyRow = (positions: StockPosition[], maxRow: number) => {
   return arr;
 };
 
-export const savePositionsToGG = async (positionsOrg: StockPosition[]) => {
+export const savePositionsToGG = async (positionsOrg: SheetPosition[]) => {
   const positions = fillEmptyRow(positionsOrg, 100);
   console.log('savePositionsToGG', positionsOrg.length);
 
@@ -71,7 +58,7 @@ export const savePositionsToGG = async (positionsOrg: StockPosition[]) => {
   for (let i = 0; i < positions.length; i++) {
     const cellIndex = i + 2;
     const position = positions[i];
-    const isEmpty = !position.instrumentID;
+    const isEmpty = !position.symbol;
     const now = Date.now();
 
     const symbol = sheet.getCellByA1(`A${cellIndex}`);
@@ -81,9 +68,9 @@ export const savePositionsToGG = async (positionsOrg: StockPosition[]) => {
     const marketPrice = sheet.getCellByA1(`E${cellIndex}`);
     const timestamp = sheet.getCellByA1(`F${cellIndex}`);
 
-    symbol.value = position.instrumentID;
-    sellableQty.value = getEmptyValue(position.sellableQty, isEmpty);
-    total.value = getEmptyValue(position.total, isEmpty);
+    symbol.value = position.symbol;
+    sellableQty.value = getEmptyValue(position.quantity, isEmpty);
+    total.value = getEmptyValue(position.quantity, isEmpty);
     avgPrice.value = getEmptyValue(position.avgPrice, isEmpty);
     marketPrice.value = getEmptyValue(position.marketPrice, isEmpty);
     timestamp.value = getEmptyValue(now, isEmpty);

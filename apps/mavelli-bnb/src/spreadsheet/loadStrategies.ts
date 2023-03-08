@@ -4,7 +4,7 @@ import { Strategy } from '../strategies';
 
 import { PRIVATE_KEY, CLIENT_EMAIL, GG_SPREADSHEET_ID } from './auth';
 
-const SHEET_TITLE = 'strategy-bnb';
+const SHEET_TITLE = 'bnb-strategies';
 const UPDATE_INTERVAL = 30000;
 
 export const loadStrategies = async (): Promise<Strategy[]> => {

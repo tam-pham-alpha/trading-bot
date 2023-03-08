@@ -8,8 +8,9 @@ import { Trade } from './types/Trade';
 import BalanceFactory from './factory/BalanceFactory';
 import { Mavelli } from './mavelli';
 import { loadStrategies, onStrategyChange } from './spreadsheet/loadStrategies';
-import { mergeStrategies } from './utils/strategy';
 import { getStrategyTable } from './utils/table';
+import { savePositionsToGG } from './spreadsheet/savePositionsToGG';
+import { SheetPosition } from './types/Position';
 
 dotenv.config();
 
@@ -50,6 +51,20 @@ const onOrderMatch = async (data: any) => {
   if (data.orderStatus === 'CANCELED' && BOT[symbol]) {
     BOT[symbol].onCancel();
   }
+};
+
+const syncPositions = () => {
+  const positions: SheetPosition[] = Object.values(BOT).map(
+    (i) =>
+      ({
+        ...i.position,
+        marketPrice: i.lastPrice,
+        holdQuantity: i.strategy.holdQuantity,
+      } as SheetPosition),
+  );
+  console.log('POSITIONS');
+  console.table(positions);
+  savePositionsToGG(positions);
 };
 
 (async () => {
@@ -105,4 +120,8 @@ const onOrderMatch = async (data: any) => {
       onTradeThrottle(trade);
     });
   });
+
+  setInterval(() => {
+    syncPositions();
+  }, 120000);
 })();

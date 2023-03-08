@@ -32,3 +32,15 @@ export type StockPosition = {
   buying: boolean;
   delta: number;
 };
+
+export type SheetPosition = {
+  symbol: string;
+  quantity: number;
+  avgPrice: number;
+  takeProfit: number;
+  tpPrice: number;
+  expectedPnl: number;
+  valid: boolean;
+  marketPrice: number;
+  holdQuantity: number;
+};
