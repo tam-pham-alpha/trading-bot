@@ -85,14 +85,16 @@ export class Mavelli {
   cancelOrders = async (symbol: string) => {
     try {
       const orders = (await client.openOrders({ symbol })) || [];
-      await Promise.all([
-        orders.map((i) =>
-          client.cancelOrder({
-            symbol,
-            orderId: i.orderId,
-          }),
-        ),
-      ]);
+      if (!orders.length) return 0;
+
+      console.log('R. CANCEL OPEN ORDERS', this.symbol);
+      for (let i = 0; i < orders.length; i++) {
+        await client.cancelOrder({
+          symbol,
+          orderId: orders[i].orderId,
+        });
+      }
+
       return orders.length;
     } catch (err) {
       console.log('cancelOrders:ERR', err);
@@ -143,11 +145,9 @@ export class Mavelli {
   };
 
   placeBuyOrder = async () => {
-    if (!this.position) return;
     console.log('R. ALGO TRADE', this.symbol);
-    if (!this.lastPrice) return;
 
-    console.log('R. CANCEL OPEN ORDERS', this.symbol);
+    if (!this.position || !this.lastPrice) return;
     const t = await this.cancelOrders(this.symbol);
 
     // wait for cancel event to trigger new orders
