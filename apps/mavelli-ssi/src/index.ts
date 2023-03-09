@@ -387,7 +387,7 @@ const syncSystemStatus = async () => {
       PositionFactory.getBuyingList()
         .map((i) => {
           const token = AGG_STRATEGIES.find((s) => s.symbol === i);
-          return `${i}@${token?.buyPrc ?? '???'}`;
+          return `${i}@${token?.buyPrice ?? '???'}`;
         })
         .join(', ') || '-',
     liveOrders:

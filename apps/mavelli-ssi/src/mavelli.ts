@@ -55,9 +55,9 @@ export class Mavelli {
     this.strategy = strategy;
 
     if (
-      old.buyPrc !== this.strategy.buyPrc ||
-      old.buyQty1 !== this.strategy.buyQty1 ||
-      old.buyQty2 !== this.strategy.buyQty2 ||
+      old.buyPrice !== this.strategy.buyPrice ||
+      old.buyQuantity !== this.strategy.buyQuantity ||
+      old.buyQuantity !== this.strategy.buyQuantity ||
       old.tickSize !== this.strategy.tickSize ||
       old.interval !== this.strategy.interval
     ) {
@@ -89,7 +89,7 @@ export class Mavelli {
   startBuying = async () => {
     if (
       this.isPlacingOrders ||
-      this.strategy.buyPrc > 0 ||
+      this.strategy.buyPrice > 0 ||
       this.session !== 'LO' ||
       !this.ready ||
       !this.strategy.active ||
@@ -150,7 +150,7 @@ export class Mavelli {
       PositionFactory.checkIsBuyingStock(this.symbol),
     );
     if (
-      this.strategy.buyPrc > 0 ||
+      this.strategy.buyPrice > 0 ||
       !this.ready ||
       !this.strategy.active ||
       !this.lastPrice ||
@@ -164,19 +164,19 @@ export class Mavelli {
 
     const position = positionList.find((i) => i.instrumentID === this.symbol);
     const strategy = this.strategy;
-    const avgPrice = position?.avgPrice || 0;
     const allocation = position?.allocation || 0;
 
     const buyPrice = Math.max(
-      getNumberByPercentage(this.lastPrice, strategy.buyPrc, strategy.tickSize),
+      getNumberByPercentage(
+        this.lastPrice,
+        strategy.buyPrice,
+        strategy.tickSize,
+      ),
       this.trade?.Floor || 0,
     );
 
     // sometime buyQty2 is missing, hence it uses default config
-    const qty =
-      !avgPrice || avgPrice < buyPrice
-        ? strategy.buyQty1
-        : Math.max(strategy.buyQty1, strategy.buyQty2);
+    const qty = strategy.buyQuantity;
 
     // insufficient balance
     if (buyPrice * qty > purchasingPower) {
@@ -201,13 +201,17 @@ export class Mavelli {
     const position = positionList.find((i) => i.instrumentID === this.symbol);
 
     const avgPrice = position?.avgPrice ?? 0;
-    const sellQty = position?.sellableQty ?? 0;
+    const sellQty = Math.min(
+      position?.sellableQty ?? 0,
+      (position?.total ?? 0) - strategy.holdQuantity,
+    );
 
     if (
       !this.lastPrice ||
       !sellQty ||
       !strategy ||
-      !checkCrossProfit(strategy.takeProfit, avgPrice, this.lastPrice)
+      !checkCrossProfit(strategy.takeProfit, avgPrice, this.lastPrice) ||
+      sellQty < 0
     ) {
       return;
     }

@@ -15,9 +15,9 @@ export const INTERVAL = {
 export type Strategy = {
   symbol: string;
   interval: number;
-  buyPrc: number;
-  buyQty1: number;
-  buyQty2: number;
+  buyPrice: number;
+  buyQuantity: number;
+  holdQuantity: number;
   takeProfit: number;
   allocation: number;
   active: boolean;
@@ -28,10 +28,10 @@ export type Strategy = {
 export const based: Strategy = {
   symbol: '',
   interval: INTERVAL.m60,
-  buyPrc: -2.55,
-  buyQty1: 100,
-  buyQty2: 100,
+  buyPrice: -2.55,
+  buyQuantity: 100,
   takeProfit: 2.45,
+  holdQuantity: 100,
   allocation: 1,
   active: false,
   tickSize: 2,

@@ -31,10 +31,10 @@ export const loadStrategies = async (): Promise<Strategy[]> => {
   return rows.map((i) => {
     return {
       symbol: i.Symbol,
-      buyPrc: toNumber(i.BuyPrc),
-      buyQty1: toNumber(i.BuyQty1),
-      buyQty2: toNumber(i.BuyQty2),
+      buyPrice: toNumber(i.BuyPrice),
+      buyQuantity: toNumber(i.BuyQuantity),
       takeProfit: toNumber(i.TakeProfit),
+      holdQuantity: toNumber(i.HoldQuantity),
       allocation: toNumber(i.Allocation),
       active: i.Active === 'TRUE',
       tickSize: toNumber(i.TickSize),
