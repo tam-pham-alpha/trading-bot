@@ -7,6 +7,7 @@ import { getPriceByDelta, matchExpectedPrice } from './utils/number';
 import { getAssetBySymbol } from './utils/symbol';
 
 const BOT_PREFIX = 'mavelli';
+const SYNC_POSITION_INTERVAL = 300000; // 5 mins
 
 export class Mavelli {
   symbol: string;
@@ -40,6 +41,9 @@ export class Mavelli {
 
   init = async () => {
     await this.getPosition();
+    setInterval(() => {
+      this.getPosition();
+    }, SYNC_POSITION_INTERVAL);
     this.start();
   };
 
