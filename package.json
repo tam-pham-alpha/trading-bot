@@ -17,6 +17,7 @@
     "login": "ssh -i _deploy/goingsunny-sg.pem ubuntu@13.229.66.125",
     "deploy:mavelli-ssi": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && cd apps/mavelli-ssi && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
     "deploy:mavelli-bnb": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && cd apps/mavelli-bnb && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
+    "deploy:bnb-markets": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && cd apps/bnb-markets && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
     "start": "turbo run start --parallel"
   },
   "keywords": [],

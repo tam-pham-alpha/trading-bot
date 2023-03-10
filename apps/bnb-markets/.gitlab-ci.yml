@@ -12,11 +12,9 @@ deploy_stag:
     - mkdir -p _deploy
     - echo -e "$SSH_PRIVATE_KEY" > _deploy/goingsunny-sg.pem
     - chmod 700 _deploy/goingsunny-sg.pem
-    - ssh-keyscan -t rsa 13.229.66.125 >> ~/.ssh/known_hosts
+    - ssh-keyscan -t rsa 13.215.51.234 >> ~/.ssh/known_hosts
   script:
-    - npm run deploy:mavelli-ssi
-    - npm run deploy:mavelli-bnb
-    - npm run deploy:bnb-markets
+    - npm run deploy:prod
   only:
     - develop
 
@@ -29,9 +27,8 @@ deploy_prod:
     - mkdir -p _deploy
     - echo -e "$SSH_PRIVATE_KEY" > _deploy/goingsunny-sg.pem
     - chmod 700 _deploy/goingsunny-sg.pem
-    - ssh-keyscan -t rsa 13.229.66.125 >> ~/.ssh/known_hosts
+    - ssh-keyscan -t rsa 13.215.51.234 >> ~/.ssh/known_hosts
   script:
-    - npm run deploy:mavelli-ssi
-    - npm run deploy:mavelli-bnb
+    - npm run deploy:prod
   only:
     - master
