@@ -7,7 +7,7 @@ jest.mock('../strategies', () => ({
     symbol: 'SSI',
     interval: 1,
 
-    buyPrc: 1,
+    buyPrice: 1,
     buyQty1: 100,
     buyQty2: 100,
 
@@ -37,34 +37,34 @@ describe('mergeStrategies', () => {
 
   test('fallback should not be use', () => {
     const t = mergeStrategies(
-      [{ symbol: 'SSI', allocation: 6, buyPrc: 2.45 }],
+      [{ symbol: 'SSI', allocation: 6, buyPrice: 2.45 }],
       {
         ...based,
-        buyPrc: 2.55,
+        buyPrice: 2.55,
       },
     );
 
-    expect(t[0].buyPrc).toBe(2.45);
+    expect(t[0].buyPrice).toBe(2.45);
   });
 
   test('fallback should not be use', () => {
     const t = mergeStrategies([{ symbol: 'SSI', allocation: 6 }], {
       ...based,
-      buyPrc: 2.55,
+      buyPrice: 2.55,
     });
 
-    expect(t[0].buyPrc).toBe(2.55);
+    expect(t[0].buyPrice).toBe(2.55);
   });
 
   test('fallback should be use', () => {
     const t = mergeStrategies([{ symbol: 'SSI', allocation: 6 }], {
       ...based,
-      buyPrc: 2.55,
+      buyPrice: 2.55,
     });
 
     expect(t).toHaveLength(1);
     expect(t[0].symbol).toBe('SSI');
     expect(t[0].allocation).toBe(6);
-    expect(t[0].buyPrc).toBe(2.55);
+    expect(t[0].buyPrice).toBe(2.55);
   });
 });
