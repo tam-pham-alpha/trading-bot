@@ -7,7 +7,7 @@ import { PRIVATE_KEY, CLIENT_EMAIL, GG_SPREADSHEET_ID } from './auth';
 const SHEET_TITLE = 'markets';
 
 export const savePositionsToGG = async (market: Market) => {
-  console.log('savePositionsToGG', market);
+  console.log('savePositionsToGG');
 
   // Initialize the sheet - doc ID is the long id in the sheets URL
   const doc = new GoogleSpreadsheet(GG_SPREADSHEET_ID);
@@ -29,13 +29,15 @@ export const savePositionsToGG = async (market: Market) => {
   }
 
   const total = Object.values(market).length + 2;
-  console.log('total', market, total);
 
   await sheet.loadHeaderRow();
   await sheet.loadCells(`A1:V${total}`);
 
   const today = format(new Date(), 'MM/dd/yyyy');
   const colIndex = sheet.headerValues.findIndex((i) => i === today);
+
+  const timestamp = sheet.getCellByA1('B1');
+  timestamp.value = Date.now();
 
   Object.values(market).forEach((price, rowIndex) => {
     const cell = sheet.getCell(rowIndex + 1, colIndex);
