@@ -47,8 +47,8 @@ export class Mavelli {
       };
       return;
     }
+
     this.position = await getPosition(this.symbol, this.strategy);
-    console.log('R. POSITION', this.symbol);
     console.table([this.position]);
   };
 
@@ -163,9 +163,13 @@ export class Mavelli {
   };
 
   placeBuyOrder = async () => {
-    console.log('R. ALGO TRADE', this.symbol);
-
-    if (!this.position || !this.lastPrice) return;
+    if (
+      !this.position ||
+      !this.lastPrice ||
+      BalanceFactory.get(this.base) > 0
+    ) {
+      return;
+    }
     const t = await this.cancelOrders(this.symbol);
 
     // wait for cancel event to trigger new orders
@@ -185,7 +189,6 @@ export class Mavelli {
     };
 
     console.log('R. PLACE ORDER', this.symbol, order.quantity, order.price);
-
     try {
       // @ts-ignore
       await client.order(order);

@@ -22,8 +22,6 @@ client.time().then((time) => {
 });
 
 const onLastPrice = (trade: Trade) => {
-  console.log('R. TRADE', trade.symbol, trade.price, trade.qty);
-
   const symbol = trade.symbol;
   const price = trade.price;
 
