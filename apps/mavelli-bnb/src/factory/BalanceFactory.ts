@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { toNumber } from 'lodash';
 import { client as clientSrc } from '../client';
 
 class BalanceFactory {
@@ -14,7 +15,7 @@ class BalanceFactory {
     const positiveAccounts = accounts.balances
       .map((i) => ({
         ...i,
-        free: parseFloat(i.free),
+        free: toNumber(i.free),
       }))
       .filter((i) => i.free > 0 && i.asset.indexOf('LD') < 0);
 

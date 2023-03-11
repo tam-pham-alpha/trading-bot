@@ -1,5 +1,6 @@
 import { client } from './client';
 import { INTERVAL } from './config';
+import BalanceFactory from './factory/BalanceFactory';
 import { Strategy } from './strategies';
 import { Position } from './types/Position';
 import { getPosition } from './utils/getPosition';
@@ -22,8 +23,8 @@ export class Mavelli {
   constructor(symbol: string, strategy: Strategy) {
     this.symbol = symbol;
     this.strategy = strategy;
-    this.quote = getAssetBySymbol(symbol);
-    this.base = 'USDT';
+    this.base = getAssetBySymbol(symbol);
+    this.quote = 'USDT';
     this.init();
   }
 
@@ -34,6 +35,18 @@ export class Mavelli {
   };
 
   getPosition = async () => {
+    if (!BalanceFactory.get(this.base)) {
+      this.position = {
+        symbol: this.symbol,
+        quantity: 0,
+        avgPrice: 0,
+        takeProfit: 0,
+        tpPrice: 0,
+        expectedPnl: 0,
+        valid: true,
+      };
+      return;
+    }
     this.position = await getPosition(this.symbol, this.strategy);
     console.log('R. POSITION', this.symbol);
     console.table([this.position]);
@@ -41,6 +54,7 @@ export class Mavelli {
 
   init = async () => {
     await this.getPosition();
+
     setInterval(() => {
       this.getPosition();
     }, SYNC_POSITION_INTERVAL);
