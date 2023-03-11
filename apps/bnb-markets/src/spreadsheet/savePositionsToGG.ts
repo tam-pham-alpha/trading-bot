@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, getHours } from 'date-fns';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { Market } from '../types/market-data';
 
@@ -7,7 +7,7 @@ import { PRIVATE_KEY, CLIENT_EMAIL, GG_SPREADSHEET_ID } from './auth';
 const SHEET_TITLE = 'markets';
 
 export const savePositionsToGG = async (market: Market) => {
-  console.log('savePositionsToGG');
+  console.log('savePositionsToGG: BTCUSDT', market['BTCUSDT']);
 
   // Initialize the sheet - doc ID is the long id in the sheets URL
   const doc = new GoogleSpreadsheet(GG_SPREADSHEET_ID);
@@ -33,15 +33,20 @@ export const savePositionsToGG = async (market: Market) => {
   await sheet.loadHeaderRow();
   await sheet.loadCells(`A1:V${total}`);
 
-  const today = format(new Date(), 'MM/dd/yyyy');
-  const colIndex = sheet.headerValues.findIndex((i) => i === today);
+  const ts = new Date();
+  const today = format(ts, 'MM/dd/yyyy');
+  const hours = getHours(ts);
+  const hourBlock = Math.floor(hours / 4);
+  const colName = `${today} B${hourBlock}`;
+  const colIndex = sheet.headerValues.findIndex((i) => i === colName);
+  console.log('today', colName);
 
   const timestamp = sheet.getCellByA1('B1');
   timestamp.value = Date.now();
 
-  Object.values(market).forEach((price, rowIndex) => {
+  Object.keys(market).forEach((key, rowIndex) => {
     const cell = sheet.getCell(rowIndex + 1, colIndex);
-    cell.value = price;
+    cell.value = market[key];
   });
 
   await sheet.saveUpdatedCells();
