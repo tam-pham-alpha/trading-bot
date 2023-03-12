@@ -113,7 +113,7 @@ export class Mavelli {
         });
       }
 
-      return orders.length;
+      return 0;
     } catch (err) {
       console.log('cancelOrders:ERR', err);
       return 0;
@@ -170,7 +170,8 @@ export class Mavelli {
     ) {
       return;
     }
-    const t = await this.cancelOrders(this.symbol);
+
+    await this.cancelOrders(this.symbol);
 
     const price = getPriceByDelta(
       this.lastPrice,
@@ -180,11 +181,7 @@ export class Mavelli {
     const orderValue = price * this.strategy.buyQuantity;
 
     // wait for cancel event to trigger new orders
-    if (
-      t !== 0 ||
-      !this.strategy.active ||
-      orderValue >= BalanceFactory.get('USDT')
-    )
+    if (!this.strategy.active || orderValue >= BalanceFactory.get('USDT'))
       return;
 
     const order = {
@@ -199,7 +196,7 @@ export class Mavelli {
     console.log('R. PLACE ORDER', this.symbol, order.quantity, order.price);
     try {
       // @ts-ignore
-      await client.order(order);
+      return await client.order(order);
     } catch (err) {
       console.log('placeBuyOrder:ERR', err);
     }
