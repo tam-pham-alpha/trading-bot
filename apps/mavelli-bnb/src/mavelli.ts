@@ -58,6 +58,7 @@ export class Mavelli {
     setInterval(() => {
       this.getPosition();
     }, SYNC_POSITION_INTERVAL);
+
     this.start();
   };
 
@@ -65,28 +66,30 @@ export class Mavelli {
     if (this.blocking) return;
 
     this.blocking = true;
-    await this.placeBuyOrder();
+
+    await this.cancelOrders();
+    const order = await this.placeBuyOrder();
 
     if (this.interval) {
       clearInterval(this.interval);
     }
 
-    this.interval = setInterval(() => {
-      this.start();
-    }, INTERVAL.m60);
+    if (order) {
+      this.interval = setInterval(() => {
+        this.start();
+      }, INTERVAL.m60);
+    }
 
     this.blocking = false;
   };
 
   onCancel = async () => {
     this.lastPrice = 0;
-    this.start();
   };
 
   onOrderMatch = async (lastPrice: number) => {
     this.lastPrice = lastPrice;
     await this.getPosition();
-    this.start();
   };
 
   onLastPrice = (lastPrice: number) => {
@@ -100,15 +103,17 @@ export class Mavelli {
     }
   };
 
-  cancelOrders = async (symbol: string) => {
+  cancelOrders = async () => {
+    if (!this.strategy.active) return;
+
     try {
-      const orders = (await client.openOrders({ symbol })) || [];
+      const orders = (await client.openOrders({ symbol: this.symbol })) || [];
       if (!orders.length) return 0;
 
       console.log('R. CANCEL OPEN ORDERS', this.symbol);
       for (let i = 0; i < orders.length; i++) {
         await client.cancelOrder({
-          symbol,
+          symbol: this.symbol,
           orderId: orders[i].orderId,
         });
       }
@@ -166,12 +171,12 @@ export class Mavelli {
     if (
       !this.position ||
       !this.lastPrice ||
+      !this.strategy.active ||
+      // already buy
       BalanceFactory.get(this.base) > 0
     ) {
       return;
     }
-
-    await this.cancelOrders(this.symbol);
 
     const price = getPriceByDelta(
       this.lastPrice,
@@ -181,8 +186,9 @@ export class Mavelli {
     const orderValue = price * this.strategy.buyQuantity;
 
     // wait for cancel event to trigger new orders
-    if (!this.strategy.active || orderValue >= BalanceFactory.get('USDT'))
+    if (orderValue >= BalanceFactory.get('USDT')) {
       return;
+    }
 
     const order = {
       symbol: this.symbol,
