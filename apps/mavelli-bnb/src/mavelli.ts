@@ -172,19 +172,27 @@ export class Mavelli {
     }
     const t = await this.cancelOrders(this.symbol);
 
+    const price = getPriceByDelta(
+      this.lastPrice,
+      this.strategy.buyPrice,
+      this.strategy.tickSize,
+    );
+    const orderValue = price * this.strategy.buyQuantity;
+
     // wait for cancel event to trigger new orders
-    if (t !== 0 || !this.strategy.active) return;
+    if (
+      t !== 0 ||
+      !this.strategy.active ||
+      orderValue >= BalanceFactory.get('USDT')
+    )
+      return;
 
     const order = {
       symbol: this.symbol,
       side: 'BUY',
       type: 'LIMIT',
       quantity: this.strategy.buyQuantity,
-      price: getPriceByDelta(
-        this.lastPrice,
-        this.strategy.buyPrice,
-        this.strategy.tickSize,
-      ),
+      price,
       newClientOrderId: `${BOT_PREFIX}-${Date.now()}`,
     };
 
