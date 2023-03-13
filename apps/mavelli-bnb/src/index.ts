@@ -52,14 +52,17 @@ const onOrderMatch = async (data: any) => {
 };
 
 const syncPositions = () => {
-  const positions: SheetPosition[] = Object.values(BOT).map(
-    (i) =>
-      ({
-        ...i.position,
-        marketPrice: i.lastPrice,
-        holdQuantity: i.strategy.holdQuantity,
-      } as SheetPosition),
-  );
+  const positions: SheetPosition[] = Object.values(BOT)
+    .map(
+      (i) =>
+        ({
+          ...i.position,
+          marketPrice: i.lastPrice,
+          holdQuantity: i.strategy.holdQuantity,
+        } as SheetPosition),
+    )
+    .filter((i) => i.quantity);
+
   console.log('POSITIONS');
   console.table(positions);
   savePositionsToGG(positions);
