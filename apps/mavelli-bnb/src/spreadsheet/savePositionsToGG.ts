@@ -9,12 +9,7 @@ export const emptyPosition: SheetPosition = {
   symbol: '',
   quantity: 0,
   avgPrice: 0,
-  takeProfit: 0,
-  tpPrice: 0,
-  expectedPnl: 0,
-  valid: false,
   marketPrice: 0,
-  holdQuantity: 0,
 };
 
 const getEmptyValue = (value: number, isEmpty: boolean) => {

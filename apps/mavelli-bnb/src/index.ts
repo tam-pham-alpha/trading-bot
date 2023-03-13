@@ -52,6 +52,13 @@ const onOrderMatch = async (data: any) => {
 };
 
 const syncPositions = () => {
+  const usdtPosition = {
+    symbol: 'USDT',
+    quantity: BalanceFactory.get('USDT'),
+    avgPrice: 1,
+    marketPrice: 1,
+  };
+
   const positions: SheetPosition[] = Object.values(BOT)
     .map(
       (i) =>
@@ -62,10 +69,11 @@ const syncPositions = () => {
         } as SheetPosition),
     )
     .filter((i) => i.quantity);
+  const positionList = [usdtPosition, ...positions];
 
   console.log('POSITIONS');
-  console.table(positions);
-  savePositionsToGG(positions);
+  console.table(positionList);
+  savePositionsToGG(positionList);
 };
 
 (async () => {
