@@ -8,7 +8,7 @@ import { Trade } from './types/Trade';
 import BalanceFactory from './factory/BalanceFactory';
 import { Mavelli } from './mavelli';
 import { loadStrategies, onStrategyChange } from './spreadsheet/loadStrategies';
-import { loadConfigs, onConfigChange } from './spreadsheet/loadConfigs';
+import { onConfigChange } from './spreadsheet/loadConfigs';
 import { getStrategyTable } from './utils/table';
 import { savePositionsToGG } from './spreadsheet/savePositionsToGG';
 import { SheetPosition } from './types/Position';
