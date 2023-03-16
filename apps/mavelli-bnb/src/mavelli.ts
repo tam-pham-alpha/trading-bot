@@ -172,6 +172,7 @@ export class Mavelli {
       !this.position ||
       !this.lastPrice ||
       !this.strategy.active ||
+      !BalanceFactory.getIsActive() ||
       // already buy
       BalanceFactory.get(this.base) > 0
     ) {

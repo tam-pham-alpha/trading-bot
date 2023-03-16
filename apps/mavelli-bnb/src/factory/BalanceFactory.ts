@@ -5,6 +5,7 @@ import { client as clientSrc } from '../client';
 class BalanceFactory {
   client;
   balances: Record<string, number> = {};
+  cashInventory = 2000;
 
   constructor() {
     this.client = clientSrc;
@@ -30,6 +31,14 @@ class BalanceFactory {
 
   set = (asset: string, value: number) => {
     this.balances[asset] = value;
+  };
+
+  setCashInventory = (value: number) => {
+    this.cashInventory = value;
+  };
+
+  getIsActive = () => {
+    return this.get('USDT') >= this.cashInventory;
   };
 
   print = () => {

@@ -4,7 +4,7 @@ import { MavelliConfig } from '../types/Mavelli';
 
 import { PRIVATE_KEY, CLIENT_EMAIL, GG_SPREADSHEET_ID } from './auth';
 
-const SHEET_TITLE = 'MasterConfig';
+const SHEET_TITLE = 'master-config';
 const UPDATE_INTERVAL = 30000;
 
 export const loadConfigs = async (): Promise<MavelliConfig> => {
