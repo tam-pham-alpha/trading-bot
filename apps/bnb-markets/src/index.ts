@@ -6,7 +6,7 @@ import { client } from './client';
 import { MarketConfig } from './types/market-config';
 import { Trade } from './types/trade';
 import { loadStrategies } from './spreadsheet/loadStrategies';
-import { savePositionsToGG } from './spreadsheet/savePositionsToGG';
+import { saveMarketsToGG } from './spreadsheet/saveMarketsToGG';
 import { Market } from './types/market-data';
 
 dotenv.config();
@@ -27,7 +27,7 @@ const onLastPrice = (trade: Trade) => {
 };
 
 const syncPositions = () => {
-  savePositionsToGG(MARKETS);
+  saveMarketsToGG(MARKETS);
 };
 
 (async () => {

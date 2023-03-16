@@ -6,8 +6,8 @@ import { PRIVATE_KEY, CLIENT_EMAIL, GG_SPREADSHEET_ID } from './auth';
 
 const SHEET_TITLE = 'markets';
 
-export const savePositionsToGG = async (market: Market) => {
-  console.log('savePositionsToGG: BTCUSDT', market['BTCUSDT']);
+export const saveMarketsToGG = async (market: Market) => {
+  console.log('saveMarketsToGG: BTCUSDT', market['BTCUSDT']);
 
   // Initialize the sheet - doc ID is the long id in the sheets URL
   const doc = new GoogleSpreadsheet(GG_SPREADSHEET_ID);
@@ -31,7 +31,7 @@ export const savePositionsToGG = async (market: Market) => {
   const total = Object.values(market).length + 2;
 
   await sheet.loadHeaderRow();
-  await sheet.loadCells(`A1:AO${total}`);
+  await sheet.loadCells(`A1:BM${total}`);
 
   const ts = new Date();
   const today = format(ts, 'MM/dd/yyyy');
