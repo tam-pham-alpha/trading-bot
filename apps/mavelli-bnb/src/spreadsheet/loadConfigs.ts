@@ -34,7 +34,7 @@ export const loadConfigs = async (): Promise<MavelliConfig> => {
   await sheet.loadCells(`B3:B5`);
 
   return {
-    priorityList: sheet.getCellByA1('B3').value.toString() ?? '',
+    priorityList: sheet.getCellByA1('B3').value?.toString() ?? '',
     maxOrder: toNumber(sheet.getCellByA1('B4').value),
     cashInventory: toNumber(sheet.getCellByA1('B5').value),
   };
