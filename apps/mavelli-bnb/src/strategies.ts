@@ -7,6 +7,7 @@ export type Strategy = {
   takeProfit: number;
   allocation: number;
   tickSize: number;
+  lotSize: number;
   interval: number;
 };
 
@@ -19,5 +20,6 @@ export const defaultValue: Strategy = {
   takeProfit: 2.45,
   allocation: 1,
   tickSize: 2,
+  lotSize: 2,
   interval: 1800000,
 };

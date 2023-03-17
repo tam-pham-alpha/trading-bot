@@ -9,6 +9,10 @@ export const getPriceByDelta = (price: number, delta: number, tickSize = 4) => {
   );
 };
 
+export const getValidNumber = (value: number, dp: number) => {
+  return Math.floor(value * Math.pow(10, dp)) / Math.pow(10, dp);
+};
+
 export const matchExpectedPrice = (
   price: number,
   avgPrice: number,

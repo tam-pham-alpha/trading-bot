@@ -4,7 +4,11 @@ import BalanceFactory from './factory/BalanceFactory';
 import { Strategy } from './strategies';
 import { Position } from './types/Position';
 import { getPosition } from './utils/getPosition';
-import { getPriceByDelta, matchExpectedPrice } from './utils/number';
+import {
+  getPriceByDelta,
+  getValidNumber,
+  matchExpectedPrice,
+} from './utils/number';
 import { getAssetBySymbol } from './utils/symbol';
 
 const BOT_PREFIX = 'mavelli';
@@ -128,7 +132,10 @@ export class Mavelli {
   placeTpOrder = async () => {
     if (!this.position || !this.lastPrice || !this.position.quantity) return;
 
-    const quantity = this.position.quantity - this.strategy.holdQuantity;
+    const quantity = getValidNumber(
+      this.position.quantity - this.strategy.holdQuantity,
+      this.strategy.lotSize,
+    );
 
     if (
       this.position.valid &&

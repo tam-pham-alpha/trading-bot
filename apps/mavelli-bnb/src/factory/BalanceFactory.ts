@@ -9,6 +9,10 @@ class BalanceFactory {
 
   constructor() {
     this.client = clientSrc;
+
+    setInterval(() => {
+      this.sync();
+    }, 120000); // 2 mins
   }
 
   sync = async () => {
