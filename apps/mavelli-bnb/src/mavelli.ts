@@ -159,9 +159,8 @@ export class Mavelli {
 
       console.log(
         'R. PLACE TAKE PROFIT ORDER',
+        this.symbol,
         this.lastPrice,
-        this.position.avgPrice,
-        this.strategy.takeProfit,
         order.quantity,
       );
 
