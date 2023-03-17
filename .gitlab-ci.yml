@@ -14,9 +14,9 @@ deploy_stag:
     - chmod 700 _deploy/goingsunny-sg.pem
     - ssh-keyscan -t rsa 13.229.66.125 >> ~/.ssh/known_hosts
   script:
-    - npm run deploy:mavelli-ssi
+    # - npm run deploy:mavelli-ssi
+    # - npm run deploy:bnb-markets
     - npm run deploy:mavelli-bnb
-    - npm run deploy:bnb-markets
   only:
     - develop
 

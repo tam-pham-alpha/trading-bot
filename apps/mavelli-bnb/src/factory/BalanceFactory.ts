@@ -12,7 +12,7 @@ class BalanceFactory {
 
     setInterval(() => {
       this.sync();
-    }, 120000); // 2 mins
+    }, 300000); // 2 mins
   }
 
   sync = async () => {
