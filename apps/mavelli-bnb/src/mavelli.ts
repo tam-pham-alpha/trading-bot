@@ -140,6 +140,7 @@ export class Mavelli {
     if (
       this.position.valid &&
       quantity > 0 &&
+      quantity * this.lastPrice > 10 &&
       matchExpectedPrice(
         this.lastPrice,
         this.position.avgPrice,
