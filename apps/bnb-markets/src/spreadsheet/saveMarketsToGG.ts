@@ -31,7 +31,7 @@ export const saveMarketsToGG = async (market: Market) => {
   const total = Object.values(market).length + 2;
 
   await sheet.loadHeaderRow();
-  await sheet.loadCells(`A1:BM${total}`);
+  await sheet.loadCells(`A1:BZ${total}`);
 
   const ts = new Date();
   const today = format(ts, 'MM/dd/yyyy');
