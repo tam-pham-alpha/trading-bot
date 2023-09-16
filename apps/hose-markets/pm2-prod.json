@@ -1,0 +1,21 @@
+{
+  "apps": [
+    {
+      "name": "prd-hose-markets",
+      "script": "./build/index.js",
+      "exec_mode": "fork_mode",
+      "instances": 1,
+      "args": "start",
+      "watch": false,
+      "cron_restart": "45 1,9,17 * * *",
+      "ignore_watch": [
+        "node_modules",
+        "log"
+      ],
+      "watch_options": {
+        "followSymlinks": false
+      },
+      "env_production": {}
+    }
+  ]
+}
