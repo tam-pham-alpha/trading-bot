@@ -93,11 +93,11 @@ class PositionFactory {
   };
 
   setConfig = (config: MavelliConfig) => {
-    if (config.maxOrder) {
+    if (config.maxOrder !== undefined) {
       this.maxOrder = config.maxOrder;
     }
 
-    if (config.priorityList) {
+    if (config.priorityList !== undefined) {
       this.priorityList = config.priorityList.split(',').map((i) => trim(i));
     }
 
