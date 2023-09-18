@@ -56,7 +56,6 @@ const storeDataIntoBigQuery = async () => {
 
 const onTrade = (data: TradeMessage) => {
   const symbol = data.Symbol;
-  console.log('onTrade', symbol, data.LastPrice, data.TotalVol);
 
   MARKET_DATA[symbol] = {
     symbol,
