@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import * as Sentry from '@sentry/node';
 import './sentry';
+import { BigQuery } from '@google-cloud/bigquery';
 
 import config from './config';
 import Streaming from './streaming';
@@ -12,20 +13,54 @@ type Market = {
   price: number;
   volume: number;
   timestamp: number;
+  source: 'hose' | 'hnx' | 'upcom';
 };
 
-const BOT: Record<string, Market> = {};
+const DATA_SET_ID = 'mavelli_tech';
+const MARKET_DATA_TABLE = 'market_data';
+
+const bigquery = new BigQuery({
+  projectId: 'mavelli-ssi',
+  keyFilename: './mavelli-ssi-market-data.json',
+});
+const dataset = bigquery.dataset(DATA_SET_ID);
+let MARKET_DATA: Record<string, Market> = {};
 
 const onSessionUpdate = async (session: TradingSession) => {};
 
 const onQuote = (data: QuoteMessage) => {};
 
+const insertDataIntoBigQuery = async (rows: Market[]) => {
+  if (!rows.length) return;
+  console.log('insertDataIntoBigQuery', rows.length);
+
+  try {
+    const table = dataset.table(MARKET_DATA_TABLE);
+
+    // Insert the rows using the table.insert method
+    await table.insert(rows);
+  } catch (error) {
+    console.log(`Error inserting data into BigQuery:`, error);
+  }
+};
+
+const storeDataIntoBigQuery = async () => {
+  console.log('storeDataIntoBigQuery');
+  insertDataIntoBigQuery(Object.values(MARKET_DATA));
+  MARKET_DATA = {};
+
+  setTimeout(() => {
+    storeDataIntoBigQuery();
+  }, 60_000); // 5 min
+};
+
 const onTrade = (data: TradeMessage) => {
   const symbol = data.Symbol;
-  console.log('onTrade', symbol);
+  console.log('onTrade', symbol, data.LastPrice, data.TotalVol);
 
-  BOT[symbol] = {
+  MARKET_DATA[symbol] = {
     symbol,
+    source: 'hose',
     timestamp: Date.now(),
     price: data.LastPrice,
     volume: data.TotalVol,
@@ -144,6 +179,11 @@ const initSsiMarketData = () => {
 const main = async () => {
   console.log('HOSE MARKETS!', Date.now());
   initSsiMarketData();
+  storeDataIntoBigQuery();
+
+  setTimeout(() => {
+    insertDataIntoBigQuery(Object.values(MARKET_DATA));
+  }, 10_000); // 10 secs
 };
 
 main();
