@@ -45,7 +45,7 @@ const insertDataIntoBigQuery = async (rows: Market[]) => {
 };
 
 const storeDataIntoBigQuery = async () => {
-  console.log('storeDataIntoBigQuery');
+  console.log('storeDataIntoBigQuery', Date.now());
   insertDataIntoBigQuery(Object.values(MARKET_DATA));
   MARKET_DATA = {};
 
