@@ -13,7 +13,7 @@ type Market = {
   price: number;
   volume: number;
   timestamp: number;
-  source: 'hose' | 'hnx' | 'upcom';
+  source: string;
 };
 
 const DATA_SET_ID = 'mavelli_tech';
@@ -59,7 +59,7 @@ const onTrade = (data: TradeMessage) => {
 
   MARKET_DATA[symbol] = {
     symbol,
-    source: 'hose',
+    source: data.Exchange,
     timestamp: Date.now(),
     price: data.LastPrice,
     volume: data.TotalVol,
