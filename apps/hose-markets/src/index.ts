@@ -10,29 +10,40 @@ import { dataFetch, setDataAccessToken } from './utils/dataFetch';
 
 type Market = {
   symbol: string;
+  source: string;
+  timestamp: number;
   price: number;
   volume: number;
-  timestamp: number;
+};
+
+type Trade = {
+  symbol: string;
   source: string;
+  timestamp: number;
+  price: number;
+  volume: number;
 };
 
 const DATA_SET_ID = 'mavelli_tech';
 const MARKET_DATA_TABLE = 'market_data';
+const AGG_TRADES_TABLE = 'agg_trades';
 
 const bigquery = new BigQuery({
   projectId: 'mavelli-ssi',
   keyFilename: './mavelli-ssi-market-data.json',
 });
 const dataset = bigquery.dataset(DATA_SET_ID);
+
 let MARKET_DATA: Record<string, Market> = {};
+let AGG_TRADES: Trade[] = [];
 
 const onSessionUpdate = async (session: TradingSession) => {};
 
 const onQuote = (data: QuoteMessage) => {};
 
-const insertDataIntoBigQuery = async (rows: Market[]) => {
+const insertMarkerDataIntoBigQuery = async (rows: Market[]) => {
   if (!rows.length) return;
-  console.log('insertDataIntoBigQuery', rows.length);
+  console.log('insertMarkerDataIntoBigQuery', rows.length);
 
   try {
     const table = dataset.table(MARKET_DATA_TABLE);
@@ -40,30 +51,65 @@ const insertDataIntoBigQuery = async (rows: Market[]) => {
     // Insert the rows using the table.insert method
     await table.insert(rows);
   } catch (error) {
-    console.log(`Error inserting data into BigQuery:`, error);
+    console.log(`Error inserting market data into BigQuery:`, error);
   }
 };
 
-const storeDataIntoBigQuery = async () => {
-  console.log('storeDataIntoBigQuery', Date.now());
-  insertDataIntoBigQuery(Object.values(MARKET_DATA));
+const insertAggTradesIntoBigQuery = async (rows: Trade[]) => {
+  if (!rows.length) return;
+  console.log('insertAggTradesIntoBigQuery', rows.length);
+
+  try {
+    const table = dataset.table(AGG_TRADES_TABLE);
+
+    // Insert the rows using the table.insert method
+    await table.insert(rows);
+  } catch (error) {
+    console.log(`Error inserting agg trades into BigQuery:`, error);
+  }
+};
+
+const storeMarketDataIntoBigQuery = async () => {
+  console.log('storeMarketDataIntoBigQuery', Date.now());
+  insertMarkerDataIntoBigQuery(Object.values(MARKET_DATA));
   MARKET_DATA = {};
 
   setTimeout(() => {
-    storeDataIntoBigQuery();
-  }, 60_000); // 5 min
+    storeMarketDataIntoBigQuery();
+  }, 60_000); // 1 min
+};
+
+const storeAggTradesIntoBigQuery = async () => {
+  console.log('storeAggTradesIntoBigQuery', Date.now());
+  insertAggTradesIntoBigQuery(AGG_TRADES);
+  AGG_TRADES = [];
+
+  setTimeout(() => {
+    storeAggTradesIntoBigQuery();
+  }, 60_000); // 1 min
 };
 
 const onTrade = (data: TradeMessage) => {
   const symbol = data.Symbol;
+  const source = data.Exchange;
+  const timestamp = Date.now();
+  const price = data.LastPrice;
 
   MARKET_DATA[symbol] = {
     symbol,
-    source: data.Exchange,
-    timestamp: Date.now(),
-    price: data.LastPrice,
+    source,
+    timestamp,
+    price,
     volume: data.TotalVol,
   };
+
+  AGG_TRADES.push({
+    symbol,
+    source,
+    timestamp,
+    price,
+    volume: data.LastVol,
+  });
 };
 
 const initSsiMarketData = () => {
@@ -178,10 +224,17 @@ const initSsiMarketData = () => {
 const main = async () => {
   console.log('HOSE MARKETS!', Date.now());
   initSsiMarketData();
-  storeDataIntoBigQuery();
 
+  storeMarketDataIntoBigQuery();
+  storeAggTradesIntoBigQuery();
+
+  // update data after restarting
   setTimeout(() => {
-    insertDataIntoBigQuery(Object.values(MARKET_DATA));
+    insertMarkerDataIntoBigQuery(Object.values(MARKET_DATA));
+    insertAggTradesIntoBigQuery([]);
+
+    MARKET_DATA = {};
+    AGG_TRADES = [];
   }, 10_000); // 10 secs
 };
 
