@@ -86,7 +86,7 @@ const storeAggTradesIntoBigQuery = async () => {
 
   setTimeout(() => {
     storeAggTradesIntoBigQuery();
-  }, 60_000); // 1 min
+  }, 30_000); // 30 seconds
 };
 
 const onTrade = (data: TradeMessage) => {
