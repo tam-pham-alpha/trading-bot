@@ -5,7 +5,12 @@ import { BigQuery } from '@google-cloud/bigquery';
 
 import config from './config';
 import Streaming from './streaming';
-import { QuoteMessage, TradeMessage, TradingSession } from './types/Market';
+import {
+  QuoteMessage,
+  TradeMessage,
+  TradingSession,
+  ForeignRoomMessage,
+} from './types/Market';
 import { dataFetch, setDataAccessToken } from './utils/dataFetch';
 
 type Market = {
@@ -24,9 +29,18 @@ type Trade = {
   volume: number;
 };
 
+type ForeignRoom = {
+  symbol: string;
+  source: string;
+  timestamp: number;
+  total_room: number;
+  current_room: number;
+};
+
 const DATA_SET_ID = 'mavelli_tech';
 const MARKET_DATA_TABLE = 'market_data';
 const AGG_TRADES_TABLE = 'agg_trades';
+const FOREIGN_ROOM_TABLE = 'foreign_room';
 
 const bigquery = new BigQuery({
   projectId: 'mavelli-ssi',
@@ -36,10 +50,47 @@ const dataset = bigquery.dataset(DATA_SET_ID);
 
 let MARKET_DATA: Record<string, Market> = {};
 let AGG_TRADES: Trade[] = [];
+let FOREIGN_ROOM: Record<string, ForeignRoom> = {};
 
 const onSessionUpdate = async (session: TradingSession) => {};
-
 const onQuote = (data: QuoteMessage) => {};
+
+const onTrade = (data: TradeMessage) => {
+  const symbol = data.Symbol;
+  const source = data.Exchange;
+  const timestamp = Date.now();
+  const price = data.LastPrice || data.RefPrice;
+
+  MARKET_DATA[symbol] = {
+    symbol,
+    source,
+    timestamp,
+    price,
+    volume: data.TotalVol,
+  };
+
+  AGG_TRADES.push({
+    symbol,
+    source,
+    timestamp,
+    price,
+    volume: data.LastVol,
+  });
+};
+
+const onForeignRoom = (data: ForeignRoomMessage) => {
+  const symbol = data.Symbol;
+  const source = data.Exchange;
+  const timestamp = Date.now();
+
+  FOREIGN_ROOM[symbol] = {
+    symbol,
+    source,
+    timestamp,
+    total_room: data.TotalRoom,
+    current_room: data.CurrentRoom,
+  };
+};
 
 const insertMarkerDataIntoBigQuery = async (rows: Market[]) => {
   if (!rows.length) return;
@@ -69,6 +120,20 @@ const insertAggTradesIntoBigQuery = async (rows: Trade[]) => {
   }
 };
 
+const insertForeignRoomIntoBigQuery = async (rows: ForeignRoom[]) => {
+  if (!rows.length) return;
+  console.log('insertForeignRoomIntoBigQuery', rows.length);
+
+  try {
+    const table = dataset.table(FOREIGN_ROOM_TABLE);
+
+    // Insert the rows using the table.insert method
+    await table.insert(rows);
+  } catch (error) {
+    console.log(`Error inserting agg trades into BigQuery:`, error);
+  }
+};
+
 const storeMarketDataIntoBigQuery = async () => {
   console.log('storeMarketDataIntoBigQuery', Date.now());
   insertMarkerDataIntoBigQuery(Object.values(MARKET_DATA));
@@ -89,27 +154,14 @@ const storeAggTradesIntoBigQuery = async () => {
   }, 30_000); // 30 seconds
 };
 
-const onTrade = (data: TradeMessage) => {
-  const symbol = data.Symbol;
-  const source = data.Exchange;
-  const timestamp = Date.now();
-  const price = data.LastPrice || data.RefPrice;
+const storeForeignRoomIntoBigQuery = async () => {
+  console.log('storeForeignRoomIntoBigQuery', Date.now());
+  insertForeignRoomIntoBigQuery(Object.values(FOREIGN_ROOM));
+  FOREIGN_ROOM = {};
 
-  MARKET_DATA[symbol] = {
-    symbol,
-    source,
-    timestamp,
-    price,
-    volume: data.TotalVol,
-  };
-
-  AGG_TRADES.push({
-    symbol,
-    source,
-    timestamp,
-    price,
-    volume: data.LastVol,
-  });
+  setTimeout(() => {
+    storeForeignRoomIntoBigQuery();
+  }, 60_000); // 60 seconds
 };
 
 const initSsiMarketData = () => {
@@ -183,6 +235,11 @@ const initSsiMarketData = () => {
             if (type === 'X-TRADE') {
               onTrade(data as TradeMessage);
             }
+
+            if (type === 'R') {
+              console.log('type', type, data);
+              onForeignRoom(data as ForeignRoomMessage);
+            }
           },
         );
 
@@ -226,14 +283,17 @@ const main = async () => {
   initSsiMarketData();
 
   storeMarketDataIntoBigQuery();
+  storeForeignRoomIntoBigQuery();
   storeAggTradesIntoBigQuery();
 
   // update data after restarting
   setTimeout(() => {
     insertMarkerDataIntoBigQuery(Object.values(MARKET_DATA));
-    insertAggTradesIntoBigQuery([]);
+    insertForeignRoomIntoBigQuery(Object.values(FOREIGN_ROOM));
+    insertAggTradesIntoBigQuery(AGG_TRADES);
 
     MARKET_DATA = {};
+    FOREIGN_ROOM = {};
     AGG_TRADES = [];
   }, 10_000); // 10 secs
 };

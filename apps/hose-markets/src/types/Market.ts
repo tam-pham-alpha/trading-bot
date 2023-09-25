@@ -157,3 +157,19 @@ export type TradeMessage = {
   RatioChange: number;
   EstMatchedPrice: number;
 };
+
+export type ForeignRoomMessage = {
+  RType: string;
+  TradingDate: string;
+  Time: string;
+  Isin: string;
+  Symbol: string;
+  TotalRoom: number;
+  CurrentRoom: number;
+  BuyVol: number;
+  SellVol: number;
+  BuyVal: number;
+  SellVal: number;
+  MarketId: string;
+  Exchange: string;
+};
