@@ -93,7 +93,7 @@ const onTrade = (data: TradeMessage) => {
   const symbol = data.Symbol;
   const source = data.Exchange;
   const timestamp = Date.now();
-  const price = data.LastPrice;
+  const price = data.LastPrice || data.RefPrice;
 
   MARKET_DATA[symbol] = {
     symbol,
