@@ -173,3 +173,33 @@ export type ForeignRoomMessage = {
   MarketId: string;
   Exchange: string;
 };
+
+export type IndexMessage = {
+  IndexId: string;
+  IndexValue: number;
+  PriorIndexValue: number;
+  TradingDate: string;
+  Time: string;
+  TotalTrade: number;
+  TotalQtty: number;
+  TotalValue: number;
+  IndexName: string;
+  Advances: number;
+  NoChanges: number;
+  Declines: number;
+  Ceilings: number;
+  Floors: number;
+  Change: number;
+  RatioChange: number;
+  TotalQttyPt: number;
+  TotalValuePt: number;
+  Exchange: string;
+  AllQty: number;
+  AllValue: number;
+  IndexType: string;
+  TradingSession: string;
+  MarketId: string;
+  RType: string;
+  TotalQtyOd: number;
+  TotalValueOd: number;
+};

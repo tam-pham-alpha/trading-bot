@@ -5,12 +5,7 @@ import { BigQuery } from '@google-cloud/bigquery';
 
 import config from './config';
 import Streaming from './streaming';
-import {
-  QuoteMessage,
-  TradeMessage,
-  TradingSession,
-  ForeignRoomMessage,
-} from './types/Market';
+import { TradeMessage, ForeignRoomMessage, IndexMessage } from './types/Market';
 import { dataFetch, setDataAccessToken } from './utils/dataFetch';
 
 type Market = {
@@ -37,10 +32,19 @@ type ForeignRoom = {
   current_room: number;
 };
 
+type Index = {
+  symbol: string;
+  source: string;
+  timestamp: number;
+  index_value: number;
+  total_value: number;
+};
+
 const DATA_SET_ID = 'mavelli_tech';
 const MARKET_DATA_TABLE = 'market_data';
 const AGG_TRADES_TABLE = 'agg_trades';
 const FOREIGN_ROOM_TABLE = 'foreign_room';
+const INDEX_DATA_TABLE = 'index_data';
 
 const bigquery = new BigQuery({
   projectId: 'mavelli-ssi',
@@ -51,9 +55,7 @@ const dataset = bigquery.dataset(DATA_SET_ID);
 let MARKET_DATA: Record<string, Market> = {};
 let AGG_TRADES: Trade[] = [];
 let FOREIGN_ROOM: Record<string, ForeignRoom> = {};
-
-const onSessionUpdate = async (session: TradingSession) => {};
-const onQuote = (data: QuoteMessage) => {};
+let INDEX_DATA: Record<string, Index> = {};
 
 const onTrade = (data: TradeMessage) => {
   const symbol = data.Symbol;
@@ -89,6 +91,22 @@ const onForeignRoom = (data: ForeignRoomMessage) => {
     timestamp,
     total_room: data.TotalRoom,
     current_room: data.CurrentRoom,
+  };
+};
+
+const onIndex = (data: IndexMessage) => {
+  const symbol = data.IndexId;
+  const source = data.Exchange;
+  const timestamp = Date.now();
+  const indexValue = data.IndexValue;
+  const totalValue = data.TotalValue;
+
+  INDEX_DATA[symbol] = {
+    symbol,
+    source,
+    timestamp,
+    index_value: indexValue,
+    total_value: totalValue,
   };
 };
 
@@ -134,6 +152,20 @@ const insertForeignRoomIntoBigQuery = async (rows: ForeignRoom[]) => {
   }
 };
 
+const insertIndexDataIntoBigQuery = async (rows: Index[]) => {
+  if (!rows.length) return;
+  console.log('insertIndexDataIntoBigQuery', rows.length);
+
+  try {
+    const table = dataset.table(INDEX_DATA_TABLE);
+
+    // Insert the rows using the table.insert method
+    await table.insert(rows);
+  } catch (error) {
+    console.log(`Error inserting index data into BigQuery:`, error);
+  }
+};
+
 const storeMarketDataIntoBigQuery = async () => {
   console.log('storeMarketDataIntoBigQuery', Date.now());
   insertMarkerDataIntoBigQuery(Object.values(MARKET_DATA));
@@ -164,6 +196,16 @@ const storeForeignRoomIntoBigQuery = async () => {
   }, 60_000); // 60 seconds
 };
 
+const storeIndexDataIntoBigQuery = async () => {
+  console.log('storeIndexDataIntoBigQuery', Date.now());
+  insertIndexDataIntoBigQuery(Object.values(INDEX_DATA));
+  INDEX_DATA = {};
+
+  setTimeout(() => {
+    storeIndexDataIntoBigQuery();
+  }, 60_000); // 60 seconds
+};
+
 const initSsiMarketData = () => {
   return dataFetch({
     url: config.market.ApiUrl + 'AccessToken',
@@ -187,7 +229,7 @@ const initSsiMarketData = () => {
         stream.connected = () => {
           stream
             .getClient()
-            .invoke('FcMarketDataV2Hub', 'SwitchChannels', 'MI:VN30');
+            .invoke('FcMarketDataV2Hub', 'SwitchChannels', 'MI:ALL');
           stream
             .getClient()
             .invoke('FcMarketDataV2Hub', 'SwitchChannels', `F:ALL`);
@@ -223,21 +265,17 @@ const initSsiMarketData = () => {
             const data = JSON.parse(resp.Content);
             const type = resp.DataType;
 
-            if (type === 'F' && data.MarketId === 'HOSE') {
-              const session = data.TradingSession as TradingSession;
-              onSessionUpdate(session);
-            }
-
-            if (type === 'X-QUOTE') {
-              onQuote(data as QuoteMessage);
-            }
-
             if (type === 'X-TRADE') {
               onTrade(data as TradeMessage);
             }
 
             if (type === 'R') {
               onForeignRoom(data as ForeignRoomMessage);
+            }
+
+            if (type === 'MI') {
+              console.log('MI', data);
+              onIndex(data as IndexMessage);
             }
           },
         );
@@ -284,15 +322,18 @@ const main = async () => {
   storeMarketDataIntoBigQuery();
   storeForeignRoomIntoBigQuery();
   storeAggTradesIntoBigQuery();
+  storeIndexDataIntoBigQuery();
 
-  // update data after restarting
+  // // update data after restarting
   setTimeout(() => {
     insertMarkerDataIntoBigQuery(Object.values(MARKET_DATA));
     insertForeignRoomIntoBigQuery(Object.values(FOREIGN_ROOM));
+    insertIndexDataIntoBigQuery(Object.values(INDEX_DATA));
     insertAggTradesIntoBigQuery(AGG_TRADES);
 
     MARKET_DATA = {};
     FOREIGN_ROOM = {};
+    INDEX_DATA = {};
     AGG_TRADES = [];
   }, 10_000); // 10 secs
 };
