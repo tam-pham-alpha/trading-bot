@@ -237,7 +237,6 @@ const initSsiMarketData = () => {
             }
 
             if (type === 'R') {
-              console.log('type', type, data);
               onForeignRoom(data as ForeignRoomMessage);
             }
           },
