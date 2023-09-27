@@ -30,6 +30,10 @@ type ForeignRoom = {
   timestamp: number;
   total_room: number;
   current_room: number;
+  buy_volume: number;
+  sell_volume: number;
+  buy_value: number;
+  sell_value: number;
 };
 
 type Index = {
@@ -91,6 +95,10 @@ const onForeignRoom = (data: ForeignRoomMessage) => {
     timestamp,
     total_room: data.TotalRoom,
     current_room: data.CurrentRoom,
+    buy_value: data.BuyVal,
+    sell_value: data.SellVal,
+    buy_volume: data.BuyVol,
+    sell_volume: data.SellVol,
   };
 };
 
@@ -274,7 +282,6 @@ const initSsiMarketData = () => {
             }
 
             if (type === 'MI') {
-              console.log('MI', data);
               onIndex(data as IndexMessage);
             }
           },
@@ -324,7 +331,7 @@ const main = async () => {
   storeAggTradesIntoBigQuery();
   storeIndexDataIntoBigQuery();
 
-  // // update data after restarting
+  // update data after restarting
   setTimeout(() => {
     insertMarkerDataIntoBigQuery(Object.values(MARKET_DATA));
     insertForeignRoomIntoBigQuery(Object.values(FOREIGN_ROOM));
