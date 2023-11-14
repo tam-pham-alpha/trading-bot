@@ -156,7 +156,7 @@ const insertForeignRoomIntoBigQuery = async (rows: ForeignRoom[]) => {
     // Insert the rows using the table.insert method
     await table.insert(rows);
   } catch (error) {
-    console.log(`Error inserting agg trades into BigQuery:`, error);
+    console.log(`Error inserting fr into BigQuery:`, error);
   }
 };
 
@@ -256,6 +256,7 @@ const initSsiMarketData = () => {
         };
 
         stream.disconnected = () => {
+          console.log('Market Data got disconnected');
           Sentry.captureMessage('Market Data got disconnected', {
             tags: {
               domain: 'SSI MARKET',
@@ -303,21 +304,17 @@ const initSsiMarketData = () => {
           },
         );
 
-        stream.subscribe('FcMarketDataV2Hub', 'Error', (message: string) => {
-          console.log(message);
-        });
-
         stream.start();
 
         console.log('SSI Market Data Started!');
       } else {
-        console.log(resp.data.message);
+        console.log('initSsiMarketData', resp.data.message);
       }
 
       return true;
     },
     (reason) => {
-      console.log(reason);
+      console.log('Reason', reason);
     },
   );
 };

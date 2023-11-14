@@ -6,7 +6,7 @@ const addSlash = (str: string) => {
 };
 
 const api = {
-  SIGNALR: 'signalr',
+  SIGNALR: 'v2.0/signalr',
 };
 
 const resoleURL = (baseURL: string, query: string) => {

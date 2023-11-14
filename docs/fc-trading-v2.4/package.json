@@ -1,0 +1,18 @@
+{
+  "name": "fctrading-client-ex",
+  "version": "2.3.0",
+  "description": "Example using fctrading-client-js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "ducdv@ssi.com.vn",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "0.27.2",
+    "express": "^4.17.0",
+    "ssi-fctrading": "^2.4.1",
+    "random-number": "0.0.9"
+  }
+}
