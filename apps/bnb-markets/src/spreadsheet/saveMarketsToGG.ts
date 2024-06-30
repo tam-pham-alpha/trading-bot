@@ -37,7 +37,7 @@ export const saveMarketsToGG = async (market: Market) => {
   const today = format(ts, 'MM/dd/yyyy');
   const hours = getHours(ts);
   const hourBlock = Math.floor(hours / 4);
-  const colName = `${today} B${hourBlock}`;
+  const colName = `Price`;
   const colIndex = sheet.headerValues.findIndex((i) => i === colName);
   console.log('today', colName);
 

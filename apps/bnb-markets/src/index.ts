@@ -13,14 +13,13 @@ dotenv.config();
 
 let AGG_STRATEGIES: MarketConfig[];
 const MARKETS: Market = {};
-const SYNC_MARKETS_INTERVAL = 120000;
+const SYNC_MARKETS_INTERVAL = 120000; // 2 mins
 
 client.time().then((time) => {
   console.log('STARTED', time);
 });
 
 const onLastPrice = (trade: Trade) => {
-  // console.log('onLastPrice', trade.symbol, trade.price);
   const symbol = trade.symbol;
   const price = trade.price;
   MARKETS[symbol] = price;
@@ -51,6 +50,7 @@ const syncPositions = () => {
   });
 
   syncPositions();
+
   setInterval(() => {
     syncPositions();
   }, SYNC_MARKETS_INTERVAL);
