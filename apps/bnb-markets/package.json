@@ -16,7 +16,7 @@
     "prettier-watch:win32": "onchange \"src/**/*.ts\" -- prettier --write {{changed}}",
     "prettier-watch:darwin:linux": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
     "prettier-watch:default": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
-    "login": "ssh -i _deploy/goingsunny-sg.pem ubuntu@13.229.66.125",
+    "login": "ssh -i _deploy/goingsunny-sg.pem ubuntu@54.179.9.104",
     "deploy": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && cd apps/bnb-markets && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
     "test": "jest --watch",
     "test:dev": "jest --watchAll"
