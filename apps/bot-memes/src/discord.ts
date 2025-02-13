@@ -10,7 +10,7 @@ export async function sendDiscordMessage(content: string): Promise<void> {
     const response = await axios.post(WEBHOOK_URL, payload);
 
     if (response.status === 204) {
-      console.log('Message sent successfully!');
+      console.log(content);
     } else {
       console.log(
         `Failed to send message: ${response.status} - ${response.statusText}`,

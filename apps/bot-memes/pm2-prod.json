@@ -5,9 +5,10 @@
       "script": "./build/index.js",
       "exec_mode": "fork_mode",
       "instances": 1,
+      "autorestart": false,
       "args": "start",
       "watch": false,
-      "cron_restart": "*/10 * * * *",
+      "cron_restart": "*/20 * * * *",
       "ignore_watch": [
         "node_modules",
         "log"

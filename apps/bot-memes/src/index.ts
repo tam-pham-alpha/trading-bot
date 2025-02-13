@@ -1,1 +1,5 @@
-import './new_raydium_token_snipper';
+import { main } from './new_raydium_token_snipper';
+
+(() => {
+  main();
+})();

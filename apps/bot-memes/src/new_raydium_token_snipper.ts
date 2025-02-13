@@ -25,7 +25,7 @@ Social Impact:
 // - Total Quotes: ${socialImpact.total_quote_count}
 // - Total Views: ${socialImpact.total_view_count}
 
-async function main(): Promise<void> {
+export async function main(): Promise<void> {
   await sendDiscordMessage('Meme bot is running...');
 
   const data = await callAuthAPI('/token/pairs?type=2', 'GET', {});
@@ -51,21 +51,28 @@ async function main(): Promise<void> {
 
   for (let i = 0; i < filteredPairs.length; i++) {
     const pair: any = filteredPairs[i];
+    console.log(
+      `Checking pair ${i.toString().padStart(2, '0')}:`,
+      pair.token_address,
+    );
     const socialImpact = await getSocialImpactOfContractAddress(
       pair.token_address,
     );
     if (
       socialImpact.total_posts_count > 5 &&
-      socialImpact.total_favorite_count > 100 &&
-      socialImpact.total_followers_count > 1000
+      socialImpact.total_favorite_count > 50 &&
+      socialImpact.total_followers_count > 500
     ) {
+      // send info to discord
       await sendDiscordMessage(
         getDiscordMessage(pair.token_address, socialImpact),
       );
+      // send an instruction to buy the token
+      await sendDiscordMessage(`/buy ${pair.token_address} 0.05`);
     }
   }
 
   await sendDiscordMessage('Meme bot finished running.');
-}
 
-main();
+  return;
+}
