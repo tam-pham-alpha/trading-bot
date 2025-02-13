@@ -1,5 +1,5 @@
 {
-  "name": "mavelli-bnb",
+  "name": "bot-memes",
   "version": "1.0.0",
   "description": "A basic typescript app starter for newbies in 2022.",
   "main": "index.js",
@@ -17,7 +17,7 @@
     "prettier-watch:darwin:linux": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
     "prettier-watch:default": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
     "login": "ssh -i _deploy/goingsunny-sg.pem ubuntu@54.179.9.104",
-    "deploy": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && cd apps/mavelli-bnb && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
+    "deploy": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && cd apps/bot-memes && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
     "test": "jest --watch",
     "test:dev": "jest --watchAll"
   },
@@ -53,6 +53,8 @@
   "dependencies": {
     "@binance/connector": "^2.0.0-rc.3",
     "binance-api-node": "https://github.com/tampham47/binance-api-node",
+    "crypto": "^1.0.1",
+    "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "firebase-admin": "^11.3.0",
     "lodash": "^4.17.21"

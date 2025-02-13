@@ -17,7 +17,7 @@
     "prettier-watch:darwin:linux": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
     "prettier-watch:default": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
     "test": "jest --watch",
-    "login": "ssh -i _deploy/goingsunny-sg.pem ubuntu@13.229.66.125",
+    "login": "ssh -i _deploy/goingsunny-sg.pem ubuntu@54.179.9.104",
     "deploy": "npm run login 'cd prod/ssi-bot && git reset --hard && git checkout develop && git pull && yarn install && cd apps/mavelli-ssi && yarn run build && pm2 startOrRestart pm2-prod.json --env production'",
     "test:dev": "jest --watchAll"
   },
