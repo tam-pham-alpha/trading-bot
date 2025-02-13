@@ -1,1 +1,1 @@
-import './twitter-check';
+import './new_raydium_token_snipper';

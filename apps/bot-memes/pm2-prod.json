@@ -1,13 +1,13 @@
 {
   "apps": [
     {
-      "name": "prd-bnb-markets",
+      "name": "prd-bot-memes",
       "script": "./build/index.js",
       "exec_mode": "fork_mode",
       "instances": 1,
       "args": "start",
       "watch": false,
-      "cron_restart": "0 */4 * * *",
+      "cron_restart": "*/10 * * * *",
       "ignore_watch": [
         "node_modules",
         "log"
