@@ -4,20 +4,26 @@ import {
   getSocialImpactOfContractAddress,
   SocialImpact,
 } from './twitter-check';
+import { MemeMetadata } from './types';
 
 // create a beautiful message for discord
 const getDiscordMessage = (
   contractAddress: string,
+  metadata: MemeMetadata,
   socialImpact: SocialImpact,
 ) => {
   return `
-Token Address: ${contractAddress}
-Gmgnai: [${contractAddress}](https://gmgn.ai/sol/token/${contractAddress}) 
+Token Info
+- symbol: ${metadata.symbol}
+- address: ${contractAddress}
+- twitter: [${metadata.twitter}](${metadata.twitter})
+- website: [${metadata.website}](${metadata.website})
+- gmgnai: [${contractAddress}](https://gmgn.ai/sol/token/${contractAddress})
 Social Impact:
-- Total Followers: ${socialImpact.total_followers_count}
-- Total Favorites: ${socialImpact.total_favorite_count}
-- Total Retweets: ${socialImpact.total_retweet_count}
-- Total Posts: ${socialImpact.total_posts_count}
+- followers: ${socialImpact.total_followers_count}
+- favorites: ${socialImpact.total_favorite_count}
+- retweets: ${socialImpact.total_retweet_count}
+- posts: ${socialImpact.total_posts_count}
 `;
 };
 // - Total Friends: ${socialImpact.total_friends_count}
@@ -64,8 +70,13 @@ export async function main(): Promise<void> {
       socialImpact.total_followers_count > 500
     ) {
       // send info to discord
+      await sendDiscordMessage(pair.metadata.image);
       await sendDiscordMessage(
-        getDiscordMessage(pair.token_address, socialImpact),
+        getDiscordMessage(
+          pair.token_address,
+          pair.metadata as MemeMetadata,
+          socialImpact,
+        ),
       );
       // send an instruction to buy the token
       await sendDiscordMessage(`/buy ${pair.token_address} 0.05`);
