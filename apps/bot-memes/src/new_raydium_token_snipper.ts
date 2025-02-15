@@ -16,7 +16,7 @@ const getDiscordMessage = (
 Token Info
 - symbol: ${metadata.symbol}
 - address: ${contractAddress}
-- [gmgnai](https://gmgn.ai/sol/token/${contractAddress}), [twitter](${metadata.twitter}), [website](${metadata.website}), 
+- [gmgnai](https://gmgn.ai/sol/token/${contractAddress}), [twitter](${metadata.twitter}), [website](${metadata.website}), [search token](https://x.com/search?q=${contractAddress})
 - fl: ${socialImpact.total_followers_count}, fav: ${socialImpact.total_favorite_count}, rt: ${socialImpact.total_retweet_count}, posts: ${socialImpact.total_posts_count}
 `;
 };
