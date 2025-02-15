@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { sendDiscordMessage } from './discord';
+import { sendToGeneralDiscord } from './discord';
 
 /**
  * Refs
@@ -96,7 +96,7 @@ const fetchTweets = async (contractAddress: string) => {
       if (!cursor) break; // Stop if there's no more cursor
     } catch (error) {
       console.error(`Error fetching page ${page + 1}:`, error);
-      await sendDiscordMessage(`Out of tweetscout quota.`);
+      await sendToGeneralDiscord(`Out of tweetscout quota.`);
       break;
     }
   }
