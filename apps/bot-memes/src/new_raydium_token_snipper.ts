@@ -16,14 +16,8 @@ const getDiscordMessage = (
 Token Info
 - symbol: ${metadata.symbol}
 - address: ${contractAddress}
-- twitter: [${metadata.twitter}](${metadata.twitter})
-- website: [${metadata.website}](${metadata.website})
-- gmgnai: [${contractAddress}](https://gmgn.ai/sol/token/${contractAddress})
-Social Impact:
-- followers: ${socialImpact.total_followers_count}
-- favorites: ${socialImpact.total_favorite_count}
-- retweets: ${socialImpact.total_retweet_count}
-- posts: ${socialImpact.total_posts_count}
+- [gmgnai](https://gmgn.ai/sol/token/${contractAddress}), [twitter](${metadata.twitter}), [website](${metadata.website}), 
+- fl: ${socialImpact.total_followers_count}, fav: ${socialImpact.total_favorite_count}, rt: ${socialImpact.total_retweet_count}, posts: ${socialImpact.total_posts_count}
 `;
 };
 // - Total Friends: ${socialImpact.total_friends_count}
@@ -34,8 +28,18 @@ Social Impact:
 export async function main(): Promise<void> {
   await sendDiscordMessage('Meme bot is running...');
 
-  const data = await callAuthAPI('/token/pairs?type=2', 'GET', {});
-  const pairs = Object.values(data.data);
+  // const data = await callAuthAPI('/token/pairs?type=0', 'GET', {});
+  // let pairs = Object.values(data.data);
+
+  const trending = await callAuthAPI('/token/pairs?type=1', 'GET', {});
+  const resp: any = trending.data;
+  const pairs = [
+    // ...pairs,
+    ...Object.values(resp['5m']),
+    // ...Object.values(resp['1h']),
+    // ...Object.values(resp['6h']),
+    // ...Object.values(resp['24h']),
+  ];
 
   const filteredPairs = pairs
     .map((pair: any) => {
@@ -48,7 +52,13 @@ export async function main(): Promise<void> {
       };
     })
     .filter((pair: any) => {
-      return pair.current_liquidity > 10;
+      return (
+        pair.current_liquidity > 10 &&
+        pair.metadata &&
+        pair.metadata.description &&
+        pair.metadata.twitter &&
+        pair.metadata.website
+      );
     });
 
   await sendDiscordMessage(
