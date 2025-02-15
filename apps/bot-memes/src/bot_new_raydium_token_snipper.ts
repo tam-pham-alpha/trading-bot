@@ -1,5 +1,5 @@
 import { callAuthAPI } from './autosniper';
-import { sendDiscordMessage } from './discord';
+import { sendToGeneralDiscord } from './discord';
 import {
   getSocialImpactOfContractAddress,
   SocialImpact,
@@ -26,7 +26,7 @@ Token Info
 // - Total Views: ${socialImpact.total_view_count}
 
 export async function main(): Promise<void> {
-  await sendDiscordMessage('Meme bot is running...');
+  await sendToGeneralDiscord('Meme bot is running...');
 
   // const data = await callAuthAPI('/token/pairs?type=0', 'GET', {});
   // let pairs = Object.values(data.data);
@@ -61,7 +61,7 @@ export async function main(): Promise<void> {
       );
     });
 
-  await sendDiscordMessage(
+  await sendToGeneralDiscord(
     `All/Filtered pairs: ${pairs.length}, ${filteredPairs.length}`,
   );
 
@@ -80,8 +80,8 @@ export async function main(): Promise<void> {
       socialImpact.total_followers_count > 500
     ) {
       // send info to discord
-      await sendDiscordMessage(pair.metadata.image);
-      await sendDiscordMessage(
+      await sendToGeneralDiscord(pair.metadata.image);
+      await sendToGeneralDiscord(
         getDiscordMessage(
           pair.token_address,
           pair.metadata as MemeMetadata,
@@ -89,11 +89,11 @@ export async function main(): Promise<void> {
         ),
       );
       // send an instruction to buy the token
-      await sendDiscordMessage(`/buy ${pair.token_address} 0.05`);
+      await sendToGeneralDiscord(`/buy ${pair.token_address} 0.05`);
     }
   }
 
-  await sendDiscordMessage('Meme bot finished running.');
+  await sendToGeneralDiscord('Meme bot finished running.');
 
   return;
 }

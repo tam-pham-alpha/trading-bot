@@ -1,5 +1,3 @@
-import { main } from './new_raydium_token_snipper';
+import { main } from './bot_get_trending_memes';
 
-(() => {
-  main();
-})();
+main();
