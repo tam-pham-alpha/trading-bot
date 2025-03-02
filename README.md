@@ -1,4 +1,15 @@
-# 🧰 Simple TypeScript Starter | 2022
+# Trading Bot
+
+This is an automated trading application built with TypeScript, NodeJS, and Turbo. The project features data aggregation and sends data to Google Big Data, enabling the use of low-code tools like Dynaboard or Retool for query analysis and data extraction.  
+
+The application provides several features, including:  
+- Fetching data from SSI, a Vietnamese stock exchange.  
+- Automated trading on SSI based on predefined configurations from a Google Spreadsheet.  
+- Automated trading on Binance using configuration files from a Google Spreadsheet.  
+- Automatically updating trading positions to a Google Spreadsheet.  
+- Sniping meme coins on Solana and pushing information to Discord.
+
+### 🧰 Simple TypeScript Starter | 2022
 
 > We talk about a lot of **advanced Node.js and TypeScript** concepts on [the blog](https://khalilstemmler.com), particularly focused around Domain-Driven Design and large-scale enterprise application patterns. However, I received a few emails from readers that were interested in seeing what a basic TypeScript starter project looks like. So I've put together just that.
 
