@@ -39,14 +39,33 @@ showAccountInfo();
 
 export const placeOrder = async (): Promise<number> => {
   try {
-    const response = await client.newOrder(
-      'BNBUSDT', // Trading pair
-      'BUY', // Order side (BUY or SELL)
-      'MARKET', // Order type
+    const batchOrders = [
       {
-        quantity: 20,
+        symbol: 'BNBUSDT',
+        side: 'BUY',
+        type: 'MARKET',
+        quantity: '0.1',
       },
+      {
+        symbol: 'BTCUSDT',
+        side: 'BUY',
+        type: 'MARKET',
+        quantity: '0.001',
+      },
+    ];
+
+    const response = await client.placeMultipleOrders(
+      JSON.stringify(batchOrders),
     );
+
+    // const response = await client.newOrder(
+    //   'BNBUSDT', // Trading pair
+    //   'BUY', // Order side (BUY or SELL)
+    //   'MARKET', // Order type
+    //   {
+    //     quantity: 20,
+    //   },
+    // );
 
     console.log('Market Order Response:', response.data);
     return 0;
