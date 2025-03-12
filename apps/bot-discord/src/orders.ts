@@ -1,4 +1,4 @@
-const { Spot } = require('@binance/connector');
+const { WebsocketAPI } = require('@binance/connector');
 
 type Order = {
   ticker: string;
@@ -10,7 +10,7 @@ type Order = {
 const BINANCE_API_KEY = process.env.BINANCE_API_KEY || '';
 const BINANCE_API_SECRET = process.env.BINANCE_API_SECRET || '';
 
-const client = new Spot(BINANCE_API_KEY, BINANCE_API_SECRET);
+const client = new WebsocketAPI(BINANCE_API_KEY, BINANCE_API_SECRET);
 
 export const placeOrder = async (): Promise<number> => {
   try {
