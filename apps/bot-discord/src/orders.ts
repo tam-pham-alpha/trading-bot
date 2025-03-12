@@ -10,33 +10,16 @@ type Order = {
 const BINANCE_API_KEY = process.env.BINANCE_API_KEY || '';
 const BINANCE_API_SECRET = process.env.BINANCE_API_SECRET || '';
 
-const client = new WebsocketAPI(BINANCE_API_KEY, BINANCE_API_SECRET);
+const callbacks = {
+  open: (client: any) => {
+    console.log('Connected with Websocket server');
+  },
+  close: () => console.log('Disconnected with Websocket server'),
+  message: (data: any) => console.log('socket message', data),
+};
 
-// Subscribe to order updates
-client.listenUserStream((data: any) => {
-  console.log('User Data Stream Response:', data);
-});
-
-// Event listener for messages
-client.on('message', (data: any) => {
-  const response = JSON.parse(data);
-
-  // Handle different event types
-  if (response.e === 'executionReport') {
-    console.log('Order Update:', response);
-  }
-});
-
-// Error handling
-client.on('error', (error: any) => {
-  console.error('WebSocket Error:', error);
-});
-
-// Close connection properly when needed
-process.on('SIGINT', () => {
-  client.close();
-  console.log('WebSocket closed');
-  process.exit();
+const client = new WebsocketAPI(BINANCE_API_KEY, BINANCE_API_SECRET, {
+  callbacks,
 });
 
 export const placeOrder = async (): Promise<number> => {
