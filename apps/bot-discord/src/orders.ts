@@ -49,7 +49,7 @@ export const placeOrder = async (): Promise<number> => {
       },
     );
 
-    console.log('Market Order Response:', response);
+    console.log('Market Order Response:', response.data);
     return 0;
   } catch (error) {
     console.log('Error:', error);
