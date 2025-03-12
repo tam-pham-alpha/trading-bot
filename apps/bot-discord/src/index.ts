@@ -74,9 +74,9 @@ client.on(Events.ClientReady, (readyClient) => {
 
 client.on(Events.MessageCreate, async (message) => {
   const user = await client.users.fetch(message.author.id);
-  console.log('message', JSON.stringify(message));
-  console.log('user', JSON.stringify(user));
-  console.log(`Message: ${message.content}`);
+  // console.log('message', JSON.stringify(message));
+  // console.log('user', JSON.stringify(user));
+  // console.log(`Message: ${message.content}`);
 
   const cmd = parseTradeCommand(message.content);
   console.log('cmd', cmd);
@@ -106,9 +106,9 @@ client.on(Events.MessageCreate, async (message) => {
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
   const message = await reaction.message.fetch();
-  console.log('reaction', JSON.stringify(reaction));
-  console.log('message', JSON.stringify(message));
-  console.log('user', JSON.stringify(user));
+  // console.log('reaction', JSON.stringify(reaction));
+  // console.log('message', JSON.stringify(message));
+  // console.log('user', JSON.stringify(user));
 });
 
 client.login(DISCORD_BOT_TOKEN);
