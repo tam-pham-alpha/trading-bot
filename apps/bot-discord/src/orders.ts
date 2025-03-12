@@ -21,7 +21,7 @@ export const placeOrder = async (): Promise<number> => {
       { quantity: 0.001 }, // Amount of BTC to buy
     );
 
-    console.log('Market Order Response:', response.data);
+    console.log('Market Order Response:', response);
     return 0;
   } catch (error) {
     console.log('Error:', error);
