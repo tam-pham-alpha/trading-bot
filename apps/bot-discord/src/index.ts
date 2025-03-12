@@ -1,8 +1,9 @@
-import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
 const dotenv = require('dotenv');
+dotenv.config();
+
+import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
 const { placeOrder } = require('./orders');
 
-dotenv.config();
 /**
  * https://chatgpt.com/share/67d046b6-ea20-800b-94b5-99bdc2766df1
  */
