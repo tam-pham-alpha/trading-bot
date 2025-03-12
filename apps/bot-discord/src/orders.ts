@@ -28,7 +28,7 @@ const client = new UMFutures(BINANCE_API_KEY, BINANCE_API_SECRET, {
 
 const showAccountInfo = async () => {
   try {
-    const info = await client.getAccountInformation({ recvWindow: 2000 });
+    const info = await client.getAccountInformation();
     console.log('client', info.data);
   } catch (err) {
     console.log('showAccountInfo Error:', err);
@@ -40,11 +40,11 @@ showAccountInfo();
 export const placeOrder = async (): Promise<number> => {
   try {
     const response = await client.newOrder(
-      'BTCUSDT', // Trading pair
+      'BNBUSDT', // Trading pair
       'BUY', // Order side (BUY or SELL)
       'MARKET', // Order type
       {
-        quantity: 0.001,
+        quantity: 20,
       },
     );
 
