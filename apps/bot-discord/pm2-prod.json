@@ -1,0 +1,22 @@
+{
+  "apps": [
+    {
+      "name": "prd-bot-discord",
+      "script": "./build/index.js",
+      "exec_mode": "fork_mode",
+      "instances": 1,
+      "autorestart": true,
+      "args": "start",
+      "watch": false,
+      "cron_restart": "* * * * *",
+      "ignore_watch": [
+        "node_modules",
+        "log"
+      ],
+      "watch_options": {
+        "followSymlinks": false
+      },
+      "env_production": {}
+    }
+  ]
+}
