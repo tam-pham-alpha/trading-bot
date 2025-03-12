@@ -29,7 +29,7 @@ const client = new CMFutures(BINANCE_API_KEY, BINANCE_API_SECRET, {
 const showAccountInfo = async () => {
   try {
     const info = await client.getAccountInformation({ recvWindow: 2000 });
-    console.log('client', info);
+    console.log('client', info.data);
   } catch (err) {
     console.log('showAccountInfo Error:', err);
   }
@@ -39,10 +39,6 @@ showAccountInfo();
 
 export const placeOrder = async (): Promise<number> => {
   try {
-    await client.setLeverage({
-      symbol: 'BTCUSDT',
-      leverage: 20,
-    });
     const response = await client.newOrder(
       'BTCUSDT_PERP', // Trading pair
       'BUY', // Order side (BUY or SELL)
