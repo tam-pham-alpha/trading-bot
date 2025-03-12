@@ -44,7 +44,6 @@ export const placeOrder = async (): Promise<number> => {
       'BUY', // Order side (BUY or SELL)
       'MARKET', // Order type
       {
-        timeInForce: 'GTC',
         quantity: 0.001,
       },
     );
