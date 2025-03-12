@@ -23,7 +23,7 @@ const callbacks = {
 };
 
 const client = new UMFutures(BINANCE_API_KEY, BINANCE_API_SECRET, {
-  baseURL: 'https://dapi.binance.com',
+  baseURL: 'https://fapi.binance.com',
 });
 
 const showAccountInfo = async () => {
@@ -40,7 +40,7 @@ showAccountInfo();
 export const placeOrder = async (): Promise<number> => {
   try {
     const response = await client.newOrder(
-      'BTCUSDT_PERP', // Trading pair
+      'BTCUSDT', // Trading pair
       'BUY', // Order side (BUY or SELL)
       'MARKET', // Order type
       {
