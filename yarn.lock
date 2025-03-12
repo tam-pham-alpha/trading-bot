@@ -289,6 +289,14 @@
     axios "^1.7.4"
     ws "^8.17.1"
 
+"@binance/futures-connector@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.npmjs.org/@binance/futures-connector/-/futures-connector-0.1.7.tgz"
+  integrity sha512-c8YPN2F25Rlyv03nhoFHYoMrNptzJytoiYgfSwqjkYuWu6bBAbq3RQ7ClglPfRXjlWzSePLgxK63CllZ0F56bQ==
+  dependencies:
+    axios "^1.7.4"
+    ws "^8.17.1"
+
 "@blakeembrey/deque@^1.0.5":
   version "1.0.5"
   resolved "https://registry.npmjs.org/@blakeembrey/deque/-/deque-1.0.5.tgz"
@@ -1433,7 +1441,7 @@
     "@babel/types" "^7.20.7"
 
 "@types/binance__connector@file:@types/binance-connector":
-  resolved "file:apps/bnb-markets/@types/binance-connector"
+  resolved "file:apps/bot-discord/@types/binance-connector"
 
 "@types/body-parser@*":
   version "1.19.5"
@@ -1658,7 +1666,6 @@
     "@types/send" "*"
 
 "@types/ssi-api-client@file:../../_ssi-api-client_type":
-  resolved "file:_ssi-api-client_type"
 
 "@types/stack-utils@^2.0.0":
   version "2.0.3"
@@ -5446,7 +5453,7 @@ sprintf-js@~1.0.2:
 
 "ssi-api-client@file:../../_ssi-api-client":
   version "2.3.1"
-  resolved "file:_ssi-api-client"
+  resolved "_ssi-api-client"
   dependencies:
     aes-js "^3.1.2"
     axios "^0.18.0"

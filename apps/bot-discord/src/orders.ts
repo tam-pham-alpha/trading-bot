@@ -1,3 +1,4 @@
+const { CMFutures } = require('@binance/futures-connector');
 const { WebsocketAPI } = require('@binance/connector');
 
 type Order = {
@@ -21,17 +22,32 @@ const callbacks = {
   message: (data: any) => console.log('socket message', data),
 };
 
-const client = new WebsocketAPI(BINANCE_API_KEY, BINANCE_API_SECRET, {
-  callbacks,
+const client = new CMFutures(BINANCE_API_KEY, BINANCE_API_SECRET, {
+  baseURL: 'https://dapi.binance.com',
 });
+
+const showAccountInfo = async () => {
+  try {
+    const info = await client.getAccountInformation({ recvWindow: 2000 });
+    console.log('client', info);
+  } catch (err) {
+    console.log('showAccountInfo Error:', err);
+  }
+};
+
+showAccountInfo();
 
 export const placeOrder = async (): Promise<number> => {
   try {
+    await client.setLeverage({
+      symbol: 'BTCUSDT',
+      leverage: 20,
+    });
     const response = await client.newOrder(
-      'BTCUSDT', // Trading pair
+      'BTCUSDT_PERP', // Trading pair
       'BUY', // Order side (BUY or SELL)
       'MARKET', // Order type
-      { quantity: 0.001 }, // Amount of BTC to buy
+      { quoteOrderQty: 100 }, // Amount of BTC to buy
     );
 
     console.log('Market Order Response:', response);
