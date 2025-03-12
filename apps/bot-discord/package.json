@@ -51,8 +51,7 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
-    "@binance/connector": "^2.0.1",
-    "binance-api-node": "https://github.com/tampham47/binance-api-node",
+    "@binance/connector": "^3.6.1",
     "crypto": "^1.0.1",
     "date-fns": "^2.29.3",
     "discord.js": "^14.18.0",

@@ -1,9 +1,8 @@
-import * as dotenv from 'dotenv';
+import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
+const dotenv = require('dotenv');
+const { placeOrder } = require('./orders');
 
 dotenv.config();
-
-import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
-
 /**
  * https://chatgpt.com/share/67d046b6-ea20-800b-94b5-99bdc2766df1
  */
@@ -83,6 +82,8 @@ client.on(Events.MessageCreate, async (message) => {
   console.log('cmd', cmd);
 
   if (message.mentions.users.has(DISCORD_BOT_ID)) {
+    await placeOrder();
+
     await message.react('✅');
 
     const isThread = await message.channel.isThread();
