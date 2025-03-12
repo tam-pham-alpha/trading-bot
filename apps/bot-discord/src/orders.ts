@@ -28,10 +28,10 @@ const client = new UMFutures(BINANCE_API_KEY, BINANCE_API_SECRET, {
 
 const showAccountInfo = async () => {
   try {
-    const info = await client.getAccountInformation();
+    const info = await client.getAccountConfig();
     console.log('client', info.data);
   } catch (err) {
-    console.log('showAccountInfo Error:', err);
+    console.log('getAccountConfig Error:', err);
   }
 };
 
