@@ -1,4 +1,4 @@
-import Binance from 'node-binance-api';
+const { UMFutures } = require('@binance/futures-connector');
 
 const BINANCE_API_KEY = process.env.BINANCE_API_KEY || '';
 const BINANCE_API_SECRET = process.env.BINANCE_API_SECRET || '';
@@ -6,10 +6,8 @@ const BINANCE_API_SECRET = process.env.BINANCE_API_SECRET || '';
 console.log('BINANCE_API_KEY', BINANCE_API_KEY);
 console.log('BINANCE_API_SECRET', BINANCE_API_SECRET);
 
-const client = Binance({
-  apiKey: BINANCE_API_KEY,
-  apiSecret: BINANCE_API_SECRET,
-  getTime: () => Date.now(),
+const umFuturesClient = new UMFutures(BINANCE_API_KEY, BINANCE_API_SECRET, {
+  baseURL: 'https://fapi.binance.com',
 });
 
 export const placeOrder = async (): Promise<number> => {
@@ -18,29 +16,22 @@ export const placeOrder = async (): Promise<number> => {
       {
         symbol: 'BNBUSDT',
         side: 'BUY',
-        type: 'MARKET',
+        type: 'LIMIT',
         quantity: '0.1',
+        price: '400',
+        timeInForce: 'GTC',
       },
       {
-        symbol: 'BTCUSDT',
-        side: 'BUY',
-        type: 'MARKET',
-        quantity: '0.001',
+        symbol: 'BNBUSDT',
+        side: 'SELL',
+        type: 'LIMIT',
+        quantity: '0.1',
+        price: '8000',
+        timeInForce: 'GTC',
       },
     ];
 
-    const response = await client.placeMultipleOrders(
-      JSON.stringify(batchOrders),
-    );
-
-    // const response = await client.newOrder(
-    //   'BNBUSDT', // Trading pair
-    //   'BUY', // Order side (BUY or SELL)
-    //   'MARKET', // Order type
-    //   {
-    //     quantity: 20,
-    //   },
-    // );
+    const response = await umFuturesClient.placeMultipleOrders(batchOrders);
 
     console.log('Market Order Response:', response.data);
     return 0;
