@@ -31,7 +31,11 @@ export const placeOrder = async (): Promise<number> => {
       },
     ];
 
-    const response = await umFuturesClient.placeMultipleOrders(batchOrders);
+    const response = await umFuturesClient.newOrder('BNBUSDT', 'BUY', 'LIMIT', {
+      quantity: '0.1',
+      price: '400',
+      timeInForce: 'GTC',
+    });
 
     console.log('Market Order Response:', response.data);
     return 0;
