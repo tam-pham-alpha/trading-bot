@@ -53,6 +53,7 @@
   "dependencies": {
     "@binance/connector": "^3.6.1",
     "@binance/futures-connector": "^0.1.7",
+    "binance-api-node": "^0.12.9",
     "crypto": "^1.0.1",
     "date-fns": "^2.29.3",
     "discord.js": "^14.18.0",

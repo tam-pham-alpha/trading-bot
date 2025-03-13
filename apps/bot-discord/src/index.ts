@@ -87,21 +87,21 @@ client.on(Events.MessageCreate, async (message) => {
 
     await message.react('✅');
 
-    const isThread = await message.channel.isThread();
+    // const isThread = await message.channel.isThread();
 
-    if (!isThread) {
-      try {
-        // Create a thread from the message
-        const thread = await message.startThread({
-          name: 'Discussion Thread', // Thread name
-          autoArchiveDuration: 60, // Auto-archive after 60 minutes
-        });
+    // if (!isThread) {
+    //   try {
+    //     // Create a thread from the message
+    //     const thread = await message.startThread({
+    //       name: 'Discussion Thread', // Thread name
+    //       autoArchiveDuration: 60, // Auto-archive after 60 minutes
+    //     });
 
-        await thread.send('Hello! This is a new thread.');
-      } catch (error) {
-        console.error('Failed to create a thread:', error);
-      }
-    }
+    //     await thread.send('Hello! This is a new thread.');
+    //   } catch (error) {
+    //     console.error('Failed to create a thread:', error);
+    //   }
+    // }
   }
 });
 

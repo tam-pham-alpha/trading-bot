@@ -1,12 +1,4 @@
-const { UMFutures } = require('@binance/futures-connector');
-const { WebsocketAPI } = require('@binance/connector');
-
-type Order = {
-  ticker: string;
-  qty: number; // usd_qty
-  ls: number;
-  tp: number;
-};
+import Binance from 'node-binance-api';
 
 const BINANCE_API_KEY = process.env.BINANCE_API_KEY || '';
 const BINANCE_API_SECRET = process.env.BINANCE_API_SECRET || '';
@@ -14,28 +6,11 @@ const BINANCE_API_SECRET = process.env.BINANCE_API_SECRET || '';
 console.log('BINANCE_API_KEY', BINANCE_API_KEY);
 console.log('BINANCE_API_SECRET', BINANCE_API_SECRET);
 
-const callbacks = {
-  open: (client: any) => {
-    console.log('Connected with Websocket server');
-  },
-  close: () => console.log('Disconnected with Websocket server'),
-  message: (data: any) => console.log('socket message', data),
-};
-
-const client = new UMFutures(BINANCE_API_KEY, BINANCE_API_SECRET, {
-  baseURL: 'https://fapi.binance.com',
+const client = Binance({
+  apiKey: BINANCE_API_KEY,
+  apiSecret: BINANCE_API_SECRET,
+  getTime: () => Date.now(),
 });
-
-const showAccountInfo = async () => {
-  try {
-    const info = await client.getAccountConfig();
-    console.log('client', info.data);
-  } catch (err) {
-    console.log('getAccountConfig Error:', err);
-  }
-};
-
-showAccountInfo();
 
 export const placeOrder = async (): Promise<number> => {
   try {
