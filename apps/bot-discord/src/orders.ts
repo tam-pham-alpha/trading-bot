@@ -18,6 +18,15 @@ export const placeOrder = async (): Promise<number> => {
 
     const resp02 = await pmClient.getAccountInfo();
     console.log('resp02', resp02);
+
+    const resp03 = await pmClient.submitNewUMOrder({
+      symbol: 'BTCUSDT',
+      side: 'BUY',
+      type: 'LIMIT',
+      price: '70000',
+      quantity: '0.01',
+    });
+    console.log('resp03', resp03);
     return 0;
   } catch (error) {
     console.log('Error:', error);
