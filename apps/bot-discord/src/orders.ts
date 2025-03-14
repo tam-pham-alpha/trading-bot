@@ -25,6 +25,7 @@ export const placeOrder = async (): Promise<number> => {
       type: 'LIMIT',
       price: '70000',
       quantity: '0.01',
+      timeInForce: 'GTD',
     });
     console.log('resp03', resp03);
     return 0;
