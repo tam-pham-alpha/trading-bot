@@ -39,7 +39,6 @@ export const placeOrder = async (): Promise<number> => {
       strategyType: 'TAKE_PROFIT_MARKET',
       quantity: quantity,
       stopPrice: '99000',
-      reduceOnly: true,
     });
 
     const resp5 = await pmClient.submitNewUMConditionalOrder({
@@ -49,7 +48,6 @@ export const placeOrder = async (): Promise<number> => {
       strategyType: 'STOP_MARKET',
       quantity: quantity,
       stopPrice: '70000',
-      reduceOnly: true,
     });
 
     console.log('resp4', resp4);
