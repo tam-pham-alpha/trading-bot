@@ -7,11 +7,11 @@ export type FutureOrderData = TradeCommand & {
   price: number;
 };
 
-export const getPriceWithPrecision = (
-  price: number,
+export const getNumberWithPrecision = (
+  number: number,
   precision: number,
 ): number => {
-  return Math.floor(price * Math.pow(10, precision)) / Math.pow(10, precision);
+  return Math.floor(number * Math.pow(10, precision)) / Math.pow(10, precision);
 };
 
 export const getFutureOrderData = (
@@ -32,9 +32,9 @@ export const getFutureOrderData = (
 
   return {
     ...cmd,
-    quantity,
-    price: getPriceWithPrecision(currentPrice, 1),
-    stopLossPrice: getPriceWithPrecision(stopLossPrice, 1),
-    takeProfitPrice: getPriceWithPrecision(takeProfitPrice, 1),
+    quantity: getNumberWithPrecision(quantity, 3),
+    price: getNumberWithPrecision(currentPrice, 1),
+    stopLossPrice: getNumberWithPrecision(stopLossPrice, 1),
+    takeProfitPrice: getNumberWithPrecision(takeProfitPrice, 1),
   };
 };
