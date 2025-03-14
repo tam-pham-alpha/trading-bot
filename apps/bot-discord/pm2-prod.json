@@ -8,7 +8,6 @@
       "autorestart": true,
       "args": "start",
       "watch": false,
-      "cron_restart": "* * * * *",
       "ignore_watch": [
         "node_modules",
         "log"
