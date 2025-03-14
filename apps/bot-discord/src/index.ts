@@ -58,7 +58,7 @@ client.on(Events.MessageCreate, async (message) => {
             });
 
             await thread.send(
-              `<${user.id}> Your orders have been placed for ${cmd.ticker} at an average price of ${avgPrice}`,
+              `<@${user.id}> Your orders have been placed for ${cmd.ticker} at an average price of ${avgPrice}`,
             );
           } catch (error) {
             console.error('Failed to create a thread:', error);
