@@ -26,6 +26,7 @@ export const placeOrder = async (): Promise<number> => {
       price: '70000',
       quantity: '0.01',
       timeInForce: 'GTD',
+      goodTillDate: new Date().getTime() + 1000 * 60 * 60 * 24, // 24 hour from now
     });
     console.log('resp03', resp03);
     return 0;
