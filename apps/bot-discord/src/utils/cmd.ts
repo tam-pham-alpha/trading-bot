@@ -27,3 +27,7 @@ export const parseTradeCommand = (message: string): TradeCommand | null => {
     takeProfit: Number(takeProfit),
   };
 };
+
+export const getCmdString = (cmd: TradeCommand): string => {
+  return `Trade: ${cmd.side} ${cmd.ticker} ${cmd.qtyUsd} ${cmd.stopLoss} ${cmd.takeProfit}`;
+};

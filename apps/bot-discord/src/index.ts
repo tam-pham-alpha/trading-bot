@@ -1,9 +1,9 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config();
 
 import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
-import { parseTradeCommand } from './utils/cmd';
-const { placeOrder } = require('./orders');
+import { getCmdString, parseTradeCommand } from './utils/cmd';
+import { binanceMarketData } from './binance/market';
 
 /**
  * https://chatgpt.com/share/67d046b6-ea20-800b-94b5-99bdc2766df1
@@ -11,38 +11,6 @@ const { placeOrder } = require('./orders');
 
 const DISCORD_BOT_ID = process.env.DISCORD_BOT_ID || '';
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN || '';
-
-// const CLIENT_ID = '1348671176108539975';
-// const setCommands = async () => {
-//   const commands = [
-//     {
-//       name: 'ping',
-//       description: 'Replies with Pong!',
-//     },
-//     {
-//       name: 'set_token',
-//       description: 'Set the token for the bot',
-//     },
-//     {
-//       name: 'long',
-//       description: 'create a long position: /long ticker qty ls_% tp_%',
-//     },
-//   ];
-
-//   const rest = new REST({ version: '10' }).setToken(TOKEN);
-
-//   try {
-//     console.log('Started refreshing application (/) commands.');
-
-//     await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
-
-//     console.log('Successfully reloaded application (/) commands.');
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
-
-// setCommands();
 
 const client = new Client({
   intents: [
@@ -64,35 +32,42 @@ client.on(Events.ClientReady, (readyClient) => {
 
 client.on(Events.MessageCreate, async (message) => {
   const user = await client.users.fetch(message.author.id);
-  // console.log('message', JSON.stringify(message));
+  console.log('message', JSON.stringify(message));
   // console.log('user', JSON.stringify(user));
   // console.log(`Message: ${message.content}`);
 
   if (message.mentions.users.has(DISCORD_BOT_ID)) {
     const cmd = parseTradeCommand(message.content);
-    console.log('cmd', cmd);
 
     if (cmd) {
+      console.log('cmd', cmd);
       await message.react('✅');
+
+      if (cmd.ticker === 'BTCUSDT') {
+        const avgPrice = await binanceMarketData.getAvgPrice(cmd.ticker);
+        console.log('avgPrice', cmd.ticker, avgPrice);
+
+        const isThread = await message.channel.isThread();
+
+        if (!isThread) {
+          try {
+            // Create a thread from the message
+            const thread = await message.startThread({
+              name: getCmdString(cmd), // Thread name
+              autoArchiveDuration: 60, // Auto-archive after 60 minutes
+            });
+
+            await thread.send(
+              `<${user.id}> Your orders have been placed for ${cmd.ticker} at an average price of ${avgPrice}`,
+            );
+          } catch (error) {
+            console.error('Failed to create a thread:', error);
+          }
+        }
+      }
     } else {
       await message.react('❌');
     }
-
-    // const isThread = await message.channel.isThread();
-
-    // if (!isThread) {
-    //   try {
-    //     // Create a thread from the message
-    //     const thread = await message.startThread({
-    //       name: 'Discussion Thread', // Thread name
-    //       autoArchiveDuration: 60, // Auto-archive after 60 minutes
-    //     });
-
-    //     await thread.send('Hello! This is a new thread.');
-    //   } catch (error) {
-    //     console.error('Failed to create a thread:', error);
-    //   }
-    // }
   }
 });
 
