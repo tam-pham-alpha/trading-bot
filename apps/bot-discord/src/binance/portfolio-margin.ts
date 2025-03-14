@@ -17,7 +17,7 @@ export const getBatchOrders = (ftOrderData: FutureOrderData) => {
         quantity: ftOrderData.quantity.toString(),
       },
       {
-        symbol: 'BTCUSDT',
+        symbol: ftOrderData.ticker,
         side: 'BUY',
         positionSide: 'SHORT',
         strategyType: 'TAKE_PROFIT_MARKET',
@@ -25,7 +25,7 @@ export const getBatchOrders = (ftOrderData: FutureOrderData) => {
         stopPrice: ftOrderData.takeProfitPrice.toString(),
       },
       {
-        symbol: 'BTCUSDT',
+        symbol: ftOrderData.ticker,
         side: 'BUY',
         positionSide: 'SHORT',
         strategyType: 'STOP_MARKET',
@@ -45,7 +45,7 @@ export const getBatchOrders = (ftOrderData: FutureOrderData) => {
       quantity: ftOrderData.quantity.toString(),
     },
     {
-      symbol: 'BTCUSDT',
+      symbol: ftOrderData.ticker,
       side: 'SELL',
       positionSide: 'LONG',
       strategyType: 'TAKE_PROFIT_MARKET',
@@ -53,7 +53,7 @@ export const getBatchOrders = (ftOrderData: FutureOrderData) => {
       stopPrice: ftOrderData.takeProfitPrice.toString(),
     },
     {
-      symbol: 'BTCUSDT',
+      symbol: ftOrderData.ticker,
       side: 'SELL',
       positionSide: 'LONG',
       strategyType: 'STOP_MARKET',
