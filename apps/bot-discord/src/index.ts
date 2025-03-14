@@ -6,7 +6,7 @@ import { getCmdString, parseTradeCommand } from './utils/cmd';
 import { binanceMarketData } from './binance/market';
 
 import { PortfolioClient } from 'binance';
-import { getFutureOrderData } from './binance/order';
+import { getCountDecimalPlaces, getFutureOrderData } from './binance/order';
 import { placeBatchOrders } from './binance/portfolio-margin';
 
 /**
@@ -64,7 +64,21 @@ client.on(Events.MessageCreate, async (message) => {
         console.log('Average Price:', avgPrice);
         console.log('ExchangeInfo', exchangeInfo);
 
-        const ftOrderData = getFutureOrderData(cmd, avgPrice);
+        const tickSize = getCountDecimalPlaces(
+          (exchangeInfo?.filters.find((i) => i.filterType === 'PRICE_FILTER')
+            ?.tickSize || '0.01') as string,
+        );
+        const lotSize = getCountDecimalPlaces(
+          (exchangeInfo?.filters.find((i) => i.filterType === 'LOT_SIZE')
+            ?.stepSize || '0.01') as string,
+        );
+
+        const ftOrderData = getFutureOrderData(
+          cmd,
+          avgPrice,
+          tickSize,
+          lotSize,
+        );
         console.log('ftOrderData', ftOrderData);
 
         // await placeBatchOrders(pmClient, ftOrderData);

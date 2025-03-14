@@ -7,6 +7,11 @@ export type FutureOrderData = TradeCommand & {
   price: number;
 };
 
+export const getCountDecimalPlaces = (number: string): number => {
+  if (!number.includes('.')) return 0;
+  return number.replace(/0+$/, '').split('.')[1].length;
+};
+
 export const getNumberWithPrecision = (
   number: number,
   precision: number,
@@ -17,6 +22,8 @@ export const getNumberWithPrecision = (
 export const getFutureOrderData = (
   cmd: TradeCommand,
   currentPrice: number,
+  tickSize: number,
+  lotSize: number,
 ): FutureOrderData => {
   const quantity = cmd.qtyUsd / currentPrice;
   let stopLossPrice = currentPrice,
@@ -32,9 +39,9 @@ export const getFutureOrderData = (
 
   return {
     ...cmd,
-    quantity: getNumberWithPrecision(quantity, 3),
-    price: getNumberWithPrecision(currentPrice, 1),
-    stopLossPrice: getNumberWithPrecision(stopLossPrice, 1),
-    takeProfitPrice: getNumberWithPrecision(takeProfitPrice, 1),
+    quantity: getNumberWithPrecision(quantity, lotSize),
+    price: getNumberWithPrecision(currentPrice, tickSize),
+    stopLossPrice: getNumberWithPrecision(stopLossPrice, tickSize),
+    takeProfitPrice: getNumberWithPrecision(takeProfitPrice, tickSize),
   };
 };

@@ -2,6 +2,7 @@ import {
   getFutureOrderData,
   FutureOrderData,
   getNumberWithPrecision,
+  getCountDecimalPlaces,
 } from './order';
 import { TradeCommand } from '../utils/cmd';
 
@@ -24,7 +25,7 @@ describe('getFutureOrderData', () => {
       takeProfitPrice: 51000,
     };
 
-    const result = getFutureOrderData(cmd, currentPrice);
+    const result = getFutureOrderData(cmd, currentPrice, 0, 2);
     expect(result).toEqual(expected);
   });
 
@@ -46,7 +47,7 @@ describe('getFutureOrderData', () => {
       takeProfitPrice: 2425,
     };
 
-    const result = getFutureOrderData(cmd, currentPrice);
+    const result = getFutureOrderData(cmd, currentPrice, 0, 2);
     expect(result).toEqual(expected);
   });
 
@@ -68,7 +69,7 @@ describe('getFutureOrderData', () => {
       takeProfitPrice: 204,
     };
 
-    const result = getFutureOrderData(cmd, currentPrice);
+    const result = getFutureOrderData(cmd, currentPrice, 0, 2);
     expect(result).toEqual(expected);
   });
 
@@ -90,7 +91,7 @@ describe('getFutureOrderData', () => {
       takeProfitPrice: 196,
     };
 
-    const result = getFutureOrderData(cmd, currentPrice);
+    const result = getFutureOrderData(cmd, currentPrice, 0, 2);
     expect(result).toEqual(expected);
   });
 });
@@ -113,7 +114,7 @@ describe('getFutureOrderData', () => {
       takeProfitPrice: 51000,
     };
 
-    const result = getFutureOrderData(cmd, currentPrice);
+    const result = getFutureOrderData(cmd, currentPrice, 0, 2);
     expect(result).toEqual(expected);
   });
 
@@ -135,7 +136,7 @@ describe('getFutureOrderData', () => {
       takeProfitPrice: 2425,
     };
 
-    const result = getFutureOrderData(cmd, currentPrice);
+    const result = getFutureOrderData(cmd, currentPrice, 0, 2);
     expect(result).toEqual(expected);
   });
 
@@ -157,7 +158,7 @@ describe('getFutureOrderData', () => {
       takeProfitPrice: 204,
     };
 
-    const result = getFutureOrderData(cmd, currentPrice);
+    const result = getFutureOrderData(cmd, currentPrice, 0, 2);
     expect(result).toEqual(expected);
   });
 
@@ -179,7 +180,7 @@ describe('getFutureOrderData', () => {
       takeProfitPrice: 196,
     };
 
-    const result = getFutureOrderData(cmd, currentPrice);
+    const result = getFutureOrderData(cmd, currentPrice, 0, 2);
     expect(result).toEqual(expected);
   });
 
@@ -201,7 +202,7 @@ describe('getFutureOrderData', () => {
       takeProfitPrice: 50000,
     };
 
-    const result = getFutureOrderData(cmd, currentPrice);
+    const result = getFutureOrderData(cmd, currentPrice, 0, 2);
     expect(result).toEqual(expected);
   });
 
@@ -223,7 +224,7 @@ describe('getFutureOrderData', () => {
       takeProfitPrice: 2500,
     };
 
-    const result = getFutureOrderData(cmd, currentPrice);
+    const result = getFutureOrderData(cmd, currentPrice, 0, 2);
     expect(result).toEqual(expected);
   });
 });
@@ -254,5 +255,13 @@ describe('getNumberWithPrecision', () => {
 
     const result = getNumberWithPrecision(price, precision);
     expect(result).toBe(expected);
+  });
+});
+
+describe('getCountDecimalPlaces', () => {
+  test('should return two decimal places', () => {
+    expect(getCountDecimalPlaces('0.10')).toBe(1);
+    expect(getCountDecimalPlaces('0.01')).toBe(2);
+    expect(getCountDecimalPlaces('0.001')).toBe(3);
   });
 });
