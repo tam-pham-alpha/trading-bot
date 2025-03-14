@@ -1,5 +1,9 @@
 import { PortfolioClient } from 'binance';
 import { FutureOrderData } from './order';
+import {
+  NewPortfolioUMOrderReq,
+  NewPortfolioUMConditionalOrderReq,
+} from 'binance/lib/types/portfolio-margin';
 
 export const getBatchOrders = (ftOrderData: FutureOrderData) => {
   // short position
@@ -9,11 +13,8 @@ export const getBatchOrders = (ftOrderData: FutureOrderData) => {
         symbol: ftOrderData.ticker,
         side: 'SELL',
         positionSide: 'SHORT',
-        type: 'LIMIT',
-        price: ftOrderData.price.toString(),
+        type: 'MARKET',
         quantity: ftOrderData.quantity.toString(),
-        timeInForce: 'GTD',
-        goodTillDate: new Date().getTime() + 1000 * 60 * 60, // 1 hour from now
       },
       {
         symbol: 'BTCUSDT',
@@ -40,11 +41,8 @@ export const getBatchOrders = (ftOrderData: FutureOrderData) => {
       symbol: ftOrderData.ticker,
       side: 'BUY',
       positionSide: 'LONG',
-      type: 'LIMIT',
-      price: ftOrderData.price.toString(),
+      type: 'MARKET',
       quantity: ftOrderData.quantity.toString(),
-      timeInForce: 'GTD',
-      goodTillDate: new Date().getTime() + 1000 * 60 * 60, // 1 hour from now
     },
     {
       symbol: 'BTCUSDT',
@@ -69,39 +67,16 @@ export const placeBatchOrders = async (
   pmClient: PortfolioClient,
   ftOrderData: FutureOrderData,
 ): Promise<number> => {
+  const orders = getBatchOrders(ftOrderData);
+
   try {
-    // place limit order
-    const resp3 = await pmClient.submitNewUMOrder({
-      symbol: ftOrderData.ticker,
-      side: 'BUY',
-      type: 'LIMIT',
-      price: ftOrderData.price.toString(),
-      quantity: ftOrderData.quantity.toString(),
-      timeInForce: 'GTD',
-      goodTillDate: new Date().getTime() + 1000 * 60 * 60, // 1 hour from now
-      positionSide: 'LONG',
-    });
-
-    // place take profit and stop loss orders
-    const resp4 = await pmClient.submitNewUMConditionalOrder({
-      symbol: 'BTCUSDT',
-      side: 'SELL',
-      positionSide: 'LONG',
-      strategyType: 'TAKE_PROFIT_MARKET',
-      quantity: ftOrderData.quantity.toString(),
-      stopPrice: ftOrderData.takeProfitPrice.toString(),
-    });
-
-    const resp5 = await pmClient.submitNewUMConditionalOrder({
-      symbol: 'BTCUSDT',
-      side: 'SELL',
-      positionSide: 'LONG',
-      strategyType: 'STOP_MARKET',
-      quantity: ftOrderData.quantity.toString(),
-      stopPrice: ftOrderData.stopLossPrice.toString(),
-    });
-
-    console.log('Result', resp3, resp4, resp5);
+    await pmClient.submitNewUMOrder(orders[0] as NewPortfolioUMOrderReq);
+    await pmClient.submitNewUMConditionalOrder(
+      orders[1] as NewPortfolioUMConditionalOrderReq,
+    );
+    await pmClient.submitNewUMConditionalOrder(
+      orders[2] as NewPortfolioUMConditionalOrderReq,
+    );
 
     return 0;
   } catch (error) {

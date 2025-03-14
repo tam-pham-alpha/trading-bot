@@ -76,7 +76,7 @@ client.on(Events.MessageCreate, async (message) => {
       const batchOrders = getBatchOrders(ftOrderData);
       console.log('batchOrders', batchOrders);
 
-      // await placeBatchOrders(pmClient, ftOrderData);
+      await placeBatchOrders(pmClient, ftOrderData);
 
       const isThread = await message.channel.isThread();
 
