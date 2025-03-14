@@ -50,7 +50,10 @@ client.on(Events.MessageCreate, async (message) => {
 
   console.log('message', JSON.stringify(message));
 
-  if (message.mentions.users.has(DISCORD_BOT_ID)) {
+  if (
+    message.mentions.users.has(DISCORD_BOT_ID) ||
+    message.mentions.roles.has('1349023359815647316')
+  ) {
     const cmd = parseTradeCommand(message.content);
 
     if (cmd) {
