@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
+import { parseTradeCommand } from './utils/cmd';
 const { placeOrder } = require('./orders');
 
 /**
@@ -53,18 +54,6 @@ const client = new Client({
   partials: [Partials.Channel],
 });
 
-const parseTradeCommand = (message: string) => {
-  const cmd = message.substring(message.indexOf('>') + 1).trim();
-  const [direction, ticker, qty, ls, tp] = cmd.split(' ');
-  return {
-    direction,
-    ticker,
-    qty,
-    ls,
-    tp,
-  };
-};
-
 client.on(Events.ClientReady, (readyClient) => {
   console.log(`Logged in as ${readyClient.user.username}!`);
   console.log('Connected to these servers:');
@@ -79,13 +68,15 @@ client.on(Events.MessageCreate, async (message) => {
   // console.log('user', JSON.stringify(user));
   // console.log(`Message: ${message.content}`);
 
-  const cmd = parseTradeCommand(message.content);
-  console.log('cmd', cmd);
-
   if (message.mentions.users.has(DISCORD_BOT_ID)) {
-    await placeOrder();
+    const cmd = parseTradeCommand(message.content);
+    console.log('cmd', cmd);
 
-    await message.react('✅');
+    if (cmd) {
+      await message.react('✅');
+    } else {
+      await message.react('❌');
+    }
 
     // const isThread = await message.channel.isThread();
 
