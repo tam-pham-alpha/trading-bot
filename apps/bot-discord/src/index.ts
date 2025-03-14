@@ -7,7 +7,7 @@ import { binanceMarketData } from './binance/market';
 
 import { PortfolioClient } from 'binance';
 import { getCountDecimalPlaces, getFutureOrderData } from './binance/order';
-import { placeBatchOrders } from './binance/portfolio-margin';
+import { getBatchOrders, placeBatchOrders } from './binance/portfolio-margin';
 
 /**
  * https://chatgpt.com/share/67d046b6-ea20-800b-94b5-99bdc2766df1
@@ -80,6 +80,9 @@ client.on(Events.MessageCreate, async (message) => {
           lotSize,
         );
         console.log('ftOrderData', ftOrderData);
+
+        const batchOrders = getBatchOrders(ftOrderData);
+        console.log('batchOrders', batchOrders);
 
         // await placeBatchOrders(pmClient, ftOrderData);
 
