@@ -1,19 +1,19 @@
-import { MainClient } from 'binance';
+import { FuturesExchangeInfo, USDMClient } from 'binance';
 
 class BinanceMarketData {
-  client: MainClient;
+  client: USDMClient;
 
   constructor() {
-    this.client = new MainClient({});
+    this.client = new USDMClient({});
   }
 
   getAvgPrice = async (symbol: string): Promise<number> => {
-    const resp = await this.client.getAvgPrice({ symbol });
-    return Number(resp.price);
+    const resp = await this.client.getMarkPrice({ symbol });
+    return Number(resp.markPrice);
   };
 
   getExchangeInfo = async (symbol: string) => {
-    const resp = await this.client.getExchangeInfo({ symbol });
+    const resp: FuturesExchangeInfo = await this.client.getExchangeInfo();
     return resp.symbols.find((s) => s.symbol === symbol);
   };
 }
