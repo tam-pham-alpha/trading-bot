@@ -63,8 +63,9 @@ client.on(Events.MessageCreate, async (message) => {
 
         console.log('Average Price:', avgPrice);
         console.log('ExchangeInfo', exchangeInfo);
-        // const ftOrderData = getFutureOrderData(cmd, avgPrice);
-        // await placeBatchOrders(pmClient, ftOrderData);
+
+        const ftOrderData = getFutureOrderData(cmd, avgPrice);
+        await placeBatchOrders(pmClient, ftOrderData);
 
         const isThread = await message.channel.isThread();
 

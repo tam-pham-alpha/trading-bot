@@ -1,4 +1,8 @@
-import { getFutureOrderData, FutureOrderData } from './order';
+import {
+  getFutureOrderData,
+  FutureOrderData,
+  getPriceWithPrecision,
+} from './order';
 import { TradeCommand } from '../utils/cmd';
 
 describe('getFutureOrderData', () => {
@@ -221,5 +225,34 @@ describe('getFutureOrderData', () => {
 
     const result = getFutureOrderData(cmd, currentPrice);
     expect(result).toEqual(expected);
+  });
+});
+
+describe('getPriceWithPrecision', () => {
+  test('should return price with correct precision', () => {
+    const price = 123.456789;
+    const precision = 2;
+    const expected = 123.45;
+
+    const result = getPriceWithPrecision(price, precision);
+    expect(result).toBe(expected);
+  });
+
+  test('should return price with zero precision', () => {
+    const price = 123.456789;
+    const precision = 0;
+    const expected = 123;
+
+    const result = getPriceWithPrecision(price, precision);
+    expect(result).toBe(expected);
+  });
+
+  test('should return price with high precision', () => {
+    const price = 123.456789;
+    const precision = 5;
+    const expected = 123.45678;
+
+    const result = getPriceWithPrecision(price, precision);
+    expect(result).toBe(expected);
   });
 });
