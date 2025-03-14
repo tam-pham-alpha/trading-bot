@@ -57,8 +57,14 @@ client.on(Events.MessageCreate, async (message) => {
 
       if (cmd.ticker === 'BTCUSDT') {
         const avgPrice = await binanceMarketData.getAvgPrice(cmd.ticker);
-        const ftOrderData = getFutureOrderData(cmd, avgPrice);
-        await placeBatchOrders(pmClient, ftOrderData);
+        const exchangeInfo = await binanceMarketData.getExchangeInfo(
+          cmd.ticker,
+        );
+
+        console.log('Average Price:', avgPrice);
+        console.log('ExchangeInfo', exchangeInfo);
+        // const ftOrderData = getFutureOrderData(cmd, avgPrice);
+        // await placeBatchOrders(pmClient, ftOrderData);
 
         const isThread = await message.channel.isThread();
 

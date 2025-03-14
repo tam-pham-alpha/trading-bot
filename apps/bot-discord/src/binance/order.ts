@@ -7,6 +7,13 @@ export type FutureOrderData = TradeCommand & {
   price: number;
 };
 
+export const getPriceWithTickSize = (
+  price: number,
+  tickSize: number,
+): number => {
+  return Math.floor(price / tickSize) * tickSize;
+};
+
 export const getFutureOrderData = (
   cmd: TradeCommand,
   currentPrice: number,

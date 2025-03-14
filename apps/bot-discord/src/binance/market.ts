@@ -11,6 +11,11 @@ class BinanceMarketData {
     const resp = await this.client.getAvgPrice({ symbol });
     return Number(resp.price);
   };
+
+  getExchangeInfo = async (symbol: string) => {
+    const resp = await this.client.getExchangeInfo({ symbol });
+    return resp.symbols.find((s) => s.symbol === symbol);
+  };
 }
 
 export const binanceMarketData = new BinanceMarketData();
