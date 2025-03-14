@@ -14,6 +14,7 @@ const pmClient = new PortfolioClient({
 export const placeOrder = async (): Promise<number> => {
   try {
     const resp = await pmClient.testConnectivity();
+    console.log('resp', resp);
     return 0;
   } catch (error) {
     console.log('Error:', error);
