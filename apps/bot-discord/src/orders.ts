@@ -13,8 +13,11 @@ const pmClient = new PortfolioClient({
 
 export const placeOrder = async (): Promise<number> => {
   try {
-    const resp = await pmClient.testConnectivity();
-    console.log('resp', resp);
+    const resp01 = await pmClient.testConnectivity();
+    console.log('resp01', resp01);
+
+    const resp02 = await pmClient.getAccountInfo();
+    console.log('resp02', resp02);
     return 0;
   } catch (error) {
     console.log('Error:', error);
