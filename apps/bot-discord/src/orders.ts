@@ -30,6 +30,7 @@ export const placeOrder = async (): Promise<number> => {
     //   goodTillDate: new Date().getTime() + 1000 * 60 * 60, // 1 hour from now
     //   positionSide: 'LONG',
     // });
+    // console.log('resp3', resp3);
 
     const resp4 = await pmClient.submitNewUMConditionalOrder({
       symbol: 'BTCUSDT',
@@ -51,7 +52,6 @@ export const placeOrder = async (): Promise<number> => {
       reduceOnly: true,
     });
 
-    console.log('resp3', resp3);
     console.log('resp4', resp4);
     console.log('resp5', resp5);
     return 0;
