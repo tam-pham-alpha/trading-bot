@@ -55,7 +55,7 @@ client.on(Events.MessageCreate, async (message) => {
       console.log('Command:', getCmdString(cmd));
       await message.react('✅');
 
-      if (cmd.ticker === 'BTCUSDT') {
+      if (cmd.side === 'LONG') {
         const avgPrice = await binanceMarketData.getAvgPrice(cmd.ticker);
         const exchangeInfo = await binanceMarketData.getExchangeInfo(
           cmd.ticker,
