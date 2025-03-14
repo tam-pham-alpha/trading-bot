@@ -32,9 +32,9 @@ client.on(Events.ClientReady, (readyClient) => {
 
 client.on(Events.MessageCreate, async (message) => {
   const user = await client.users.fetch(message.author.id);
+  if (user.bot) return;
+
   console.log('message', JSON.stringify(message));
-  // console.log('user', JSON.stringify(user));
-  // console.log(`Message: ${message.content}`);
 
   if (message.mentions.users.has(DISCORD_BOT_ID)) {
     const cmd = parseTradeCommand(message.content);
@@ -72,10 +72,12 @@ client.on(Events.MessageCreate, async (message) => {
 });
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
+  if (user.bot) return;
+
   const message = await reaction.message.fetch();
-  // console.log('reaction', JSON.stringify(reaction));
-  // console.log('message', JSON.stringify(message));
-  // console.log('user', JSON.stringify(user));
+  console.log(
+    `MessageReactionAdd: ${user.username} reacted with ${reaction.emoji.name} on ${message.content}`,
+  );
 });
 
 client.login(DISCORD_BOT_TOKEN);
