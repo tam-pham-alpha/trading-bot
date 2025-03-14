@@ -44,6 +44,8 @@ client.on(Events.ClientReady, (readyClient) => {
 
 client.on(Events.MessageCreate, async (message) => {
   const user = await client.users.fetch(message.author.id);
+  console.log('user', JSON.stringify(user));
+
   if (user.bot) return;
 
   console.log('message', JSON.stringify(message));
