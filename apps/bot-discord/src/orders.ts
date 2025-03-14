@@ -13,23 +13,47 @@ const pmClient = new PortfolioClient({
 
 export const placeOrder = async (): Promise<number> => {
   try {
-    const resp01 = await pmClient.testConnectivity();
-    console.log('resp01', resp01);
+    const resp1 = await pmClient.testConnectivity();
+    const resp2 = await pmClient.getAccountInfo();
 
-    const resp02 = await pmClient.getAccountInfo();
-    console.log('resp02', resp02);
+    console.log('resp1', resp1);
+    console.log('resp2', resp2);
 
-    const resp03 = await pmClient.submitNewUMOrder({
+    const quantity = '0.002';
+    // const resp3 = await pmClient.submitNewUMOrder({
+    //   symbol: 'BTCUSDT',
+    //   side: 'BUY',
+    //   type: 'LIMIT',
+    //   price: '70000',
+    //   quantity: quantity,
+    //   timeInForce: 'GTD',
+    //   goodTillDate: new Date().getTime() + 1000 * 60 * 60, // 1 hour from now
+    //   positionSide: 'LONG',
+    // });
+
+    const resp4 = await pmClient.submitNewUMConditionalOrder({
       symbol: 'BTCUSDT',
-      side: 'BUY',
-      type: 'LIMIT',
-      price: '70000',
-      quantity: '0.01',
-      timeInForce: 'GTD',
-      goodTillDate: new Date().getTime() + 1000 * 60 * 60, // 1 hour from now
+      side: 'SELL',
       positionSide: 'LONG',
+      strategyType: 'TAKE_PROFIT_MARKET',
+      quantity: quantity,
+      stopPrice: '99000',
+      reduceOnly: true,
     });
-    console.log('resp03', resp03);
+
+    const resp5 = await pmClient.submitNewUMConditionalOrder({
+      symbol: 'BTCUSDT',
+      side: 'SELL',
+      positionSide: 'LONG',
+      strategyType: 'STOP_MARKET',
+      quantity: quantity,
+      stopPrice: '70000',
+      reduceOnly: true,
+    });
+
+    console.log('resp3', resp3);
+    console.log('resp4', resp4);
+    console.log('resp5', resp5);
     return 0;
   } catch (error) {
     console.log('Error:', error);
