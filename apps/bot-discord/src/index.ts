@@ -55,53 +55,44 @@ client.on(Events.MessageCreate, async (message) => {
       console.log('Command:', getCmdString(cmd));
       await message.react('✅');
 
-      if (cmd.side === 'LONG') {
-        const avgPrice = await binanceMarketData.getAvgPrice(cmd.ticker);
-        const exchangeInfo = await binanceMarketData.getExchangeInfo(
-          cmd.ticker,
-        );
+      const avgPrice = await binanceMarketData.getAvgPrice(cmd.ticker);
+      const exchangeInfo = await binanceMarketData.getExchangeInfo(cmd.ticker);
 
-        console.log('Average Price:', avgPrice);
-        console.log('ExchangeInfo', exchangeInfo);
+      console.log('Average Price:', avgPrice);
+      console.log('ExchangeInfo', exchangeInfo);
 
-        const tickSize = getCountDecimalPlaces(
-          (exchangeInfo?.filters.find((i) => i.filterType === 'PRICE_FILTER')
-            ?.tickSize || '0.01') as string,
-        );
-        const lotSize = getCountDecimalPlaces(
-          (exchangeInfo?.filters.find((i) => i.filterType === 'LOT_SIZE')
-            ?.stepSize || '0.01') as string,
-        );
+      const tickSize = getCountDecimalPlaces(
+        (exchangeInfo?.filters.find((i) => i.filterType === 'PRICE_FILTER')
+          ?.tickSize || '0.01') as string,
+      );
+      const lotSize = getCountDecimalPlaces(
+        (exchangeInfo?.filters.find((i) => i.filterType === 'LOT_SIZE')
+          ?.stepSize || '0.01') as string,
+      );
 
-        const ftOrderData = getFutureOrderData(
-          cmd,
-          avgPrice,
-          tickSize,
-          lotSize,
-        );
-        console.log('ftOrderData', ftOrderData);
+      const ftOrderData = getFutureOrderData(cmd, avgPrice, tickSize, lotSize);
+      console.log('ftOrderData', ftOrderData);
 
-        const batchOrders = getBatchOrders(ftOrderData);
-        console.log('batchOrders', batchOrders);
+      const batchOrders = getBatchOrders(ftOrderData);
+      console.log('batchOrders', batchOrders);
 
-        // await placeBatchOrders(pmClient, ftOrderData);
+      // await placeBatchOrders(pmClient, ftOrderData);
 
-        const isThread = await message.channel.isThread();
+      const isThread = await message.channel.isThread();
 
-        if (!isThread) {
-          try {
-            // Create a thread from the message
-            const thread = await message.startThread({
-              name: getCmdString(cmd), // Thread name
-              autoArchiveDuration: 60, // Auto-archive after 60 minutes
-            });
+      if (!isThread) {
+        try {
+          // Create a thread from the message
+          const thread = await message.startThread({
+            name: getCmdString(cmd), // Thread name
+            autoArchiveDuration: 60, // Auto-archive after 60 minutes
+          });
 
-            await thread.send(
-              `<@${user.id}> Your orders have been placed for ${cmd.ticker} at an average price of ${avgPrice}`,
-            );
-          } catch (error) {
-            console.error('Failed to create a thread:', error);
-          }
+          await thread.send(
+            `<@${user.id}> Your orders have been placed for ${cmd.ticker} at an average price of ${avgPrice}`,
+          );
+        } catch (error) {
+          console.error('Failed to create a thread:', error);
         }
       }
     } else {
